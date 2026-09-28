@@ -2,27 +2,27 @@
 
 #include <cstddef>
 
-#include "Vec3Reference.h"
-#include "Mat4Reference.h"
+#include "../Headers/Vec.h"
+#include "../Headers/Mat.h"
 
 void DotBatch(
-    const Vec3* a,
-    const Vec3* b,
+    const Vec3f* a,
+    const Vec3f* b,
     float* output,
     std::size_t count
 );
 
 void NormalizeBatch(
-    const Vec3* input,
-    Vec3* output,
+    const Vec3f* input,
+    Vec3f* output,
     std::size_t count
 );
 
 void TransformPointsBatch(
-    const Vec3* input,
-    Vec3* output,
+    const Vec3f* input,
+    Vec3f* output,
     std::size_t count,
-    const Mat4& matrix
+    const Mat4f& matrix
 );
 
 #include "BatchOperations.inl"

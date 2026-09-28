@@ -1,36 +1,36 @@
 #pragma once
 
 inline void DotBatch(
-    const Vec3* a,
-    const Vec3* b,
+    const Vec3f* a,
+    const Vec3f* b,
     float* output,
     std::size_t count)
 {
     for (std::size_t i = 0; i < count; ++i)
     {
-        output[i] = Vec3::Dot(a[i], b[i]);
+        output[i] = Dot(a[i], b[i]);
     }
 }
 
 inline void NormalizeBatch(
-    const Vec3* input,
-    Vec3* output,
+    const Vec3f* input,
+    Vec3f* output,
     std::size_t count)
 {
     for (std::size_t i = 0; i < count; ++i)
     {
-        output[i] = input[i].normalized();
+        output[i] = input[i].Normalized();
     }
 }
 
 inline void TransformPointsBatch(
-    const Vec3* input,
-    Vec3* output,
+    const Vec3f* input,
+    Vec3f* output,
     std::size_t count,
-    const Mat4& matrix)
+    const Mat4f& matrix)
 {
     for (std::size_t i = 0; i < count; ++i)
     {
-        output[i] = matrix.MultiplyPoint3x4(input[i]);
+        output[i] = matrix.MultiplyPoint(input[i]);
     }
 }

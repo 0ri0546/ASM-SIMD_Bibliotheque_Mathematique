@@ -1,18 +1,26 @@
 #include <iostream>
 
-#include "Reference/Vec3Reference.h"
-#include "Reference/Mat4Reference.h"
+#include "Headers/Config/SimdConfig.h"
+#include "Headers/Mat.h"
+#include "Headers/Quaternion.h"
+#include "Headers/Vec.h"
 
 int main()
 {
-    Vec3 point(1.0f, 2.0f, 3.0f);
+    if(!Simd::Has(Simd::Feature::sse))
+    {
+        std::cerr << "SSE not supported\n";
+        return -1;
+    }
 
-    Mat4 translation = Mat4::Translate(Vec3(10.0f, 20.0f, 30.0f));
+    Vec3f point(1.0f, 2.0f, 3.0f);
 
-    Vec3 result = translation.MultiplyPoint3x4(point);
+    Mat4f translation = Mat4f::Translate(Vec3f(10.0f, 20.0f, 30.0f));
+
+    Vec3f result = translation.MultiplyPoint(point);
 
     std::cout
-        << result.x << ' '
-        << result.y << ' '
-        << result.z << '\n';
+        << result[0] << ' '
+        << result[1] << ' '
+        << result[2] << '\n';
 }
