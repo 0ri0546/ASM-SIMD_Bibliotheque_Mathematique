@@ -15,28 +15,22 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ASM-SIMD-Bibliothèque-mathématique.cpp">
+    <ClCompile Include="Vec3Tests.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Mat4Tests.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="BatchTests.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="pch.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Reference\BatchOperations.h">
+    <ClInclude Include="pch.h">
       <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="Reference\Mat4Reference.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="Reference\Vec3Reference.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="Reference\BatchOperations.inl">
-      <Filter>Fichiers sources</Filter>
-    </ClInclude>
-    <ClInclude Include="Reference\Mat4Reference.inl">
-      <Filter>Fichiers sources</Filter>
-    </ClInclude>
-    <ClInclude Include="Reference\Vec3Reference.inl">
-      <Filter>Fichiers sources</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
