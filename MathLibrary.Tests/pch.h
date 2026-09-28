@@ -7,6 +7,13 @@
 #ifndef PCH_H
 #define PCH_H
 
-// ajouter les en-têtes à précompiler ici
+#include <array>
+#include <cmath>
+#include <concepts>
+#include <cstddef>
+#include <format>
+#include <numbers>
+#include <string>
+#include <type_traits>
 
 #endif //PCH_H
