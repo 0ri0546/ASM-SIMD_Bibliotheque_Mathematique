@@ -1,4 +1,4 @@
-#include <iostream>
+#include <print>
 
 #include "Headers/Config/SimdConfig.h"
 #include "Headers/Mat.h"
@@ -9,7 +9,7 @@ int main()
 {
     if(!Simd::Has(Simd::Feature::sse))
     {
-        std::cerr << "SSE not supported\n";
+        std::println("SSE not supported\n");
         return -1;
     }
 
@@ -19,8 +19,8 @@ int main()
 
     Vec3f result = translation.MultiplyPoint(point);
 
-    std::cout
-        << result[0] << ' '
-        << result[1] << ' '
-        << result[2] << '\n';
+    std::println("{} {} {}",
+        result[0],
+        result[1],
+        result[2]);
 }
