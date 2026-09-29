@@ -3,36 +3,36 @@
 template <std::floating_point T, std::size_t N>
 template <typename... Args>
     requires(sizeof...(Args) == N) && (std::convertible_to<Args, T> && ...)
-constexpr Vec<T, N>::Vec(Args&&... args) : m_data{static_cast<T>(std::forward<Args>(args))...} {}
+inline constexpr Vec<T, N>::Vec(Args&&... args) : m_data{static_cast<T>(std::forward<Args>(args))...} {}
 
 template <std::floating_point T, std::size_t N>
-constexpr T& Vec<T, N>::operator[](size_type index) {
+inline constexpr T& Vec<T, N>::operator[](size_type index) {
     return m_data[index];
 }
 
 template <std::floating_point T, std::size_t N>
-constexpr const T& Vec<T, N>::operator[](size_type index) const {
+inline constexpr const T& Vec<T, N>::operator[](size_type index) const {
     return m_data[index];
 }
 
 template <std::floating_point T, std::size_t N>
-constexpr T* Vec<T, N>::Data() {
+inline constexpr T* Vec<T, N>::Data() {
     return m_data.data();
 }
 
 template <std::floating_point T, std::size_t N>
-constexpr const T* Vec<T, N>::Data() const {
+inline constexpr const T* Vec<T, N>::Data() const {
     return m_data.data();
 }
 
 template <std::floating_point T, std::size_t N>
-constexpr std::size_t Vec<T, N>::Size() {
+inline constexpr std::size_t Vec<T, N>::Size() {
     return N;
 }
 
 template <std::floating_point T, std::size_t N>
 template <std::floating_point U>
-constexpr bool Vec<T, N>::operator==(const Vec<U, N>& other) const {
+inline constexpr bool Vec<T, N>::operator==(const Vec<U, N>& other) const {
     for (size_type i = 0; i < N; ++i) {
         if ((*this)[i] != other[i]) {
             return false;
@@ -44,7 +44,7 @@ constexpr bool Vec<T, N>::operator==(const Vec<U, N>& other) const {
 
 template <std::floating_point T, std::size_t N>
 template <std::floating_point U>
-constexpr Vec<T, N>& Vec<T, N>::operator+=(const Vec<U, N>& other) {
+inline constexpr Vec<T, N>& Vec<T, N>::operator+=(const Vec<U, N>& other) {
     for (size_type i = 0; i < N; ++i) {
         (*this)[i] += other[i];
     }
@@ -54,7 +54,7 @@ constexpr Vec<T, N>& Vec<T, N>::operator+=(const Vec<U, N>& other) {
 
 template <std::floating_point T, std::size_t N>
 template <std::floating_point U>
-constexpr Vec<T, N>& Vec<T, N>::operator-=(const Vec<U, N>& other) {
+inline constexpr Vec<T, N>& Vec<T, N>::operator-=(const Vec<U, N>& other) {
     for (size_type i = 0; i < N; ++i) {
         (*this)[i] -= other[i];
     }
@@ -64,7 +64,7 @@ constexpr Vec<T, N>& Vec<T, N>::operator-=(const Vec<U, N>& other) {
 
 template <std::floating_point T, std::size_t N>
 template <std::floating_point U>
-constexpr Vec<T, N>& Vec<T, N>::operator*=(const Vec<U, N>& other) {
+inline constexpr Vec<T, N>& Vec<T, N>::operator*=(const Vec<U, N>& other) {
     for (size_type i = 0; i < N; ++i) {
         (*this)[i] *= other[i];
     }
@@ -74,7 +74,7 @@ constexpr Vec<T, N>& Vec<T, N>::operator*=(const Vec<U, N>& other) {
 
 template <std::floating_point T, std::size_t N>
 template <std::floating_point U>
-constexpr Vec<T, N>& Vec<T, N>::operator/=(const Vec<U, N>& other) {
+inline constexpr Vec<T, N>& Vec<T, N>::operator/=(const Vec<U, N>& other) {
     for (size_type i = 0; i < N; ++i) {
         (*this)[i] /= other[i];
     }
@@ -84,7 +84,7 @@ constexpr Vec<T, N>& Vec<T, N>::operator/=(const Vec<U, N>& other) {
 
 template <std::floating_point T, std::size_t N>
 template <std::floating_point U>
-constexpr Vec<T, N>& Vec<T, N>::operator*=(U scalar) {
+inline constexpr Vec<T, N>& Vec<T, N>::operator*=(U scalar) {
     for (auto& value : m_data) {
         value *= scalar;
     }
@@ -94,7 +94,7 @@ constexpr Vec<T, N>& Vec<T, N>::operator*=(U scalar) {
 
 template <std::floating_point T, std::size_t N>
 template <std::floating_point U>
-constexpr Vec<T, N>& Vec<T, N>::operator/=(U scalar) {
+inline constexpr Vec<T, N>& Vec<T, N>::operator/=(U scalar) {
     for (auto& value : m_data) {
         value /= scalar;
     }
@@ -103,12 +103,12 @@ constexpr Vec<T, N>& Vec<T, N>::operator/=(U scalar) {
 }
 
 template <std::floating_point T, std::size_t N>
-constexpr Vec<T, N> Vec<T, N>::operator+() const {
+inline constexpr Vec<T, N> Vec<T, N>::operator+() const {
     return *this;
 }
 
 template <std::floating_point T, std::size_t N>
-constexpr Vec<T, N> Vec<T, N>::operator-() const {
+inline constexpr Vec<T, N> Vec<T, N>::operator-() const {
     Vec result;
 
     for (size_type i = 0; i < N; ++i) {
@@ -119,7 +119,7 @@ constexpr Vec<T, N> Vec<T, N>::operator-() const {
 }
 
 template <std::floating_point T, std::size_t N>
-constexpr T Vec<T, N>::LengthSquared() const {
+inline constexpr T Vec<T, N>::LengthSquared() const {
     T result{};
 
     for (size_type i = 0; i < N; ++i) {
@@ -130,12 +130,12 @@ constexpr T Vec<T, N>::LengthSquared() const {
 }
 
 template <std::floating_point T, std::size_t N>
-constexpr T Vec<T, N>::Length() const {
+inline constexpr T Vec<T, N>::Length() const {
     return static_cast<T>(std::sqrt(static_cast<double>(LengthSquared())));
 }
 
 template <std::floating_point T, std::size_t N>
-constexpr Vec<T, N> Vec<T, N>::Normalized() const {
+inline constexpr Vec<T, N> Vec<T, N>::Normalized() const {
     const T length = Length();
 
     if (length <= T{0}) {
@@ -146,12 +146,12 @@ constexpr Vec<T, N> Vec<T, N>::Normalized() const {
 }
 
 template <std::floating_point T, std::size_t N>
-constexpr void Vec<T, N>::Normalize() {
+inline constexpr void Vec<T, N>::Normalize() {
     *this = Normalized();
 }
 
 template <std::floating_point T, std::floating_point U, std::size_t N>
-constexpr auto operator+(const Vec<T, N>& a, const Vec<U, N>& b) -> VecCommon<T, U, N> {
+inline constexpr auto operator+(const Vec<T, N>& a, const Vec<U, N>& b) -> VecCommon<T, U, N> {
     using R = std::common_type_t<T, U>;
 
     VecCommon<T, U, N> result;
@@ -164,7 +164,7 @@ constexpr auto operator+(const Vec<T, N>& a, const Vec<U, N>& b) -> VecCommon<T,
 }
 
 template <std::floating_point T, std::floating_point U, std::size_t N>
-constexpr auto operator-(const Vec<T, N>& a, const Vec<U, N>& b) -> VecCommon<T, U, N> {
+inline constexpr auto operator-(const Vec<T, N>& a, const Vec<U, N>& b) -> VecCommon<T, U, N> {
     using R = std::common_type_t<T, U>;
 
     VecCommon<T, U, N> result;
@@ -177,7 +177,7 @@ constexpr auto operator-(const Vec<T, N>& a, const Vec<U, N>& b) -> VecCommon<T,
 }
 
 template <std::floating_point T, std::floating_point U, std::size_t N>
-constexpr auto operator*(const Vec<T, N>& a, const Vec<U, N>& b) -> VecCommon<T, U, N> {
+inline constexpr auto operator*(const Vec<T, N>& a, const Vec<U, N>& b) -> VecCommon<T, U, N> {
     using R = std::common_type_t<T, U>;
 
     VecCommon<T, U, N> result;
@@ -190,7 +190,7 @@ constexpr auto operator*(const Vec<T, N>& a, const Vec<U, N>& b) -> VecCommon<T,
 }
 
 template <std::floating_point T, std::floating_point U, std::size_t N>
-constexpr auto operator/(const Vec<T, N>& a, const Vec<U, N>& b) -> VecCommon<T, U, N> {
+inline constexpr auto operator/(const Vec<T, N>& a, const Vec<U, N>& b) -> VecCommon<T, U, N> {
     using R = std::common_type_t<T, U>;
 
     VecCommon<T, U, N> result;
@@ -203,7 +203,7 @@ constexpr auto operator/(const Vec<T, N>& a, const Vec<U, N>& b) -> VecCommon<T,
 }
 
 template <std::floating_point T, std::floating_point U, std::size_t N>
-constexpr auto operator*(const Vec<T, N>& v, U scalar) -> VecCommon<T, U, N> {
+inline constexpr auto operator*(const Vec<T, N>& v, U scalar) -> VecCommon<T, U, N> {
     using R = std::common_type_t<T, U>;
 
     VecCommon<T, U, N> result;
@@ -216,12 +216,12 @@ constexpr auto operator*(const Vec<T, N>& v, U scalar) -> VecCommon<T, U, N> {
 }
 
 template <std::floating_point T, std::floating_point U, std::size_t N>
-constexpr auto operator*(U scalar, const Vec<T, N>& v) -> VecCommon<T, U, N> {
+inline constexpr auto operator*(U scalar, const Vec<T, N>& v) -> VecCommon<T, U, N> {
     return v * scalar;
 }
 
 template <std::floating_point T, std::floating_point U, std::size_t N>
-constexpr auto operator/(const Vec<T, N>& v, U scalar) -> VecCommon<T, U, N> {
+inline constexpr auto operator/(const Vec<T, N>& v, U scalar) -> VecCommon<T, U, N> {
     using R = std::common_type_t<T, U>;
 
     VecCommon<T, U, N> result;
@@ -234,7 +234,7 @@ constexpr auto operator/(const Vec<T, N>& v, U scalar) -> VecCommon<T, U, N> {
 }
 
 template <std::floating_point T, std::floating_point U, std::size_t N>
-constexpr auto Dot(const Vec<T, N>& a, const Vec<U, N>& b) -> std::common_type_t<T, U> {
+inline constexpr auto Dot(const Vec<T, N>& a, const Vec<U, N>& b) -> std::common_type_t<T, U> {
     using R = std::common_type_t<T, U>;
 
     R result{};
@@ -247,7 +247,7 @@ constexpr auto Dot(const Vec<T, N>& a, const Vec<U, N>& b) -> std::common_type_t
 }
 
 template <std::floating_point T, std::floating_point U>
-constexpr auto Cross(const Vec<T, 3>& a, const Vec<U, 3>& b) -> VecCommon<T, U, 3> {
+inline constexpr auto Cross(const Vec<T, 3>& a, const Vec<U, 3>& b) -> VecCommon<T, U, 3> {
     using R = std::common_type_t<T, U>;
 
     return VecCommon<T, U, 3>{
@@ -257,12 +257,12 @@ constexpr auto Cross(const Vec<T, 3>& a, const Vec<U, 3>& b) -> VecCommon<T, U, 
 }
 
 template <std::floating_point T, std::floating_point U, std::size_t N>
-constexpr auto Distance(const Vec<T, N>& a, const Vec<U, N>& b) -> std::common_type_t<T, U> {
+inline constexpr auto Distance(const Vec<T, N>& a, const Vec<U, N>& b) -> std::common_type_t<T, U> {
     return (a - b).Length();
 }
 
 template <std::floating_point T, std::floating_point U, std::floating_point V, std::size_t N>
-constexpr auto Lerp(const Vec<T, N>& a, const Vec<U, N>& b, V t) -> VecCommon<T, U, N> {
+inline constexpr auto Lerp(const Vec<T, N>& a, const Vec<U, N>& b, V t) -> VecCommon<T, U, N> {
     using R = std::common_type_t<T, U>;
 
     VecCommon<T, U, N> result;
@@ -277,12 +277,12 @@ constexpr auto Lerp(const Vec<T, N>& a, const Vec<U, N>& b, V t) -> VecCommon<T,
 }
 
 template <std::floating_point T, std::floating_point U, std::size_t N>
-constexpr auto Scale(const Vec<T, N>& a, const Vec<U, N>& b) -> VecCommon<T, U, N> {
+inline constexpr auto Scale(const Vec<T, N>& a, const Vec<U, N>& b) -> VecCommon<T, U, N> {
     return a * b;
 }
 
 template <std::floating_point T, std::floating_point U, std::size_t N>
-constexpr auto Min(const Vec<T, N>& a, const Vec<U, N>& b) -> VecCommon<T, U, N> {
+inline constexpr auto Min(const Vec<T, N>& a, const Vec<U, N>& b) -> VecCommon<T, U, N> {
     using R = std::common_type_t<T, U>;
 
     VecCommon<T, U, N> result;
@@ -297,7 +297,7 @@ constexpr auto Min(const Vec<T, N>& a, const Vec<U, N>& b) -> VecCommon<T, U, N>
 }
 
 template <std::floating_point T, std::floating_point U, std::size_t N>
-constexpr auto Max(const Vec<T, N>& a, const Vec<U, N>& b) -> VecCommon<T, U, N> {
+inline constexpr auto Max(const Vec<T, N>& a, const Vec<U, N>& b) -> VecCommon<T, U, N> {
     using R = std::common_type_t<T, U>;
 
     VecCommon<T, U, N> result;
@@ -312,7 +312,7 @@ constexpr auto Max(const Vec<T, N>& a, const Vec<U, N>& b) -> VecCommon<T, U, N>
 }
 
 template <std::floating_point T, std::floating_point U, std::floating_point V, std::size_t N>
-constexpr auto MoveTowards(const Vec<T, N>& current, const Vec<U, N>& target, V maxDistanceDelta)
+inline constexpr auto MoveTowards(const Vec<T, N>& current, const Vec<U, N>& target, V maxDistanceDelta)
     -> VecCommon<T, U, N> {
     using R = std::common_type_t<T, U>;
 
@@ -339,7 +339,7 @@ constexpr auto MoveTowards(const Vec<T, N>& current, const Vec<U, N>& target, V 
 }
 
 template <std::floating_point T, std::floating_point U, std::size_t N>
-constexpr auto Reflect(const Vec<T, N>& v, const Vec<U, N>& normal) -> VecCommon<T, U, N> {
+inline constexpr auto Reflect(const Vec<T, N>& v, const Vec<U, N>& normal) -> VecCommon<T, U, N> {
     using R = std::common_type_t<T, U>;
 
     VecCommon<T, U, N> result;
@@ -353,7 +353,7 @@ constexpr auto Reflect(const Vec<T, N>& v, const Vec<U, N>& normal) -> VecCommon
 }
 
 template <std::floating_point T, std::floating_point U, std::size_t N>
-constexpr auto Angle(const Vec<T, N>& a, const Vec<U, N>& b) -> std::common_type_t<T, U> {
+inline constexpr auto Angle(const Vec<T, N>& a, const Vec<U, N>& b) -> std::common_type_t<T, U> {
     using R = std::common_type_t<T, U>;
 
     R lengthSquaredA{};
@@ -378,7 +378,7 @@ constexpr auto Angle(const Vec<T, N>& a, const Vec<U, N>& b) -> std::common_type
 }
 
 template <std::floating_point T>
-constexpr Vec<T, 2> Perpendicular(const Vec<T, 2>& v) {
+inline constexpr Vec<T, 2> Perpendicular(const Vec<T, 2>& v) {
     return Vec<T, 2>{-v[1], v[0]};
 }
 
@@ -386,7 +386,7 @@ template <std::floating_point T, std::size_t N>
 struct std::formatter<Vec<T, N>> {
     std::formatter<T> underlying;
 
-    constexpr auto parse(std::format_parse_context& ctx) {
+   constexpr auto parse(std::format_parse_context& ctx) {
         return underlying.parse(ctx);
     }
 

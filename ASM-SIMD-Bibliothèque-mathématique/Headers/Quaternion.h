@@ -19,129 +19,129 @@ private:
     T m_w{1};
 
 public:
-    constexpr Quaternion() = default;
+    inline constexpr Quaternion() = default;
 
-    constexpr Quaternion(T x, T y, T z, T w);
-
-    template <std::floating_point U>
-    constexpr Quaternion(const Vec3<U>& axis, U angleRadians);
-
-    static constexpr Quaternion Identity();
+    inline constexpr Quaternion(T x, T y, T z, T w);
 
     template <std::floating_point U>
-    static constexpr Quaternion FromEuler(U pitch, U yaw, U roll);
+    inline constexpr Quaternion(const Vec3<U>& axis, U angleRadians);
+
+    static inline constexpr Quaternion Identity();
 
     template <std::floating_point U>
-    static constexpr Quaternion FromAxisAngle(const Vec3<U>& axis, U angleRadians);
+    static inline constexpr Quaternion FromEuler(U pitch, U yaw, U roll);
 
     template <std::floating_point U>
-    static constexpr Quaternion FromToRotation(const Vec3<U>& from, const Vec3<U>& to);
+    static inline constexpr Quaternion FromAxisAngle(const Vec3<U>& axis, U angleRadians);
 
     template <std::floating_point U>
-    static constexpr Quaternion LookRotation(const Vec3<U>& forward, const Vec3<U>& up);
-
-    constexpr T& X();
-    constexpr const T& X() const;
-
-    constexpr T& Y();
-    constexpr const T& Y() const;
-
-    constexpr T& Z();
-    constexpr const T& Z() const;
-
-    constexpr T& W();
-    constexpr const T& W() const;
-
-    constexpr T* Data();
-    constexpr const T* Data() const;
-
-    static constexpr size_type Size();
+    static inline constexpr Quaternion FromToRotation(const Vec3<U>& from, const Vec3<U>& to);
 
     template <std::floating_point U>
-    constexpr bool operator==(const Quaternion<U>& other) const;
+    static inline constexpr Quaternion LookRotation(const Vec3<U>& forward, const Vec3<U>& up);
+
+    inline constexpr T& X();
+    inline constexpr const T& X() const;
+
+    inline constexpr T& Y();
+    inline constexpr const T& Y() const;
+
+    inline constexpr T& Z();
+    inline constexpr const T& Z() const;
+
+    inline constexpr T& W();
+    inline constexpr const T& W() const;
+
+    inline constexpr T* Data();
+    inline constexpr const T* Data() const;
+
+    static inline constexpr size_type Size();
 
     template <std::floating_point U>
-    constexpr Quaternion& operator+=(const Quaternion<U>& other);
+    inline constexpr bool operator==(const Quaternion<U>& other) const;
 
     template <std::floating_point U>
-    constexpr Quaternion& operator-=(const Quaternion<U>& other);
+    inline constexpr Quaternion& operator+=(const Quaternion<U>& other);
 
     template <std::floating_point U>
-    constexpr Quaternion& operator*=(const Quaternion<U>& other);
+    inline constexpr Quaternion& operator-=(const Quaternion<U>& other);
 
     template <std::floating_point U>
-    constexpr Quaternion& operator*=(U scalar);
+    inline constexpr Quaternion& operator*=(const Quaternion<U>& other);
 
     template <std::floating_point U>
-    constexpr Quaternion& operator/=(U scalar);
+    inline constexpr Quaternion& operator*=(U scalar);
 
-    constexpr Quaternion operator+() const;
-    constexpr Quaternion operator-() const;
+    template <std::floating_point U>
+    inline constexpr Quaternion& operator/=(U scalar);
 
-    constexpr T LengthSquared() const;
-    constexpr T Length() const;
+    inline constexpr Quaternion operator+() const;
+    inline constexpr Quaternion operator-() const;
 
-    constexpr Quaternion Normalized() const;
-    constexpr void Normalize();
+    inline constexpr T LengthSquared() const;
+    inline constexpr T Length() const;
 
-    constexpr Quaternion Conjugate() const;
-    constexpr Quaternion Inverse() const;
+    inline constexpr Quaternion Normalized() const;
+    inline constexpr void Normalize();
 
-    constexpr Vec3<T> RotateVector(const Vec3<T>& v) const;
+    inline constexpr Quaternion Conjugate() const;
+    inline constexpr Quaternion Inverse() const;
 
-    constexpr Vec3<T> ToEuler() const;
+    inline constexpr Vec3<T> RotateVector(const Vec3<T>& v) const;
 
-    constexpr T Pitch() const;
-    constexpr T Yaw() const;
-    constexpr T Roll() const;
+    inline constexpr Vec3<T> ToEuler() const;
 
-    constexpr void ToAxisAngle(Vec3<T>& outAxis, T& outAngleRadians) const;
+    inline constexpr T Pitch() const;
+    inline constexpr T Yaw() const;
+    inline constexpr T Roll() const;
+
+    inline constexpr void ToAxisAngle(Vec3<T>& outAxis, T& outAngleRadians) const;
 };
 
 template <std::floating_point T, std::floating_point U>
 using QuaternionCommon = Quaternion<std::common_type_t<T, U>>;
 
 template <std::floating_point T, std::floating_point U>
-constexpr auto operator+(const Quaternion<T>& a, const Quaternion<U>& b) -> QuaternionCommon<T, U>;
+inline constexpr auto operator+(const Quaternion<T>& a, const Quaternion<U>& b) -> QuaternionCommon<T, U>;
 
 template <std::floating_point T, std::floating_point U>
-constexpr auto operator-(const Quaternion<T>& a, const Quaternion<U>& b) -> QuaternionCommon<T, U>;
+inline constexpr auto operator-(const Quaternion<T>& a, const Quaternion<U>& b) -> QuaternionCommon<T, U>;
 
 template <std::floating_point T, std::floating_point U>
-constexpr auto operator*(const Quaternion<T>& a, const Quaternion<U>& b) -> QuaternionCommon<T, U>;
+inline constexpr auto operator*(const Quaternion<T>& a, const Quaternion<U>& b) -> QuaternionCommon<T, U>;
 
 template <std::floating_point T, std::floating_point U>
-constexpr auto operator*(const Quaternion<T>& q, U scalar) -> QuaternionCommon<T, U>;
+inline constexpr auto operator*(const Quaternion<T>& q, U scalar) -> QuaternionCommon<T, U>;
 
 template <std::floating_point T, std::floating_point U>
-constexpr auto operator*(U scalar, const Quaternion<T>& q) -> QuaternionCommon<T, U>;
+inline constexpr auto operator*(U scalar, const Quaternion<T>& q) -> QuaternionCommon<T, U>;
 
 template <std::floating_point T, std::floating_point U>
-constexpr auto operator/(const Quaternion<T>& q, U scalar) -> QuaternionCommon<T, U>;
+inline constexpr auto operator/(const Quaternion<T>& q, U scalar) -> QuaternionCommon<T, U>;
 
 template <std::floating_point T, std::floating_point U>
-constexpr auto operator*(const Quaternion<T>& q, const Vec3<U>& v) -> Vec3<std::common_type_t<T, U>>;
+inline constexpr auto operator*(const Quaternion<T>& q, const Vec3<U>& v) -> Vec3<std::common_type_t<T, U>>;
 
 template <std::floating_point T>
-constexpr T Dot(const Quaternion<T>& a, const Quaternion<T>& b);
+inline constexpr T Dot(const Quaternion<T>& a, const Quaternion<T>& b);
 
 template <std::floating_point T>
-constexpr Quaternion<T> Lerp(const Quaternion<T>& a, const Quaternion<T>& b, T t);
+inline constexpr Quaternion<T> Lerp(const Quaternion<T>& a, const Quaternion<T>& b, T t);
 
 template <std::floating_point T>
-constexpr Quaternion<T> Slerp(const Quaternion<T>& a, const Quaternion<T>& b, T t);
+inline constexpr Quaternion<T> Slerp(const Quaternion<T>& a, const Quaternion<T>& b, T t);
 
 template <std::floating_point T>
-constexpr Quaternion<T> LerpUnclamped(const Quaternion<T>& a, const Quaternion<T>& b, T t);
+inline constexpr Quaternion<T> LerpUnclamped(const Quaternion<T>& a, const Quaternion<T>& b, T t);
 
 template <std::floating_point T>
-constexpr Quaternion<T> SlerpUnclamped(const Quaternion<T>& a, const Quaternion<T>& b, T t);
+inline constexpr Quaternion<T> SlerpUnclamped(const Quaternion<T>& a, const Quaternion<T>& b, T t);
 
 template <std::floating_point T>
-constexpr T Angle(const Quaternion<T>& a, const Quaternion<T>& b);
+inline constexpr T Angle(const Quaternion<T>& a, const Quaternion<T>& b);
 
 template <std::floating_point T>
-constexpr Quaternion<T> RotateTowards(const Quaternion<T>& from, const Quaternion<T>& to, T maxAngleRadians);
+inline constexpr Quaternion<T> RotateTowards(const Quaternion<T>& from, const Quaternion<T>& to, T maxAngleRadians);
 
 using Quaternionf = Quaternion<float>;
 using Quaterniond = Quaternion<double>;

@@ -29,171 +29,171 @@ private:
     std::array<T, RowCount * ColCount> m_data{};
 
 public:
-    constexpr Mat() = default;
+    inline constexpr Mat() = default;
 
     template <typename... Args>
         requires(sizeof...(Args) == RowCount * ColCount) && (std::convertible_to<Args, T> && ...)
-    constexpr Mat(Args&&... args);
+    inline constexpr Mat(Args&&... args);
 
     template <std::floating_point U, typename OtherLayout>
-    constexpr Mat(const Mat<U, RowCount, ColCount, OtherLayout>& other);
+    inline constexpr Mat(const Mat<U, RowCount, ColCount, OtherLayout>& other);
 
-    constexpr T& operator[](size_type row, size_type col);
-    constexpr const T& operator[](size_type row, size_type col) const;
+    inline constexpr T& operator[](size_type row, size_type col);
+    inline constexpr const T& operator[](size_type row, size_type col) const;
 
-    constexpr T& operator()(size_type row, size_type col);
-    constexpr const T& operator()(size_type row, size_type col) const;
+    inline constexpr T& operator()(size_type row, size_type col);
+    inline constexpr const T& operator()(size_type row, size_type col) const;
 
-    constexpr T* Data();
-    constexpr const T* Data() const;
+    inline constexpr T* Data();
+    inline constexpr const T* Data() const;
 
-    constexpr auto MDSpan();
-    constexpr auto MDSpan() const;
+    inline constexpr auto MDSpan();
+    inline constexpr auto MDSpan() const;
 
-    static constexpr size_type Rows();
-    static constexpr size_type Cols();
-    static constexpr size_type Size();
+    static inline constexpr size_type Rows();
+    static inline constexpr size_type Cols();
+    static inline constexpr size_type Size();
 
     template <std::floating_point U>
-    constexpr bool operator==(const Mat<U, RowCount, ColCount, Layout>& other) const;
+    inline constexpr bool operator==(const Mat<U, RowCount, ColCount, Layout>& other) const;
 
     template <std::floating_point U, typename OtherLayout>
-    constexpr bool operator==(const Mat<U, RowCount, ColCount, OtherLayout>& other) const;
+    inline constexpr bool operator==(const Mat<U, RowCount, ColCount, OtherLayout>& other) const;
 
     template <std::floating_point U, typename OtherLayout>
-    constexpr Mat& operator+=(const Mat<U, RowCount, ColCount, OtherLayout>& other);
+    inline constexpr Mat& operator+=(const Mat<U, RowCount, ColCount, OtherLayout>& other);
 
     template <std::floating_point U, typename OtherLayout>
-    constexpr Mat& operator-=(const Mat<U, RowCount, ColCount, OtherLayout>& other);
+    inline constexpr Mat& operator-=(const Mat<U, RowCount, ColCount, OtherLayout>& other);
 
     template <std::floating_point U>
-    constexpr Mat& operator*=(U scalar);
+    inline constexpr Mat& operator*=(U scalar);
 
     template <std::floating_point U>
-    constexpr Mat& operator/=(U scalar);
+    inline constexpr Mat& operator/=(U scalar);
 
-    constexpr Mat operator+() const;
-    constexpr Mat operator-() const;
+    inline constexpr Mat operator+() const;
+    inline constexpr Mat operator-() const;
 
-    constexpr Mat<T, ColCount, RowCount, Layout> Transpose() const;
+    inline constexpr Mat<T, ColCount, RowCount, Layout> Transpose() const;
 
     template <std::size_t N = RowCount>
         requires(RowCount == ColCount && N == RowCount)
-    static constexpr Mat Identity();
+    static inline constexpr Mat Identity();
 
     template <std::size_t N = RowCount>
         requires(RowCount == ColCount && N == RowCount)
-    constexpr auto Determinant() const;
+    inline constexpr auto Determinant() const;
 
     template <std::size_t N = RowCount>
         requires(RowCount == ColCount && N == RowCount)
-    constexpr Mat Inverse() const;
+    inline constexpr Mat Inverse() const;
 
     template <std::size_t R = RowCount, std::size_t C = ColCount>
         requires(R == RowCount && C == ColCount)
-    static constexpr Mat Zero();
+    static inline constexpr Mat Zero();
 
     template <std::floating_point U = T, std::size_t R = RowCount, std::size_t C = ColCount>
         requires(R == RowCount && C == ColCount && R == 4 && C == 4)
-    static constexpr Mat RotationX(U angleRadians);
+    static inline constexpr Mat RotationX(U angleRadians);
 
     template <std::floating_point U = T, std::size_t R = RowCount, std::size_t C = ColCount>
         requires(R == RowCount && C == ColCount && R == 4 && C == 4)
-    static constexpr Mat RotationY(U angleRadians);
+    static inline constexpr Mat RotationY(U angleRadians);
 
     template <std::floating_point U = T, std::size_t R = RowCount, std::size_t C = ColCount>
         requires(R == RowCount && C == ColCount && R == 4 && C == 4)
-    static constexpr Mat RotationZ(U angleRadians);
+    static inline constexpr Mat RotationZ(U angleRadians);
 
     template <std::floating_point U = T, std::size_t R = RowCount, std::size_t C = ColCount>
         requires(R == RowCount && C == ColCount && R == 4 && C == 4)
-    static constexpr Mat Scale(const Vec3<U>& scale);
+    static inline constexpr Mat Scale(const Vec3<U>& scale);
 
     template <std::floating_point U = T, std::size_t R = RowCount, std::size_t C = ColCount>
         requires(R == RowCount && C == ColCount && R == 4 && C == 4)
-    static constexpr Mat Translate(const Vec3<U>& translation);
+    static inline constexpr Mat Translate(const Vec3<U>& translation);
 
     template <std::floating_point U = T, std::size_t R = RowCount, std::size_t C = ColCount>
         requires(R == RowCount && C == ColCount && R == 4 && C == 4)
-    static constexpr Mat Rotate(const Quaternion<U>& rotation);
+    static inline constexpr Mat Rotate(const Quaternion<U>& rotation);
 
     template <std::floating_point U = T, std::size_t R = RowCount, std::size_t C = ColCount>
         requires(R == RowCount && C == ColCount && R == 4 && C == 4)
-    static constexpr Mat TRS(const Vec3<U>& translation, const Quaternion<U>& rotation, const Vec3<U>& scale);
+    static inline constexpr Mat TRS(const Vec3<U>& translation, const Quaternion<U>& rotation, const Vec3<U>& scale);
 
     template <std::floating_point U = T, std::size_t R = RowCount, std::size_t C = ColCount>
         requires(R == RowCount && C == ColCount && R == 4 && C == 4)
-    static constexpr Mat Perspective(U fovYRadians, U aspect, U nearPlane, U farPlane);
+    static inline constexpr Mat Perspective(U fovYRadians, U aspect, U nearPlane, U farPlane);
 
     template <std::floating_point U = T, std::size_t R = RowCount, std::size_t C = ColCount>
         requires(R == RowCount && C == ColCount && R == 4 && C == 4)
-    static constexpr Mat Ortho(U left, U right, U bottom, U top, U nearPlane, U farPlane);
+    static inline constexpr Mat Ortho(U left, U right, U bottom, U top, U nearPlane, U farPlane);
 
     template <std::floating_point U = T, std::size_t R = RowCount, std::size_t C = ColCount>
         requires(R == RowCount && C == ColCount && R == 4 && C == 4)
-    static constexpr Mat LookAt(const Vec3<U>& eye, const Vec3<U>& target, const Vec3<U>& up);
+    static inline constexpr Mat LookAt(const Vec3<U>& eye, const Vec3<U>& target, const Vec3<U>& up);
 
     template <std::floating_point U, std::size_t R = RowCount, std::size_t C = ColCount>
         requires(R == RowCount && C == ColCount && R == 4 && C == 4)
-    constexpr Vec3<std::common_type_t<T, U>> MultiplyPoint(const Vec3<U>& point) const;
+    inline constexpr Vec3<std::common_type_t<T, U>> MultiplyPoint(const Vec3<U>& point) const;
 
     template <std::floating_point U, std::size_t R = RowCount, std::size_t C = ColCount>
         requires(R == RowCount && C == ColCount && R == 4 && C == 4)
-    constexpr Vec3<std::common_type_t<T, U>> MultiplyVector(const Vec3<U>& vector) const;
+    inline constexpr Vec3<std::common_type_t<T, U>> MultiplyVector(const Vec3<U>& vector) const;
 
     template <std::size_t R = RowCount, std::size_t C = ColCount>
         requires(R == RowCount && C == ColCount && R == 4 && C == 4)
-    constexpr Vec3<T> ExtractPosition() const;
+    inline constexpr Vec3<T> ExtractPosition() const;
 
     template <std::size_t R = RowCount, std::size_t C = ColCount>
         requires(R == RowCount && C == ColCount && R == 4 && C == 4)
-    constexpr Vec3<T> ExtractScale() const;
+    inline constexpr Vec3<T> ExtractScale() const;
 
     template <std::floating_point U = T, std::size_t R = RowCount, std::size_t C = ColCount>
         requires(R == RowCount && C == ColCount && R == 4 && C == 4)
-    constexpr Quaternion<U> ExtractRotation() const;
+    inline constexpr Quaternion<U> ExtractRotation() const;
 };
 
 template <std::floating_point T, std::floating_point U, std::size_t RowCount, std::size_t ColCount, typename Layout>
 using MatCommon = Mat<std::common_type_t<T, U>, RowCount, ColCount, Layout>;
 
 template <std::floating_point T, std::floating_point U, std::size_t RowCount, std::size_t ColCount, typename Layout>
-constexpr auto operator+(const Mat<T, RowCount, ColCount, Layout>& a, const Mat<U, RowCount, ColCount, Layout>& b)
+inline constexpr auto operator+(const Mat<T, RowCount, ColCount, Layout>& a, const Mat<U, RowCount, ColCount, Layout>& b)
     -> MatCommon<T, U, RowCount, ColCount, Layout>;
 
 template <std::floating_point T, std::floating_point U, std::size_t RowCount, std::size_t ColCount, typename Layout>
-constexpr auto operator-(const Mat<T, RowCount, ColCount, Layout>& a, const Mat<U, RowCount, ColCount, Layout>& b)
+inline constexpr auto operator-(const Mat<T, RowCount, ColCount, Layout>& a, const Mat<U, RowCount, ColCount, Layout>& b)
     -> MatCommon<T, U, RowCount, ColCount, Layout>;
 
 template <std::floating_point T, std::floating_point U, std::size_t RowCount, std::size_t ColCount, typename Layout>
-constexpr auto operator*(const Mat<T, RowCount, ColCount, Layout>& mat, U scalar)
+inline constexpr auto operator*(const Mat<T, RowCount, ColCount, Layout>& mat, U scalar)
     -> MatCommon<T, U, RowCount, ColCount, Layout>;
 
 template <std::floating_point T, std::floating_point U, std::size_t RowCount, std::size_t ColCount, typename Layout>
-constexpr auto operator*(U scalar, const Mat<T, RowCount, ColCount, Layout>& mat)
+inline constexpr auto operator*(U scalar, const Mat<T, RowCount, ColCount, Layout>& mat)
     -> MatCommon<T, U, RowCount, ColCount, Layout>;
 
 template <std::floating_point T, std::floating_point U, std::size_t RowCount, std::size_t ColCount, typename Layout>
-constexpr auto operator/(const Mat<T, RowCount, ColCount, Layout>& mat, U scalar)
+inline constexpr auto operator/(const Mat<T, RowCount, ColCount, Layout>& mat, U scalar)
     -> MatCommon<T, U, RowCount, ColCount, Layout>;
 
 // (A x B) * (B x C) = (A x C)
 template <std::floating_point T, std::floating_point U, std::size_t A, std::size_t B, std::size_t C, typename Layout>
-constexpr auto operator*(const Mat<T, A, B, Layout>& lhs, const Mat<U, B, C, Layout>& rhs)
+inline constexpr auto operator*(const Mat<T, A, B, Layout>& lhs, const Mat<U, B, C, Layout>& rhs)
     -> MatCommon<T, U, A, C, Layout>;
 
 template <std::floating_point T, std::size_t RowCount, std::size_t ColCount, typename FromLayout, typename ToLayout>
-constexpr Mat<T, RowCount, ColCount, ToLayout> MatCastLayout(const Mat<T, RowCount, ColCount, FromLayout>& mat);
+inline constexpr Mat<T, RowCount, ColCount, ToLayout> MatCastLayout(const Mat<T, RowCount, ColCount, FromLayout>& mat);
 
 template <std::floating_point T, std::floating_point U, std::size_t RowCount, std::size_t ColCount, typename Layout>
-constexpr auto operator*(const Mat<T, RowCount, ColCount, Layout>& mat, const Vec<U, ColCount>& vec)
+inline constexpr auto operator*(const Mat<T, RowCount, ColCount, Layout>& mat, const Vec<U, ColCount>& vec)
     -> Vec<std::common_type_t<T, U>, RowCount>;
 
 template <std::floating_point T>
-constexpr T ToRadians(T degrees);
+inline constexpr T ToRadians(T degrees);
 
 template <std::floating_point T, std::size_t RowCount, std::size_t ColCount, typename Layout>
-constexpr bool ValidTRS(const Mat<T, RowCount, ColCount, Layout>& mat);
+inline constexpr bool ValidTRS(const Mat<T, RowCount, ColCount, Layout>& mat);
 
 template <std::floating_point T, std::size_t RowCount, std::size_t ColCount>
 using MatRowMajor = Mat<T, RowCount, ColCount, RowMajor>;
