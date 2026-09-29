@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.14.36203.30
+# Visual Studio Version 18
+VisualStudioVersion = 18.10.12217.157 stable
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ASM-SIMD-Bibliothèque-mathématique", "ASM-SIMD-Bibliothèque-mathématique\ASM-SIMD-Bibliothèque-mathématique.vcxproj", "{33EF3238-2029-49AA-8183-3505B44E7A3F}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MathLibrary.Tests", "MathLibrary.Tests\MathLibrary.Tests.vcxproj", "{A0121108-A697-474C-77AF-089BFECE9312}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Benchmark", "Benchmark\Benchmark.vcxproj", "{0AEAE4B1-7081-4557-A557-BE163894BABA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,6 +33,14 @@ Global
 		{A0121108-A697-474C-77AF-089BFECE9312}.Release|x64.Build.0 = Release|x64
 		{A0121108-A697-474C-77AF-089BFECE9312}.Release|x86.ActiveCfg = Release|Win32
 		{A0121108-A697-474C-77AF-089BFECE9312}.Release|x86.Build.0 = Release|Win32
+		{0AEAE4B1-7081-4557-A557-BE163894BABA}.Debug|x64.ActiveCfg = Debug|x64
+		{0AEAE4B1-7081-4557-A557-BE163894BABA}.Debug|x64.Build.0 = Debug|x64
+		{0AEAE4B1-7081-4557-A557-BE163894BABA}.Debug|x86.ActiveCfg = Debug|Win32
+		{0AEAE4B1-7081-4557-A557-BE163894BABA}.Debug|x86.Build.0 = Debug|Win32
+		{0AEAE4B1-7081-4557-A557-BE163894BABA}.Release|x64.ActiveCfg = Release|x64
+		{0AEAE4B1-7081-4557-A557-BE163894BABA}.Release|x64.Build.0 = Release|x64
+		{0AEAE4B1-7081-4557-A557-BE163894BABA}.Release|x86.ActiveCfg = Release|Win32
+		{0AEAE4B1-7081-4557-A557-BE163894BABA}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
