@@ -580,6 +580,54 @@ constexpr void VecSIMD<T, N>::Normalize()
     *this = Normalized();
 }
 
+// idea from: https://stackoverflow.com/a/56766138
+// made it simpler and consteval
+template <typename T>
+static consteval auto TypeName() {
+#if defined(__clang__)
+    constexpr std::string_view prefix = "[T = ";
+    constexpr std::string_view suffix = "]";
+    constexpr std::string_view func = __PRETTY_FUNCTION__;
+#elif defined(__GNUC__)
+    constexpr std::string_view prefix = "[with T = ";
+    constexpr std::string_view suffix = "]";
+    constexpr std::string_view func = __PRETTY_FUNCTION__;
+#elif defined(_MSC_VER)
+    constexpr std::string_view prefix = "TypeName<";
+    constexpr std::string_view suffix = ">(void)";
+    constexpr std::string_view func = __FUNCSIG__;
+#endif
+    constexpr auto start = func.find(prefix) + prefix.size();
+    constexpr auto end = func.rfind(suffix);
+    return func.substr(start, end - start);
+}
 
 
+template <std::floating_point T, std::size_t N>
+struct std::formatter<VecSIMD<T, N>> {
+    constexpr auto parse(std::format_parse_context& ctx)
+    {
+        return ctx.begin();
+    }
 
+    auto format(
+        const VecSIMD<T, N>& value,
+        std::format_context& ctx
+    ) const
+    {
+        auto out = ctx.out();
+
+        out = std::format_to(out, TypeName<VecSIMD<T, N>>());
+        out = std::format_to(out, "(");
+
+        for (std::size_t i = 0; i < N; ++i)
+        {
+            if (i != 0)
+                out = std::format_to(out, ", ");
+
+            out = std::format_to(out, "{}", value[i]);
+        }
+
+        return std::format_to(out, ")");
+    }
+};

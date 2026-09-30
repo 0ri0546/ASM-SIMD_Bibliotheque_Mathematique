@@ -1,6 +1,6 @@
 #include <print>
+
 #include "VecSIMD.h"
-//#include <iostream>
 
 int main()
 {
@@ -40,7 +40,6 @@ int main()
     std::println("{}", e * f);
     std::println("{}", e / f);
     std::println("{}", Dot(e, f));
-    //------------------------------------------
 
     VecSIMD<double, 4> g(1.0, 2.0, 3.0, 4.0);
     VecSIMD<double, 4> h(5.0, 6.0, 7.0, 8.0);

@@ -145,32 +145,6 @@ template <>
 struct std::formatter<__m256d>;
 
 template <std::floating_point T, std::size_t N>
-struct std::formatter<VecSIMD<T, N>>
-{
-    constexpr auto parse(std::format_parse_context& ctx)
-    {
-        return ctx.begin();
-    }
-
-    auto format(
-        const VecSIMD<T, N>& value,
-        std::format_context& ctx
-    ) const
-    {
-        auto out = ctx.out();
-
-        out = std::format_to(out, "(");
-
-        for (std::size_t i = 0; i < N; ++i)
-        {
-            if (i != 0)
-                out = std::format_to(out, ", ");
-
-            out = std::format_to(out, "{}", value[i]);
-        }
-
-        return std::format_to(out, ")");
-    }
-};
+struct std::formatter<VecSIMD<T, N>>;
 
 #include "VecSIMD.inl"
