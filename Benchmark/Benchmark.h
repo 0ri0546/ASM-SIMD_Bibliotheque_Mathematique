@@ -1,11 +1,23 @@
 #pragma once
 
 #include <chrono>
+#include <numeric>
 #include <print>
 #include <string>
 
+#include <intrin.h> // for _ReadWriteBarrier
+
 namespace {
 	inline std::size_t benchmarks_count = 1;
+	inline const std::size_t bench_calls = 5;
+}
+
+template <typename T>
+inline void DoNotOptimize(const T& value) {
+	// Address escapes into a volatile: the compiler must materialize `value` in memory
+	static const volatile void* volatile sink;
+	sink = &value;
+	_ReadWriteBarrier(); // compiler-level barrier (deprecated but still works on MSVC)
 }
 
 template <typename Fn>
