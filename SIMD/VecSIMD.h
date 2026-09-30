@@ -2,13 +2,16 @@
 
 #include <array>
 #include <concepts>
-#include <cstdint>
+#include <cstddef>
 #include <format>
-
-#include <xmmintrin.h>
+#include <cmath>
+#include <type_traits>
+#include <utility>
+#include <immintrin.h>
 
 template <std::floating_point T, std::size_t N>
-class Vec {
+class VecSIMD
+{
 public:
     using value_type = T;
     using size_type = std::size_t;
@@ -17,130 +20,108 @@ private:
     std::array<T, N> m_data{};
 
 public:
-    inline constexpr Vec() = default;
+    constexpr VecSIMD() = default;
 
     template <typename... Args>
-        requires(sizeof...(Args) == N) && (std::convertible_to<Args, T> && ...)
-    inline constexpr Vec(Args&&... args);
+        requires(sizeof...(Args) == N) &&
+    (std::convertible_to<Args, T> && ...)
+        constexpr VecSIMD(Args&&... args);
 
-    inline constexpr T& operator[](size_type index);
-    inline constexpr const T& operator[](size_type index) const;
+    constexpr T& operator[](size_type index);
+    constexpr const T& operator[](size_type index) const;
 
-	template <std::size_t I>
-    inline auto get_m128() const;
     template <std::size_t I>
-    inline auto get_m256() const;
+    auto get_m128() const;
 
-    inline constexpr T* Data();
-    inline constexpr const T* Data() const;
+    template <std::size_t I>
+    auto get_m256() const;
 
-    static inline constexpr size_type Size();
+    constexpr T* Data();
+    constexpr const T* Data() const;
 
-    template <std::floating_point U>
-    inline constexpr bool operator==(const Vec<U, N>& other) const;
-
-    template <std::floating_point U>
-    inline constexpr Vec& operator+=(const Vec<U, N>& other);
+    static constexpr size_type Size();
 
     template <std::floating_point U>
-    inline constexpr Vec& operator-=(const Vec<U, N>& other);
+    constexpr bool operator==(const VecSIMD<U, N>& other) const;
 
     template <std::floating_point U>
-    inline constexpr Vec& operator*=(const Vec<U, N>& other);
+    constexpr VecSIMD& operator+=(const VecSIMD<U, N>& other);
 
     template <std::floating_point U>
-    inline constexpr Vec& operator/=(const Vec<U, N>& other);
+    constexpr VecSIMD& operator-=(const VecSIMD<U, N>& other);
 
     template <std::floating_point U>
-    inline constexpr Vec& operator*=(U scalar);
+    constexpr VecSIMD& operator*=(const VecSIMD<U, N>& other);
 
     template <std::floating_point U>
-    inline constexpr Vec& operator/=(U scalar);
+    constexpr VecSIMD& operator/=(const VecSIMD<U, N>& other);
 
-    inline constexpr Vec operator+() const;
-    inline constexpr Vec operator-() const;
+    template <std::floating_point U>
+    constexpr VecSIMD& operator*=(U scalar);
 
-    inline constexpr T LengthSquared() const;
-    inline constexpr T Length() const;
+    template <std::floating_point U>
+    constexpr VecSIMD& operator/=(U scalar);
 
-    inline constexpr Vec Normalized() const;
-    inline constexpr void Normalize();
+    constexpr VecSIMD operator+() const;
+    constexpr VecSIMD operator-() const;
+
+    constexpr T LengthSquared() const;
+    constexpr T Length() const;
+
+    constexpr VecSIMD Normalized() const;
+    constexpr void Normalize();
 };
 
 template <std::floating_point T, std::floating_point U, std::size_t N>
-using VecCommon = Vec<std::common_type_t<T, U>, N>;
+using VecSIMDCommon = VecSIMD<std::common_type_t<T, U>, N>;
 
 template <std::floating_point T, std::floating_point U, std::size_t N>
-inline constexpr auto operator+(const Vec<T, N>& a, const Vec<U, N>& b) -> VecCommon<T, U, N>;
+auto operator+(
+    const VecSIMD<T, N>& a,
+    const VecSIMD<U, N>& b
+    ) -> VecSIMDCommon<T, U, N>;
 
 template <std::floating_point T, std::floating_point U, std::size_t N>
-inline constexpr auto operator-(const Vec<T, N>& a, const Vec<U, N>& b) -> VecCommon<T, U, N>;
+auto operator-(
+    const VecSIMD<T, N>& a,
+    const VecSIMD<U, N>& b
+    ) -> VecSIMDCommon<T, U, N>;
 
 template <std::floating_point T, std::floating_point U, std::size_t N>
-inline constexpr auto operator*(const Vec<T, N>& a, const Vec<U, N>& b) -> VecCommon<T, U, N>;
+auto operator*(
+    const VecSIMD<T, N>& a,
+    const VecSIMD<U, N>& b
+    ) -> VecSIMDCommon<T, U, N>;
 
 template <std::floating_point T, std::floating_point U, std::size_t N>
-inline constexpr auto operator/(const Vec<T, N>& a, const Vec<U, N>& b) -> VecCommon<T, U, N>;
+auto operator/(
+    const VecSIMD<T, N>& a,
+    const VecSIMD<U, N>& b
+    ) -> VecSIMDCommon<T, U, N>;
 
 template <std::floating_point T, std::floating_point U, std::size_t N>
-inline constexpr auto operator*(const Vec<T, N>& v, U scalar) -> VecCommon<T, U, N>;
+auto operator*(
+    const VecSIMD<T, N>& v,
+    U scalar
+    ) -> VecSIMDCommon<T, U, N>;
 
 template <std::floating_point T, std::floating_point U, std::size_t N>
-inline constexpr auto operator*(U scalar, const Vec<T, N>& v) -> VecCommon<T, U, N>;
+auto operator*(
+    U scalar,
+    const VecSIMD<T, N>& v
+    ) -> VecSIMDCommon<T, U, N>;
 
 template <std::floating_point T, std::floating_point U, std::size_t N>
-inline constexpr auto operator/(const Vec<T, N>& v, U scalar) -> VecCommon<T, U, N>;
+auto operator/(
+    const VecSIMD<T, N>& v,
+    U scalar
+    ) -> VecSIMDCommon<T, U, N>;
 
 template <std::floating_point T, std::floating_point U, std::size_t N>
-inline constexpr auto Dot(const Vec<T, N>& a, const Vec<U, N>& b) -> std::common_type_t<T, U>;
-
-template <std::floating_point T, std::floating_point U>
-inline constexpr auto Cross(const Vec<T, 3>& a, const Vec<U, 3>& b) -> VecCommon<T, U, 3>;
-
-template <std::floating_point T, std::floating_point U, std::size_t N>
-inline constexpr auto Distance(const Vec<T, N>& a, const Vec<U, N>& b) -> std::common_type_t<T, U>;
-
-template <std::floating_point T, std::floating_point U, std::floating_point V, std::size_t N>
-inline constexpr auto Lerp(const Vec<T, N>& a, const Vec<U, N>& b, V t) -> VecCommon<T, U, N>;
-
-template <std::floating_point T, std::floating_point U, std::size_t N>
-inline constexpr auto Scale(const Vec<T, N>& a, const Vec<U, N>& b) -> VecCommon<T, U, N>;
-
-template <std::floating_point T, std::floating_point U, std::size_t N>
-inline constexpr auto Min(const Vec<T, N>& a, const Vec<U, N>& b) -> VecCommon<T, U, N>;
-
-template <std::floating_point T, std::floating_point U, std::size_t N>
-inline constexpr auto Max(const Vec<T, N>& a, const Vec<U, N>& b) -> VecCommon<T, U, N>;
-
-template <std::floating_point T, std::floating_point U, std::floating_point V, std::size_t N>
-inline constexpr auto MoveTowards(const Vec<T, N>& current, const Vec<U, N>& target, V maxDistanceDelta)
--> VecCommon<T, U, N>;
-
-template <std::floating_point T, std::floating_point U, std::size_t N>
-inline constexpr auto Reflect(const Vec<T, N>& v, const Vec<U, N>& normal) -> VecCommon<T, U, N>;
-
-template <std::floating_point T, std::floating_point U, std::size_t N>
-inline constexpr auto Angle(const Vec<T, N>& a, const Vec<U, N>& b) -> std::common_type_t<T, U>;
-
-template <std::floating_point T>
-inline constexpr Vec<T, 2> Perpendicular(const Vec<T, 2>& v);
-
-template <std::floating_point T>
-using Vec2 = Vec<T, 2>;
-
-template <std::floating_point T>
-using Vec3 = Vec<T, 3>;
-
-template <std::floating_point T>
-using Vec4 = Vec<T, 4>;
-
-using Vec2f = Vec2<float>;
-using Vec3f = Vec3<float>;
-using Vec4f = Vec4<float>;
-
-using Vec2d = Vec2<double>;
-using Vec3d = Vec3<double>;
-using Vec4d = Vec4<double>;
+auto Dot(
+    const VecSIMD<T, N>& a,
+    const VecSIMD<U, N>& b
+) -> std::common_type_t<T, U>;
 
 template <std::floating_point T, std::size_t N>
 struct simd_traits;
@@ -164,6 +145,32 @@ template <>
 struct std::formatter<__m256d>;
 
 template <std::floating_point T, std::size_t N>
-struct std::formatter<Vec<T, N>>;
+struct std::formatter<VecSIMD<T, N>>
+{
+    constexpr auto parse(std::format_parse_context& ctx)
+    {
+        return ctx.begin();
+    }
+
+    auto format(
+        const VecSIMD<T, N>& value,
+        std::format_context& ctx
+    ) const
+    {
+        auto out = ctx.out();
+
+        out = std::format_to(out, "(");
+
+        for (std::size_t i = 0; i < N; ++i)
+        {
+            if (i != 0)
+                out = std::format_to(out, ", ");
+
+            out = std::format_to(out, "{}", value[i]);
+        }
+
+        return std::format_to(out, ")");
+    }
+};
 
 #include "VecSIMD.inl"

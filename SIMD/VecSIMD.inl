@@ -1,104 +1,125 @@
 #pragma once
 
 template <>
-struct simd_traits<float, 128> {
-    using m128 = __m128;
-    static constexpr std::size_t width = 4;
-
-    static m128 load(const float* ptr) {
-        return _mm_loadu_ps(ptr);
-    }
-};
-
-template <>
-struct simd_traits<double, 128> {
-    using m128 = __m128d;
+struct simd_traits<double, 128>
+{
+    using type = __m128d;
     static constexpr std::size_t width = 2;
 
-    static m128 load(const double* ptr) {
-        return _mm_loadu_pd(ptr);
+    static type load(const double* data)
+    {
+        return _mm_loadu_pd(data);
     }
 };
 
 template <>
-struct simd_traits<float, 256> {
-    using m256 = __m256;
-    static constexpr std::size_t width = 8;
-
-    static m256 load(const float* ptr) {
-        return _mm256_loadu_ps(ptr);
-    }
-};
-
-template <>
-struct simd_traits<double, 256> {
-    using m256 = __m256d;
+struct simd_traits<float, 128>
+{
+    using type = __m128;
     static constexpr std::size_t width = 4;
 
-    static m256 load(const double* ptr) {
-        return _mm256_loadu_pd(ptr);
+    static type load(const float* data)
+    {
+        return _mm_loadu_ps(data);
+    }
+};
+
+template <>
+struct simd_traits<float, 256>
+{
+    using type = __m256;
+    static constexpr std::size_t width = 8;
+
+    static type load(const float* data)
+    {
+        return _mm256_loadu_ps(data);
+    }
+};
+
+template <>
+struct simd_traits<double, 256>
+{
+    using type = __m256d;
+    static constexpr std::size_t width = 4;
+
+    static type load(const double* data)
+    {
+        return _mm256_loadu_pd(data);
     }
 };
 
 template <std::floating_point T, std::size_t N>
 template <typename... Args>
-    requires(sizeof...(Args) == N) && (std::convertible_to<Args, T> && ...)
-inline constexpr Vec<T, N>::Vec(Args&&... args) : m_data{ static_cast<T>(std::forward<Args>(args))... } {}
-
-template <std::floating_point T, std::size_t N>
-inline constexpr T& Vec<T, N>::operator[](size_type index) {
-    return m_data[index];
+    requires(sizeof...(Args) == N) &&
+(std::convertible_to<Args, T> && ...)
+constexpr VecSIMD<T, N>::VecSIMD(Args&&... args)
+    : m_data{ static_cast<T>(std::forward<Args>(args))... }
+{
 }
 
 template <std::floating_point T, std::size_t N>
-inline constexpr const T& Vec<T, N>::operator[](size_type index) const {
+constexpr T& VecSIMD<T, N>::operator[](size_type index)
+{
+    return m_data[index];
+}
+
+
+template <std::floating_point T, std::size_t N>
+constexpr const T& VecSIMD<T, N>::operator[](size_type index) const
+{
     return m_data[index];
 }
 
 template <std::floating_point T, std::size_t N>
 template <std::size_t I>
-inline auto Vec<T, N>::get_m128() const
+auto VecSIMD<T, N>::get_m128() const
 {
     using traits = simd_traits<T, 128>;
 
-    static_assert(I * traits::width < N);
+    static_assert((I + 1) * traits::width <= N);
 
     return traits::load(m_data.data() + I * traits::width);
 }
 
 template <std::floating_point T, std::size_t N>
 template <std::size_t I>
-inline auto Vec<T, N>::get_m256() const
+auto VecSIMD<T, N>::get_m256() const
 {
     using traits = simd_traits<T, 256>;
 
-    static_assert(I * traits::width < N);
+    static_assert((I + 1) * traits::width <= N);
 
     return traits::load(m_data.data() + I * traits::width);
 }
 
 template <std::floating_point T, std::size_t N>
-inline constexpr T* Vec<T, N>::Data() {
+constexpr T* VecSIMD<T, N>::Data()
+{
     return m_data.data();
 }
 
 template <std::floating_point T, std::size_t N>
-inline constexpr const T* Vec<T, N>::Data() const {
+constexpr const T* VecSIMD<T, N>::Data() const
+{
     return m_data.data();
 }
 
 template <std::floating_point T, std::size_t N>
-inline constexpr std::size_t Vec<T, N>::Size() {
+constexpr std::size_t VecSIMD<T, N>::Size()
+{
     return N;
 }
 
 template <std::floating_point T, std::size_t N>
 template <std::floating_point U>
-inline constexpr bool Vec<T, N>::operator==(const Vec<U, N>& other) const {
-    for (size_type i = 0; i < N; ++i) {
-        if ((*this)[i] != other[i]) {
+constexpr bool VecSIMD<T, N>::operator==(
+    const VecSIMD<U, N>& other
+    ) const
+{
+    for (std::size_t i = 0; i < N; ++i)
+    {
+        if ((*this)[i] != other[i])
             return false;
-        }
     }
 
     return true;
@@ -106,515 +127,459 @@ inline constexpr bool Vec<T, N>::operator==(const Vec<U, N>& other) const {
 
 template <std::floating_point T, std::size_t N>
 template <std::floating_point U>
-inline constexpr Vec<T, N>& Vec<T, N>::operator+=(const Vec<U, N>& other) {
-    for (size_type i = 0; i < N; ++i) {
-        (*this)[i] += other[i];
-    }
-
+constexpr VecSIMD<T, N>& VecSIMD<T, N>::operator+=(
+    const VecSIMD<U, N>& other
+    )
+{
+    *this = *this + other;
     return *this;
 }
 
 template <std::floating_point T, std::size_t N>
 template <std::floating_point U>
-inline constexpr Vec<T, N>& Vec<T, N>::operator-=(const Vec<U, N>& other) {
-    for (size_type i = 0; i < N; ++i) {
-        (*this)[i] -= other[i];
-    }
-
+constexpr VecSIMD<T, N>& VecSIMD<T, N>::operator-=(
+    const VecSIMD<U, N>& other
+    )
+{
+    *this = *this - other;
     return *this;
 }
 
 template <std::floating_point T, std::size_t N>
 template <std::floating_point U>
-inline constexpr Vec<T, N>& Vec<T, N>::operator*=(const Vec<U, N>& other) {
-    for (size_type i = 0; i < N; ++i) {
-        (*this)[i] *= other[i];
-    }
-
+constexpr VecSIMD<T, N>& VecSIMD<T, N>::operator*=(
+    const VecSIMD<U, N>& other
+    )
+{
+    *this = *this * other;
     return *this;
 }
 
 template <std::floating_point T, std::size_t N>
 template <std::floating_point U>
-inline constexpr Vec<T, N>& Vec<T, N>::operator/=(const Vec<U, N>& other) {
-    for (size_type i = 0; i < N; ++i) {
-        (*this)[i] /= other[i];
-    }
-
+constexpr VecSIMD<T, N>& VecSIMD<T, N>::operator/=(
+    const VecSIMD<U, N>& other
+    )
+{
+    *this = *this / other;
     return *this;
 }
 
 template <std::floating_point T, std::size_t N>
 template <std::floating_point U>
-inline constexpr Vec<T, N>& Vec<T, N>::operator*=(U scalar) {
-    for (auto& value : m_data) {
-        value *= scalar;
-    }
-
+constexpr VecSIMD<T, N>& VecSIMD<T, N>::operator*=(U scalar)
+{
+    *this = *this * scalar;
     return *this;
 }
 
 template <std::floating_point T, std::size_t N>
 template <std::floating_point U>
-inline constexpr Vec<T, N>& Vec<T, N>::operator/=(U scalar) {
-    for (auto& value : m_data) {
-        value /= scalar;
-    }
-
+constexpr VecSIMD<T, N>& VecSIMD<T, N>::operator/=(U scalar)
+{
+    *this = *this / scalar;
     return *this;
-}
-
-template <std::floating_point T, std::size_t N>
-inline constexpr Vec<T, N> Vec<T, N>::operator+() const {
-    return *this;
-}
-
-template <std::floating_point T, std::size_t N>
-inline constexpr Vec<T, N> Vec<T, N>::operator-() const {
-    Vec result;
-
-    for (size_type i = 0; i < N; ++i) {
-        result[i] = -(*this)[i];
-    }
-
-    return result;
-}
-
-template <std::floating_point T, std::size_t N>
-inline constexpr T Vec<T, N>::LengthSquared() const {
-    T result{};
-
-    for (size_type i = 0; i < N; ++i) {
-        result += (*this)[i] * (*this)[i];
-    }
-
-    return result;
-}
-
-template <std::floating_point T, std::size_t N>
-inline constexpr T Vec<T, N>::Length() const {
-    return static_cast<T>(std::sqrt(static_cast<double>(LengthSquared())));
-}
-
-template <std::floating_point T, std::size_t N>
-inline constexpr Vec<T, N> Vec<T, N>::Normalized() const {
-    const T length = Length();
-
-    if (length <= T{ 0 }) {
-        return *this;
-    }
-
-    return *this * (T{ 1 } / length);
-}
-
-template <std::floating_point T, std::size_t N>
-inline constexpr void Vec<T, N>::Normalize() {
-    *this = Normalized();
 }
 
 template <std::floating_point T, std::floating_point U, std::size_t N>
-inline constexpr auto operator+(const Vec<T, N>& a, const Vec<U, N>& b)
--> VecCommon<T, U, N>
+auto operator+(
+    const VecSIMD<T, N>& a,
+    const VecSIMD<U, N>& b
+    ) -> VecSIMDCommon<T, U, N>
 {
     using R = std::common_type_t<T, U>;
-    VecCommon<T, U, N> result;
+
+    VecSIMDCommon<T, U, N> result;
 
     if constexpr (std::same_as<R, float> && N == 4)
     {
         const __m128 va = _mm_loadu_ps(a.Data());
         const __m128 vb = _mm_loadu_ps(b.Data());
 
-        _mm_storeu_ps(
-            result.Data(),
-            _mm_add_ps(va, vb)
-        );
+        _mm_storeu_ps(result.Data(), _mm_add_ps(va, vb));
     }
     else if constexpr (std::same_as<R, float> && N == 8)
     {
         const __m256 va = _mm256_loadu_ps(a.Data());
         const __m256 vb = _mm256_loadu_ps(b.Data());
 
-        _mm256_storeu_ps(
-            result.Data(),
-            _mm256_add_ps(va, vb)
-        );
+        _mm256_storeu_ps(result.Data(), _mm256_add_ps(va, vb));
     }
     else if constexpr (std::same_as<R, double> && N == 2)
     {
         const __m128d va = _mm_loadu_pd(a.Data());
         const __m128d vb = _mm_loadu_pd(b.Data());
 
-        _mm_storeu_pd(
-            result.Data(),
-            _mm_add_pd(va, vb)
-        );
+        _mm_storeu_pd(result.Data(), _mm_add_pd(va, vb));
     }
     else if constexpr (std::same_as<R, double> && N == 4)
     {
         const __m256d va = _mm256_loadu_pd(a.Data());
         const __m256d vb = _mm256_loadu_pd(b.Data());
 
-        _mm256_storeu_pd(
-            result.Data(),
-            _mm256_add_pd(va, vb)
-        );
+        _mm256_storeu_pd(result.Data(), _mm256_add_pd(va, vb));
+
     }
 
+
     return result;
+
 }
 
+
+
 template <std::floating_point T, std::floating_point U, std::size_t N>
-inline constexpr auto operator-(const Vec<T, N>& a, const Vec<U, N>& b) -> VecCommon<T, U, N> {
+auto operator-(
+    const VecSIMD<T, N>& a,
+    const VecSIMD<U, N>& b
+    ) -> VecSIMDCommon<T, U, N>
+{
     using R = std::common_type_t<T, U>;
 
-    VecCommon<T, U, N> result;
+    VecSIMDCommon<T, U, N> result;
 
-    for (std::size_t i = 0; i < N; ++i) {
-        result[i] = static_cast<R>(a[i]) - static_cast<R>(b[i]);
+    if constexpr (std::same_as<R, float> && N == 4)
+    {
+        const __m128 va = _mm_loadu_ps(a.Data());
+        const __m128 vb = _mm_loadu_ps(b.Data());
+
+        _mm_storeu_ps(result.Data(), _mm_sub_ps(va, vb));
+    }
+    else if constexpr (std::same_as<R, float> && N == 8)
+    {
+        const __m256 va = _mm256_loadu_ps(a.Data());
+        const __m256 vb = _mm256_loadu_ps(b.Data());
+
+        _mm256_storeu_ps(result.Data(), _mm256_sub_ps(va, vb));
+    }
+    else if constexpr (std::same_as<R, double> && N == 2)
+    {
+        const __m128d va = _mm_loadu_pd(a.Data());
+        const __m128d vb = _mm_loadu_pd(b.Data());
+
+        _mm_storeu_pd(result.Data(), _mm_sub_pd(va, vb));
+    }
+    else if constexpr (std::same_as<R, double> && N == 4)
+    {
+        const __m256d va = _mm256_loadu_pd(a.Data());
+        const __m256d vb = _mm256_loadu_pd(b.Data());
+
+        _mm256_storeu_pd(result.Data(), _mm256_sub_pd(va, vb));
     }
 
     return result;
 }
 
 template <std::floating_point T, std::floating_point U, std::size_t N>
-inline constexpr auto operator*(const Vec<T, N>& a, const Vec<U, N>& b) -> VecCommon<T, U, N> {
+auto operator*(
+    const VecSIMD<T, N>& a,
+    const VecSIMD<U, N>& b
+    ) -> VecSIMDCommon<T, U, N>
+{
     using R = std::common_type_t<T, U>;
 
-    VecCommon<T, U, N> result;
+    VecSIMDCommon<T, U, N> result;
 
-    for (std::size_t i = 0; i < N; ++i) {
-        result[i] = static_cast<R>(a[i]) * static_cast<R>(b[i]);
+    if constexpr (std::same_as<R, float> && N == 4)
+    {
+        const __m128 va = _mm_loadu_ps(a.Data());
+        const __m128 vb = _mm_loadu_ps(b.Data());
+
+        _mm_storeu_ps(result.Data(), _mm_mul_ps(va, vb));
+    }
+    else if constexpr (std::same_as<R, float> && N == 8)
+    {
+        const __m256 va = _mm256_loadu_ps(a.Data());
+        const __m256 vb = _mm256_loadu_ps(b.Data());
+
+        _mm256_storeu_ps(result.Data(), _mm256_mul_ps(va, vb));
+    }
+    else if constexpr (std::same_as<R, double> && N == 2)
+    {
+        const __m128d va = _mm_loadu_pd(a.Data());
+        const __m128d vb = _mm_loadu_pd(b.Data());
+
+        _mm_storeu_pd(result.Data(), _mm_mul_pd(va, vb));
+    }
+    else if constexpr (std::same_as<R, double> && N == 4)
+    {
+        const __m256d va = _mm256_loadu_pd(a.Data());
+        const __m256d vb = _mm256_loadu_pd(b.Data());
+
+
+        _mm256_storeu_pd(result.Data(), _mm256_mul_pd(va, vb));
     }
 
     return result;
 }
 
 template <std::floating_point T, std::floating_point U, std::size_t N>
-inline constexpr auto operator/(const Vec<T, N>& a, const Vec<U, N>& b) -> VecCommon<T, U, N> {
+auto operator/(
+    const VecSIMD<T, N>& a,
+    const VecSIMD<U, N>& b
+    ) -> VecSIMDCommon<T, U, N>
+{
     using R = std::common_type_t<T, U>;
 
-    VecCommon<T, U, N> result;
+    VecSIMDCommon<T, U, N> result;
 
-    for (std::size_t i = 0; i < N; ++i) {
-        result[i] = static_cast<R>(a[i]) / static_cast<R>(b[i]);
+    if constexpr (std::same_as<R, float> && N == 4)
+    {
+        const __m128 va = _mm_loadu_ps(a.Data());
+        const __m128 vb = _mm_loadu_ps(b.Data());
+
+        _mm_storeu_ps(result.Data(), _mm_div_ps(va, vb));
+    }
+    else if constexpr (std::same_as<R, float> && N == 8)
+    {
+        const __m256 va = _mm256_loadu_ps(a.Data());
+        const __m256 vb = _mm256_loadu_ps(b.Data());
+
+        _mm256_storeu_ps(result.Data(), _mm256_div_ps(va, vb));
+    }
+    else if constexpr (std::same_as<R, double> && N == 2)
+    {
+        const __m128d va = _mm_loadu_pd(a.Data());
+        const __m128d vb = _mm_loadu_pd(b.Data());
+
+        _mm_storeu_pd(result.Data(), _mm_div_pd(va, vb));
+    }
+    else if constexpr (std::same_as<R, double> && N == 4)
+    {
+        const __m256d va = _mm256_loadu_pd(a.Data());
+        const __m256d vb = _mm256_loadu_pd(b.Data());
+
+        _mm256_storeu_pd(result.Data(), _mm256_div_pd(va, vb));
     }
 
     return result;
 }
 
 template <std::floating_point T, std::floating_point U, std::size_t N>
-inline constexpr auto operator*(const Vec<T, N>& v, U scalar) -> VecCommon<T, U, N> {
+auto operator*(
+    const VecSIMD<T, N>& v,
+    U scalar
+    ) -> VecSIMDCommon<T, U, N>
+{
     using R = std::common_type_t<T, U>;
 
-    VecCommon<T, U, N> result;
+    VecSIMDCommon<T, U, N> result;
 
-    for (std::size_t i = 0; i < N; ++i) {
-        result[i] = static_cast<R>(v[i]) * static_cast<R>(scalar);
+    if constexpr (std::same_as<R, float> && N == 4)
+    {
+        const __m128 vv = _mm_loadu_ps(v.Data());
+        const __m128 vs = _mm_set1_ps(static_cast<float>(scalar));
+
+        _mm_storeu_ps(result.Data(), _mm_mul_ps(vv, vs));
+    }
+    else if constexpr (std::same_as<R, float> && N == 8)
+    {
+        const __m256 vv = _mm256_loadu_ps(v.Data());
+        const __m256 vs = _mm256_set1_ps(static_cast<float>(scalar));
+
+        _mm256_storeu_ps(result.Data(), _mm256_mul_ps(vv, vs));
+    }
+    else if constexpr (std::same_as<R, double> && N == 2)
+    {
+        const __m128d vv = _mm_loadu_pd(v.Data());
+        const __m128d vs = _mm_set1_pd(static_cast<double>(scalar));
+
+        _mm_storeu_pd(result.Data(), _mm_mul_pd(vv, vs));
+    }
+    else if constexpr (std::same_as<R, double> && N == 4)
+    {
+        const __m256d vv = _mm256_loadu_pd(v.Data());
+        const __m256d vs = _mm256_set1_pd(static_cast<double>(scalar));
+
+
+
+        _mm256_storeu_pd(result.Data(), _mm256_mul_pd(vv, vs));
     }
 
     return result;
 }
 
 template <std::floating_point T, std::floating_point U, std::size_t N>
-inline constexpr auto operator*(U scalar, const Vec<T, N>& v) -> VecCommon<T, U, N> {
+auto operator*(
+    U scalar,
+    const VecSIMD<T, N>& v
+    ) -> VecSIMDCommon<T, U, N>
+{
     return v * scalar;
 }
 
 template <std::floating_point T, std::floating_point U, std::size_t N>
-inline constexpr auto operator/(const Vec<T, N>& v, U scalar) -> VecCommon<T, U, N> {
+auto operator/(
+    const VecSIMD<T, N>& v,
+    U scalar
+    ) -> VecSIMDCommon<T, U, N>
+{
     using R = std::common_type_t<T, U>;
 
-    VecCommon<T, U, N> result;
+    VecSIMDCommon<T, U, N> result;
 
-    for (std::size_t i = 0; i < N; ++i) {
-        result[i] = static_cast<R>(v[i]) / static_cast<R>(scalar);
+    if constexpr (std::same_as<R, float> && N == 4)
+    {
+        const __m128 vv = _mm_loadu_ps(v.Data());
+        const __m128 vs = _mm_set1_ps(static_cast<float>(scalar));
+
+        _mm_storeu_ps(result.Data(), _mm_div_ps(vv, vs));
+    }
+    else if constexpr (std::same_as<R, float> && N == 8)
+    {
+        const __m256 vv = _mm256_loadu_ps(v.Data());
+        const __m256 vs = _mm256_set1_ps(static_cast<float>(scalar));
+
+        _mm256_storeu_ps(result.Data(), _mm256_div_ps(vv, vs));
+    }
+    else if constexpr (std::same_as<R, double> && N == 2)
+    {
+        const __m128d vv = _mm_loadu_pd(v.Data());
+        const __m128d vs = _mm_set1_pd(static_cast<double>(scalar));
+
+        _mm_storeu_pd(result.Data(), _mm_div_pd(vv, vs));
+    }
+    else if constexpr (std::same_as<R, double> && N == 4)
+    {
+        const __m256d vv = _mm256_loadu_pd(v.Data());
+        const __m256d vs = _mm256_set1_pd(static_cast<double>(scalar));
+
+        _mm256_storeu_pd(result.Data(), _mm256_div_pd(vv, vs));
     }
 
     return result;
 }
-
-template <std::floating_point T, std::floating_point U, std::size_t N>
-inline constexpr auto Dot(const Vec<T, N>& a, const Vec<U, N>& b) -> std::common_type_t<T, U> {
-    using R = std::common_type_t<T, U>;
-
-    R result{};
-
-    for (std::size_t i = 0; i < N; ++i) {
-        result += static_cast<R>(a[i]) * static_cast<R>(b[i]);
-    }
-
-    return result;
-}
-
-template <std::floating_point T, std::floating_point U>
-inline constexpr auto Cross(const Vec<T, 3>& a, const Vec<U, 3>& b) -> VecCommon<T, U, 3> {
-    using R = std::common_type_t<T, U>;
-
-    return VecCommon<T, U, 3>{
-        static_cast<R>(a[1])* static_cast<R>(b[2]) - static_cast<R>(a[2]) * static_cast<R>(b[1]),
-            static_cast<R>(a[2])* static_cast<R>(b[0]) - static_cast<R>(a[0]) * static_cast<R>(b[2]),
-            static_cast<R>(a[0])* static_cast<R>(b[1]) - static_cast<R>(a[1]) * static_cast<R>(b[0])};
-}
-
-template <std::floating_point T, std::floating_point U, std::size_t N>
-inline constexpr auto Distance(const Vec<T, N>& a, const Vec<U, N>& b) -> std::common_type_t<T, U> {
-    return (a - b).Length();
-}
-
-template <std::floating_point T, std::floating_point U, std::floating_point V, std::size_t N>
-inline constexpr auto Lerp(const Vec<T, N>& a, const Vec<U, N>& b, V t) -> VecCommon<T, U, N> {
-    using R = std::common_type_t<T, U>;
-
-    VecCommon<T, U, N> result;
-
-    for (std::size_t i = 0; i < N; ++i) {
-        const R av = static_cast<R>(a[i]);
-        const R bv = static_cast<R>(b[i]);
-        result[i] = av + (bv - av) * static_cast<R>(t);
-    }
-
-    return result;
-}
-
-template <std::floating_point T, std::floating_point U, std::size_t N>
-inline constexpr auto Scale(const Vec<T, N>& a, const Vec<U, N>& b) -> VecCommon<T, U, N> {
-    return a * b;
-}
-
-template <std::floating_point T, std::floating_point U, std::size_t N>
-inline constexpr auto Min(const Vec<T, N>& a, const Vec<U, N>& b) -> VecCommon<T, U, N> {
-    using R = std::common_type_t<T, U>;
-
-    VecCommon<T, U, N> result;
-
-    for (std::size_t i = 0; i < N; ++i) {
-        const R av = static_cast<R>(a[i]);
-        const R bv = static_cast<R>(b[i]);
-        result[i] = av < bv ? av : bv;
-    }
-
-    return result;
-}
-
-template <std::floating_point T, std::floating_point U, std::size_t N>
-inline constexpr auto Max(const Vec<T, N>& a, const Vec<U, N>& b) -> VecCommon<T, U, N> {
-    using R = std::common_type_t<T, U>;
-
-    VecCommon<T, U, N> result;
-
-    for (std::size_t i = 0; i < N; ++i) {
-        const R av = static_cast<R>(a[i]);
-        const R bv = static_cast<R>(b[i]);
-        result[i] = av > bv ? av : bv;
-    }
-
-    return result;
-}
-
-template <std::floating_point T, std::floating_point U, std::floating_point V, std::size_t N>
-inline constexpr auto MoveTowards(const Vec<T, N>& current, const Vec<U, N>& target, V maxDistanceDelta)
--> VecCommon<T, U, N> {
-    using R = std::common_type_t<T, U>;
-
-    const VecCommon<T, U, N> delta = target - current;
-    const R distance = delta.Length();
-
-    if (distance <= static_cast<R>(maxDistanceDelta) || distance <= R{ 0 }) {
-        VecCommon<T, U, N> result;
-
-        for (std::size_t i = 0; i < N; ++i) {
-            result[i] = static_cast<R>(target[i]);
-        }
-
-        return result;
-    }
-
-    VecCommon<T, U, N> result;
-
-    for (std::size_t i = 0; i < N; ++i) {
-        result[i] = static_cast<R>(current[i]) + delta[i] * (static_cast<R>(maxDistanceDelta) / distance);
-    }
-
-    return result;
-}
-
-template <std::floating_point T, std::floating_point U, std::size_t N>
-inline constexpr auto Reflect(const Vec<T, N>& v, const Vec<U, N>& normal) -> VecCommon<T, U, N> {
-    using R = std::common_type_t<T, U>;
-
-    VecCommon<T, U, N> result;
-    const R factor = R{ 2 } *Dot(v, normal);
-
-    for (std::size_t i = 0; i < N; ++i) {
-        result[i] = static_cast<R>(v[i]) - static_cast<R>(normal[i]) * factor;
-    }
-
-    return result;
-}
-
-template <std::floating_point T, std::floating_point U, std::size_t N>
-inline constexpr auto Angle(const Vec<T, N>& a, const Vec<U, N>& b) -> std::common_type_t<T, U> {
-    using R = std::common_type_t<T, U>;
-
-    R lengthSquaredA{};
-    R lengthSquaredB{};
-
-    for (std::size_t i = 0; i < N; ++i) {
-        lengthSquaredA += static_cast<R>(a[i]) * static_cast<R>(a[i]);
-        lengthSquaredB += static_cast<R>(b[i]) * static_cast<R>(b[i]);
-    }
-
-    const R denom = static_cast<R>(std::sqrt(static_cast<double>(lengthSquaredA))) *
-        static_cast<R>(std::sqrt(static_cast<double>(lengthSquaredB)));
-
-    if (denom <= R{ 0 }) {
-        return R{ 0 };
-    }
-
-    R cosAngle = Dot(a, b) / denom;
-    cosAngle = cosAngle < R{ -1 } ? R{ -1 } : (cosAngle > R{ 1 } ? R{ 1 } : cosAngle);
-
-    return static_cast<R>(std::acos(static_cast<double>(cosAngle)));
-}
-
-template <std::floating_point T>
-inline constexpr Vec<T, 2> Perpendicular(const Vec<T, 2>& v) {
-    return Vec<T, 2>{-v[1], v[0]};
-}
-
-template <>
-struct std::formatter<__m128> {
-
-    constexpr auto parse(std::format_parse_context& ctx) {
-        return ctx.begin();
-    }
-
-    auto format(const __m128& obj, std::format_context& ctx) const {
-        auto out = ctx.out();
-        out = std::format_to(out, "(");
-
-        for (std::size_t i = 0; i < 4; ++i) {
-            if (i != 0) {
-                out = std::format_to(out, ", ");
-            }
-            out = std::format_to(out, "{}", obj.m128_f32[i]);
-        }
-
-        return std::format_to(out, ")");
-    }
-};
-
-template <>
-struct std::formatter<__m128d> {
-
-    constexpr auto parse(std::format_parse_context& ctx) {
-        return ctx.begin();
-    }
-
-    auto format(const __m128d& obj, std::format_context& ctx) const {
-        auto out = ctx.out();
-        out = std::format_to(out, "(");
-
-        for (std::size_t i = 0; i < 2; ++i) {
-            if (i != 0) {
-                out = std::format_to(out, ", ");
-            }
-            out = std::format_to(out, "{}", obj.m128d_f64[i]);
-        }
-
-        return std::format_to(out, ")");
-    }
-};
-
-template <>
-struct std::formatter<__m256> {
-
-    constexpr auto parse(std::format_parse_context& ctx) {
-        return ctx.begin();
-    }
-
-    auto format(const __m256& obj, std::format_context& ctx) const {
-        auto out = ctx.out();
-        out = std::format_to(out, "(");
-
-        for (std::size_t i = 0; i < 8; ++i) {
-            if (i != 0) {
-                out = std::format_to(out, ", ");
-            }
-            out = std::format_to(out, "{}", obj.m256_f32[i]);
-        }
-
-        return std::format_to(out, ")");
-    }
-};
-
-template <>
-struct std::formatter<__m256d> {
-
-    constexpr auto parse(std::format_parse_context& ctx) {
-        return ctx.begin();
-    }
-
-    auto format(const __m256d& obj, std::format_context& ctx) const {
-        auto out = ctx.out();
-        out = std::format_to(out, "(");
-
-        for (std::size_t i = 0; i < 4; ++i) {
-            if (i != 0) {
-                out = std::format_to(out, ", ");
-            }
-            out = std::format_to(out, "{}", obj.m256d_f64[i]);
-        }
-
-        return std::format_to(out, ")");
-    }
-};
-
-template <std::floating_point T>
-struct std::formatter<simd_traits<T, 128>> {
-
-    constexpr auto parse(std::format_parse_context& ctx) {
-        return ctx.begin();
-    }
-
-    auto format(const simd_traits<T, 128>& obj, std::format_context& ctx) const {
-        auto out = ctx.out();
-        out = std::format_to(out, "{}", obj.m128);
-    }
-};
-
-template <std::floating_point T>
-struct std::formatter<simd_traits<T, 256>> {
-
-    constexpr auto parse(std::format_parse_context& ctx) {
-        return ctx.begin();
-    }
-
-    auto format(const simd_traits<T, 256>& obj, std::format_context& ctx) const {
-        auto out = ctx.out();
-        out = std::format_to(out, "{}", obj.m256);
-    }
-};
 
 template <std::floating_point T, std::size_t N>
-struct std::formatter<Vec<T, N>> {
-    std::formatter<T> element_formatter;
+constexpr VecSIMD<T, N> VecSIMD<T, N>::operator+() const
+{
+    return *this;
+}
 
-    constexpr auto parse(std::format_parse_context& ctx) {
-        return element_formatter.parse(ctx);
+template <std::floating_point T, std::size_t N>
+constexpr VecSIMD<T, N> VecSIMD<T, N>::operator-() const
+{
+    VecSIMD result;
+
+    if constexpr (std::same_as<T, float> && N == 4)
+    {
+        const __m128 zero = _mm_setzero_ps();
+        const __m128 value = _mm_loadu_ps(Data());
+
+        _mm_storeu_ps(result.Data(), _mm_sub_ps(zero, value));
+    }
+    else if constexpr (std::same_as<T, float> && N == 8)
+    {
+        const __m256 zero = _mm256_setzero_ps();
+        const __m256 value = _mm256_loadu_ps(Data());
+
+        _mm256_storeu_ps(result.Data(), _mm256_sub_ps(zero, value));
+    }
+    else if constexpr (std::same_as<T, double> && N == 2)
+    {
+        const __m128d zero = _mm_setzero_pd();
+        const __m128d value = _mm_loadu_pd(Data());
+
+        _mm_storeu_pd(result.Data(), _mm_sub_pd(zero, value));
+    }
+    else if constexpr (std::same_as<T, double> && N == 4)
+    {
+        const __m256d zero = _mm256_setzero_pd();
+        const __m256d value = _mm256_loadu_pd(Data());
+
+        _mm256_storeu_pd(result.Data(), _mm256_sub_pd(zero, value));
     }
 
-    auto format(const Vec<T, N>& obj, std::format_context& ctx) const {
-        auto out = ctx.out();
-        out = std::format_to(out, "(");
+    return result;
+}
 
-        for (std::size_t i = 0; i < N; ++i) {
-            if (i != 0) {
-                out = std::format_to(out, ", ");
-            }
-            out = std::format_to(out, "{}", obj[i]);
-        }
+template <std::floating_point T, std::floating_point U, std::size_t N>
+auto Dot(
+    const VecSIMD<T, N>& a,
+    const VecSIMD<U, N>& b
+) -> std::common_type_t<T, U>
+{
+    using R = std::common_type_t<T, U>;
 
-        return std::format_to(out, ")");
+    if constexpr (std::same_as<R, float> && N == 4)
+    {
+        const __m128 va = _mm_loadu_ps(a.Data());
+        const __m128 vb = _mm_loadu_ps(b.Data());
+        const __m128 mul = _mm_mul_ps(va, vb);
+
+        alignas(16) float values[4];
+        _mm_store_ps(values, mul);
+
+        return values[0] + values[1] + values[2] + values[3];
     }
-};
+    else if constexpr (std::same_as<R, float> && N == 8)
+    {
+        const __m256 va = _mm256_loadu_ps(a.Data());
+        const __m256 vb = _mm256_loadu_ps(b.Data());
+        const __m256 mul = _mm256_mul_ps(va, vb);
+
+        alignas(32) float values[8];
+        _mm256_store_ps(values, mul);
+
+        return values[0] + values[1] + values[2] + values[3]
+            + values[4] + values[5] + values[6] + values[7];
+    }
+    else if constexpr (std::same_as<R, double> && N == 2)
+    {
+        const __m128d va = _mm_loadu_pd(a.Data());
+        const __m128d vb = _mm_loadu_pd(b.Data());
+        const __m128d mul = _mm_mul_pd(va, vb);
+
+        alignas(16) double values[2];
+        _mm_store_pd(values, mul);
+
+        return values[0] + values[1];
+    }
+    else
+    {
+        const __m256d va = _mm256_loadu_pd(a.Data());
+        const __m256d vb = _mm256_loadu_pd(b.Data());
+        const __m256d mul = _mm256_mul_pd(va, vb);
+
+        alignas(32) double values[4];
+        _mm256_store_pd(values, mul);
+
+        return values[0] + values[1] + values[2] + values[3];
+    }
+}
+
+template <std::floating_point T, std::size_t N>
+constexpr T VecSIMD<T, N>::LengthSquared() const
+{
+    return Dot(*this, *this);
+}
+
+template <std::floating_point T, std::size_t N>
+constexpr T VecSIMD<T, N>::Length() const
+{
+    return static_cast<T>(
+        std::sqrt(static_cast<double>(LengthSquared()))
+        );
+
+}
+
+template <std::floating_point T, std::size_t N>
+constexpr VecSIMD<T, N> VecSIMD<T, N>::Normalized() const
+{
+    const T length = Length();
+
+    if (length <= T{ 0 })
+        return *this;
+
+    return *this / length;
+}
+
+template <std::floating_point T, std::size_t N>
+constexpr void VecSIMD<T, N>::Normalize()
+{
+    *this = Normalized();
+}
+
+
+
+
