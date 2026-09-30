@@ -9,6 +9,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MathLibrary.Tests", "MathLi
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Benchmark", "Benchmark\Benchmark.vcxproj", "{0AEAE4B1-7081-4557-A557-BE163894BABA}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SIMD", "SIMD\SIMD.vcxproj", "{02ED81C5-2A8B-4772-91C9-6F1CCC085E33}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -41,6 +43,14 @@ Global
 		{0AEAE4B1-7081-4557-A557-BE163894BABA}.Release|x64.Build.0 = Release|x64
 		{0AEAE4B1-7081-4557-A557-BE163894BABA}.Release|x86.ActiveCfg = Release|Win32
 		{0AEAE4B1-7081-4557-A557-BE163894BABA}.Release|x86.Build.0 = Release|Win32
+		{02ED81C5-2A8B-4772-91C9-6F1CCC085E33}.Debug|x64.ActiveCfg = Debug|x64
+		{02ED81C5-2A8B-4772-91C9-6F1CCC085E33}.Debug|x64.Build.0 = Debug|x64
+		{02ED81C5-2A8B-4772-91C9-6F1CCC085E33}.Debug|x86.ActiveCfg = Debug|Win32
+		{02ED81C5-2A8B-4772-91C9-6F1CCC085E33}.Debug|x86.Build.0 = Debug|Win32
+		{02ED81C5-2A8B-4772-91C9-6F1CCC085E33}.Release|x64.ActiveCfg = Release|x64
+		{02ED81C5-2A8B-4772-91C9-6F1CCC085E33}.Release|x64.Build.0 = Release|x64
+		{02ED81C5-2A8B-4772-91C9-6F1CCC085E33}.Release|x86.ActiveCfg = Release|Win32
+		{02ED81C5-2A8B-4772-91C9-6F1CCC085E33}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

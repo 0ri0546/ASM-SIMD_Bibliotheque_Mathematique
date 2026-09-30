@@ -19,5 +19,5 @@ int main()
 
     Vec3f result = translation.MultiplyPoint(point);
 
-    std::println("{} {} {}", result[0], result[1], result[2]);
+    std::println("{}", result);
 }
