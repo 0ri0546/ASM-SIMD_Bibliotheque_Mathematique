@@ -1,5 +1,45 @@
 #pragma once
 
+template <>
+struct simd_traits<float, 128> {
+    using m128 = __m128;
+    static constexpr std::size_t width = 4;
+
+    static m128 load(const float* ptr) {
+        return _mm_loadu_ps(ptr);
+    }
+};
+
+template <>
+struct simd_traits<double, 128> {
+    using m128 = __m128d;
+    static constexpr std::size_t width = 2;
+
+    static m128 load(const double* ptr) {
+        return _mm_loadu_pd(ptr);
+    }
+};
+
+template <>
+struct simd_traits<float, 256> {
+    using m256 = __m256;
+    static constexpr std::size_t width = 8;
+
+    static m256 load(const float* ptr) {
+        return _mm256_loadu_ps(ptr);
+    }
+};
+
+template <>
+struct simd_traits<double, 256> {
+    using m256 = __m256d;
+    static constexpr std::size_t width = 4;
+
+    static m256 load(const double* ptr) {
+        return _mm256_loadu_pd(ptr);
+    }
+};
+
 template <std::floating_point T, std::size_t N>
 template <typename... Args>
     requires(sizeof...(Args) == N) && (std::convertible_to<Args, T> && ...)
@@ -15,10 +55,26 @@ inline constexpr const T& Vec<T, N>::operator[](size_type index) const {
     return m_data[index];
 }
 
-// Si vous avez besoin d'extraire les données en SIMD, faites une fonction dédiée !
-template <std::floating_point T, std::size_t N> 
-inline __m128 Vec<T, N>::to_m128() const requires (std::same_as<T, float>&& N >= 4) {
-    return _mm_loadu_ps(m_data.data()); // Charge les 4 float d'un coup de manière optimale
+template <std::floating_point T, std::size_t N>
+template <std::size_t I>
+inline auto Vec<T, N>::get_m128() const
+{
+    using traits = simd_traits<T, 128>;
+
+    static_assert(I * traits::width < N);
+
+    return traits::load(m_data.data() + I * traits::width);
+}
+
+template <std::floating_point T, std::size_t N>
+template <std::size_t I>
+inline auto Vec<T, N>::get_m256() const
+{
+    using traits = simd_traits<T, 256>;
+
+    static_assert(I * traits::width < N);
+
+    return traits::load(m_data.data() + I * traits::width);
 }
 
 template <std::floating_point T, std::size_t N>
@@ -181,6 +237,26 @@ inline constexpr auto operator+(const Vec<T, N>& a, const Vec<U, N>& b)
         _mm256_storeu_ps(
             result.Data(),
             _mm256_add_ps(va, vb)
+        );
+    }
+    else if constexpr (std::same_as<R, double> && N == 2)
+    {
+        const __m128d va = _mm_loadu_pd(a.Data());
+        const __m128d vb = _mm_loadu_pd(b.Data());
+
+        _mm_storeu_pd(
+            result.Data(),
+            _mm_add_pd(va, vb)
+        );
+    }
+    else if constexpr (std::same_as<R, double> && N == 4)
+    {
+        const __m256d va = _mm256_loadu_pd(a.Data());
+        const __m256d vb = _mm256_loadu_pd(b.Data());
+
+        _mm256_storeu_pd(
+            result.Data(),
+            _mm256_add_pd(va, vb)
         );
     }
 
@@ -425,6 +501,98 @@ struct std::formatter<__m128> {
         }
 
         return std::format_to(out, ")");
+    }
+};
+
+template <>
+struct std::formatter<__m128d> {
+
+    constexpr auto parse(std::format_parse_context& ctx) {
+        return ctx.begin();
+    }
+
+    auto format(const __m128d& obj, std::format_context& ctx) const {
+        auto out = ctx.out();
+        out = std::format_to(out, "(");
+
+        for (std::size_t i = 0; i < 2; ++i) {
+            if (i != 0) {
+                out = std::format_to(out, ", ");
+            }
+            out = std::format_to(out, "{}", obj.m128d_f64[i]);
+        }
+
+        return std::format_to(out, ")");
+    }
+};
+
+template <>
+struct std::formatter<__m256> {
+
+    constexpr auto parse(std::format_parse_context& ctx) {
+        return ctx.begin();
+    }
+
+    auto format(const __m256& obj, std::format_context& ctx) const {
+        auto out = ctx.out();
+        out = std::format_to(out, "(");
+
+        for (std::size_t i = 0; i < 8; ++i) {
+            if (i != 0) {
+                out = std::format_to(out, ", ");
+            }
+            out = std::format_to(out, "{}", obj.m256_f32[i]);
+        }
+
+        return std::format_to(out, ")");
+    }
+};
+
+template <>
+struct std::formatter<__m256d> {
+
+    constexpr auto parse(std::format_parse_context& ctx) {
+        return ctx.begin();
+    }
+
+    auto format(const __m256d& obj, std::format_context& ctx) const {
+        auto out = ctx.out();
+        out = std::format_to(out, "(");
+
+        for (std::size_t i = 0; i < 4; ++i) {
+            if (i != 0) {
+                out = std::format_to(out, ", ");
+            }
+            out = std::format_to(out, "{}", obj.m256d_f64[i]);
+        }
+
+        return std::format_to(out, ")");
+    }
+};
+
+template <std::floating_point T>
+struct std::formatter<simd_traits<T, 128>> {
+
+    constexpr auto parse(std::format_parse_context& ctx) {
+        return ctx.begin();
+    }
+
+    auto format(const simd_traits<T, 128>& obj, std::format_context& ctx) const {
+        auto out = ctx.out();
+        out = std::format_to(out, "{}", obj.m128);
+    }
+};
+
+template <std::floating_point T>
+struct std::formatter<simd_traits<T, 256>> {
+
+    constexpr auto parse(std::format_parse_context& ctx) {
+        return ctx.begin();
+    }
+
+    auto format(const simd_traits<T, 256>& obj, std::format_context& ctx) const {
+        auto out = ctx.out();
+        out = std::format_to(out, "{}", obj.m256);
     }
 };
 

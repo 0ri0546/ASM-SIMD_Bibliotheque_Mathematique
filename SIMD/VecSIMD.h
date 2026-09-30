@@ -1,10 +1,11 @@
 #pragma once
 
-#include <xmmintrin.h>
 #include <array>
 #include <concepts>
 #include <cstdint>
 #include <format>
+
+#include <xmmintrin.h>
 
 template <std::floating_point T, std::size_t N>
 class Vec {
@@ -25,7 +26,10 @@ public:
     inline constexpr T& operator[](size_type index);
     inline constexpr const T& operator[](size_type index) const;
 
-    inline __m128 to_m128() const requires (std::same_as<T, float>&& N >= 4);
+	template <std::size_t I>
+    inline auto get_m128() const;
+    template <std::size_t I>
+    inline auto get_m256() const;
 
     inline constexpr T* Data();
     inline constexpr const T* Data() const;
@@ -138,8 +142,26 @@ using Vec2d = Vec2<double>;
 using Vec3d = Vec3<double>;
 using Vec4d = Vec4<double>;
 
+template <std::floating_point T, std::size_t N>
+struct simd_traits;
+
+template <std::floating_point T>
+struct std::formatter<simd_traits<T, 128>>;
+
+template <std::floating_point T>
+struct std::formatter<simd_traits<T, 256>>;
+
 template <>
 struct std::formatter<__m128>;
+
+template <>
+struct std::formatter<__m128d>;
+
+template <>
+struct std::formatter<__m256>;
+
+template <>
+struct std::formatter<__m256d>;
 
 template <std::floating_point T, std::size_t N>
 struct std::formatter<Vec<T, N>>;

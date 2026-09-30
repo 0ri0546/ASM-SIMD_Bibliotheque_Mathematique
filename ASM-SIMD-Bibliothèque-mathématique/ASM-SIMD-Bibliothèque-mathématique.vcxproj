@@ -138,7 +138,6 @@
     <ClCompile Include="ASM-SIMD-Bibliothèque-mathématique.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Headers\Config\SimdConfig.h" />
     <ClInclude Include="Headers\Mat.h" />
     <ClInclude Include="Headers\Quaternion.h" />
     <ClInclude Include="Headers\Vec.h" />

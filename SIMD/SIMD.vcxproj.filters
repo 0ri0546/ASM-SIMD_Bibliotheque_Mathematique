@@ -23,6 +23,9 @@
     <ClInclude Include="VecSIMD.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+    <ClInclude Include="..\ASM-SIMD-Bibliothèque-mathématique\Headers\Config\SimdConfig.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="VecSIMD.inl">

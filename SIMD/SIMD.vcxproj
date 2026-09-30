@@ -134,6 +134,7 @@
     <ClCompile Include="SIMD.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\ASM-SIMD-Bibliothèque-mathématique\Headers\Config\SimdConfig.h" />
     <ClInclude Include="VecSIMD.h" />
   </ItemGroup>
   <ItemGroup>

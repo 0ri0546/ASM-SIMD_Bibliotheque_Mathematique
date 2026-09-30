@@ -20,9 +20,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Headers\Config\SimdConfig.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
     <ClInclude Include="Headers\Mat.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
