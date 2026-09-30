@@ -81,7 +81,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)/ASM-SIMD-Bibliothèque-mathématique</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)ASM-SIMD-Bibliothèque-mathématique;$(SolutionDir)SIMD;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -100,7 +100,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)/ASM-SIMD-Bibliothèque-mathématique</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)ASM-SIMD-Bibliothèque-mathématique;$(SolutionDir)SIMD;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -117,7 +117,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)/ASM-SIMD-Bibliothèque-mathématique</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)ASM-SIMD-Bibliothèque-mathématique;$(SolutionDir)SIMD;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -136,7 +136,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)/ASM-SIMD-Bibliothèque-mathématique</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)ASM-SIMD-Bibliothèque-mathématique;$(SolutionDir)SIMD;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -152,6 +152,9 @@
   <ItemGroup>
     <ProjectReference Include="..\ASM-SIMD-Bibliothèque-mathématique\ASM-SIMD-Bibliothèque-mathématique.vcxproj">
       <Project>{33ef3238-2029-49aa-8183-3505b44e7a3f}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\SIMD\SIMD.vcxproj">
+      <Project>{02ed81c5-2a8b-4772-91c9-6f1ccc085e33}</Project>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

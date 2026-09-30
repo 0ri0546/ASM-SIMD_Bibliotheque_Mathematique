@@ -52,27 +52,27 @@ template <std::floating_point T, std::size_t N>
 template <typename... Args>
     requires(sizeof...(Args) == N) &&
 (std::convertible_to<Args, T> && ...)
-constexpr VecSIMD<T, N>::VecSIMD(Args&&... args)
+inline constexpr VecSIMD<T, N>::VecSIMD(Args&&... args)
     : m_data{ static_cast<T>(std::forward<Args>(args))... }
 {
 }
 
 template <std::floating_point T, std::size_t N>
-constexpr T& VecSIMD<T, N>::operator[](size_type index)
+inline constexpr T& VecSIMD<T, N>::operator[](size_type index)
 {
     return m_data[index];
 }
 
 
 template <std::floating_point T, std::size_t N>
-constexpr const T& VecSIMD<T, N>::operator[](size_type index) const
+inline constexpr const T& VecSIMD<T, N>::operator[](size_type index) const
 {
     return m_data[index];
 }
 
 template <std::floating_point T, std::size_t N>
 template <std::size_t I>
-auto VecSIMD<T, N>::get_m128() const
+inline auto VecSIMD<T, N>::get_m128() const
 {
     using traits = simd_traits<T, 128>;
 
@@ -83,7 +83,7 @@ auto VecSIMD<T, N>::get_m128() const
 
 template <std::floating_point T, std::size_t N>
 template <std::size_t I>
-auto VecSIMD<T, N>::get_m256() const
+inline auto VecSIMD<T, N>::get_m256() const
 {
     using traits = simd_traits<T, 256>;
 
@@ -93,26 +93,26 @@ auto VecSIMD<T, N>::get_m256() const
 }
 
 template <std::floating_point T, std::size_t N>
-constexpr T* VecSIMD<T, N>::Data()
+inline constexpr T* VecSIMD<T, N>::Data()
 {
     return m_data.data();
 }
 
 template <std::floating_point T, std::size_t N>
-constexpr const T* VecSIMD<T, N>::Data() const
+inline constexpr const T* VecSIMD<T, N>::Data() const
 {
     return m_data.data();
 }
 
 template <std::floating_point T, std::size_t N>
-constexpr std::size_t VecSIMD<T, N>::Size()
+inline constexpr std::size_t VecSIMD<T, N>::Size()
 {
     return N;
 }
 
 template <std::floating_point T, std::size_t N>
 template <std::floating_point U>
-constexpr bool VecSIMD<T, N>::operator==(
+inline constexpr bool VecSIMD<T, N>::operator==(
     const VecSIMD<U, N>& other
     ) const
 {
@@ -127,7 +127,7 @@ constexpr bool VecSIMD<T, N>::operator==(
 
 template <std::floating_point T, std::size_t N>
 template <std::floating_point U>
-constexpr VecSIMD<T, N>& VecSIMD<T, N>::operator+=(
+inline constexpr VecSIMD<T, N>& VecSIMD<T, N>::operator+=(
     const VecSIMD<U, N>& other
     )
 {
@@ -137,7 +137,7 @@ constexpr VecSIMD<T, N>& VecSIMD<T, N>::operator+=(
 
 template <std::floating_point T, std::size_t N>
 template <std::floating_point U>
-constexpr VecSIMD<T, N>& VecSIMD<T, N>::operator-=(
+inline constexpr VecSIMD<T, N>& VecSIMD<T, N>::operator-=(
     const VecSIMD<U, N>& other
     )
 {
@@ -147,7 +147,7 @@ constexpr VecSIMD<T, N>& VecSIMD<T, N>::operator-=(
 
 template <std::floating_point T, std::size_t N>
 template <std::floating_point U>
-constexpr VecSIMD<T, N>& VecSIMD<T, N>::operator*=(
+inline constexpr VecSIMD<T, N>& VecSIMD<T, N>::operator*=(
     const VecSIMD<U, N>& other
     )
 {
@@ -157,7 +157,7 @@ constexpr VecSIMD<T, N>& VecSIMD<T, N>::operator*=(
 
 template <std::floating_point T, std::size_t N>
 template <std::floating_point U>
-constexpr VecSIMD<T, N>& VecSIMD<T, N>::operator/=(
+inline constexpr VecSIMD<T, N>& VecSIMD<T, N>::operator/=(
     const VecSIMD<U, N>& other
     )
 {
@@ -167,7 +167,7 @@ constexpr VecSIMD<T, N>& VecSIMD<T, N>::operator/=(
 
 template <std::floating_point T, std::size_t N>
 template <std::floating_point U>
-constexpr VecSIMD<T, N>& VecSIMD<T, N>::operator*=(U scalar)
+inline constexpr VecSIMD<T, N>& VecSIMD<T, N>::operator*=(U scalar)
 {
     *this = *this * scalar;
     return *this;
@@ -175,14 +175,14 @@ constexpr VecSIMD<T, N>& VecSIMD<T, N>::operator*=(U scalar)
 
 template <std::floating_point T, std::size_t N>
 template <std::floating_point U>
-constexpr VecSIMD<T, N>& VecSIMD<T, N>::operator/=(U scalar)
+inline constexpr VecSIMD<T, N>& VecSIMD<T, N>::operator/=(U scalar)
 {
     *this = *this / scalar;
     return *this;
 }
 
 template <std::floating_point T, std::floating_point U, std::size_t N>
-auto operator+(
+inline auto operator+(
     const VecSIMD<T, N>& a,
     const VecSIMD<U, N>& b
     ) -> VecSIMDCommon<T, U, N>
@@ -226,10 +226,8 @@ auto operator+(
 
 }
 
-
-
 template <std::floating_point T, std::floating_point U, std::size_t N>
-auto operator-(
+inline auto operator-(
     const VecSIMD<T, N>& a,
     const VecSIMD<U, N>& b
     ) -> VecSIMDCommon<T, U, N>
@@ -271,7 +269,7 @@ auto operator-(
 }
 
 template <std::floating_point T, std::floating_point U, std::size_t N>
-auto operator*(
+inline auto operator*(
     const VecSIMD<T, N>& a,
     const VecSIMD<U, N>& b
     ) -> VecSIMDCommon<T, U, N>
@@ -314,7 +312,7 @@ auto operator*(
 }
 
 template <std::floating_point T, std::floating_point U, std::size_t N>
-auto operator/(
+inline auto operator/(
     const VecSIMD<T, N>& a,
     const VecSIMD<U, N>& b
     ) -> VecSIMDCommon<T, U, N>
@@ -356,7 +354,7 @@ auto operator/(
 }
 
 template <std::floating_point T, std::floating_point U, std::size_t N>
-auto operator*(
+inline auto operator*(
     const VecSIMD<T, N>& v,
     U scalar
     ) -> VecSIMDCommon<T, U, N>
@@ -391,8 +389,6 @@ auto operator*(
         const __m256d vv = _mm256_loadu_pd(v.Data());
         const __m256d vs = _mm256_set1_pd(static_cast<double>(scalar));
 
-
-
         _mm256_storeu_pd(result.Data(), _mm256_mul_pd(vv, vs));
     }
 
@@ -400,7 +396,7 @@ auto operator*(
 }
 
 template <std::floating_point T, std::floating_point U, std::size_t N>
-auto operator*(
+inline auto operator*(
     U scalar,
     const VecSIMD<T, N>& v
     ) -> VecSIMDCommon<T, U, N>
@@ -409,7 +405,7 @@ auto operator*(
 }
 
 template <std::floating_point T, std::floating_point U, std::size_t N>
-auto operator/(
+inline auto operator/(
     const VecSIMD<T, N>& v,
     U scalar
     ) -> VecSIMDCommon<T, U, N>
@@ -451,13 +447,13 @@ auto operator/(
 }
 
 template <std::floating_point T, std::size_t N>
-constexpr VecSIMD<T, N> VecSIMD<T, N>::operator+() const
+inline constexpr VecSIMD<T, N> VecSIMD<T, N>::operator+() const
 {
     return *this;
 }
 
 template <std::floating_point T, std::size_t N>
-constexpr VecSIMD<T, N> VecSIMD<T, N>::operator-() const
+inline constexpr VecSIMD<T, N> VecSIMD<T, N>::operator-() const
 {
     VecSIMD result;
 
@@ -494,7 +490,7 @@ constexpr VecSIMD<T, N> VecSIMD<T, N>::operator-() const
 }
 
 template <std::floating_point T, std::floating_point U, std::size_t N>
-auto Dot(
+inline auto Dot(
     const VecSIMD<T, N>& a,
     const VecSIMD<U, N>& b
 ) -> std::common_type_t<T, U>
@@ -549,22 +545,21 @@ auto Dot(
 }
 
 template <std::floating_point T, std::size_t N>
-constexpr T VecSIMD<T, N>::LengthSquared() const
+inline constexpr T VecSIMD<T, N>::LengthSquared() const
 {
     return Dot(*this, *this);
 }
 
 template <std::floating_point T, std::size_t N>
-constexpr T VecSIMD<T, N>::Length() const
+inline constexpr T VecSIMD<T, N>::Length() const
 {
     return static_cast<T>(
         std::sqrt(static_cast<double>(LengthSquared()))
-        );
-
+    );
 }
 
 template <std::floating_point T, std::size_t N>
-constexpr VecSIMD<T, N> VecSIMD<T, N>::Normalized() const
+inline constexpr VecSIMD<T, N> VecSIMD<T, N>::Normalized() const
 {
     const T length = Length();
 
@@ -575,7 +570,7 @@ constexpr VecSIMD<T, N> VecSIMD<T, N>::Normalized() const
 }
 
 template <std::floating_point T, std::size_t N>
-constexpr void VecSIMD<T, N>::Normalize()
+inline constexpr void VecSIMD<T, N>::Normalize()
 {
     *this = Normalized();
 }

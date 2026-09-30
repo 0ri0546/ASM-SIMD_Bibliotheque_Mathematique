@@ -4,7 +4,14 @@
 #include "Headers/Quaternion.h"
 #include "Headers/Vec.h"
 
+#include "VecSIMD.h"
+
 void BenchmarkNoSimd() {
+    std::println("Benchmark without SIMD optimizations:");
+    std::println("{:-<122}", "");
+    std::println("{:<4} | {:<40} | {:>12} | {:>12} | {:>12} | {:>12} | {:>12}", "No.", "Name", "op/s", "ns/op", "err%", "cyc/op", "total (ms)");
+    std::println("{:-<122}", "");
+
     Benchmark("Vec3f::Normalize", []() {
         Vec3f v(1.5f, 2.5f, 3.5f);
         Vec3f res = v.Normalized();
@@ -146,16 +153,44 @@ void BenchmarkNoSimd() {
         });
 }
 
-int main() {
-    std::println("Benchmark without SIMD optimizations:");
+void BenchmarkSIMD() {
+    std::println("Benchmark with SIMD optimizations:");
     std::println("{:-<122}", "");
     std::println("{:<4} | {:<40} | {:>12} | {:>12} | {:>12} | {:>12} | {:>12}", "No.", "Name", "op/s", "ns/op", "err%", "cyc/op", "total (ms)");
     std::println("{:-<122}", "");
+
+    Benchmark("VecSIMD<float, 4>::Normalize", []() {
+        VecSIMD<float, 4> v(1.5f, 2.5f, 3.5f, 4.5f);
+        VecSIMD<float, 4> res = v.Normalized();
+        DoNotOptimizeAway(v);
+        DoNotOptimizeAway(res);
+        });
+    Benchmark("VecSIMD<float, 8>::Dot", []() {
+        VecSIMD<float, 8> a(1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f, 8.f);
+        VecSIMD<float, 8> b(8.f, 7.f, 6.f, 5.f, 4.f, 3.f, 2.f, 1.f);
+        float d = Dot(a, b);
+        DoNotOptimizeAway(a);
+        DoNotOptimizeAway(b);
+        DoNotOptimizeAway(d);
+        });
+    Benchmark("VecSIMD<double, 2>::Normalize", []() {
+        VecSIMD<double, 2> a(1.0, 2.0);
+        VecSIMD<double, 2> b = a.Normalized();
+        DoNotOptimizeAway(a);
+        DoNotOptimizeAway(b);
+        });
+    Benchmark("VecSIMD<double, 4>::Dot", []() {
+        VecSIMD<double, 4> a(1.0, 2.0, 3.0, 4.0);
+        VecSIMD<double, 4> b(5.0, 6.0, 7.0, 8.0);
+        double d = Dot(a, b);
+        DoNotOptimizeAway(a);
+        DoNotOptimizeAway(b);
+        DoNotOptimizeAway(d);
+		});
+}
+
+int main() {
     BenchmarkNoSimd();
-    // TODO: Implement SIMD lib/optimizations and benchmark them
-    // std::println("Benchmark with SIMD optimizations:");
-    // std::println("{:-<122}", "");
-    // BenchmarkSimd();
-    // std::println("{:-<122}", "");
+    BenchmarkSIMD();
     return 0;
 }
