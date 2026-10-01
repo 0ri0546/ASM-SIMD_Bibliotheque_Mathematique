@@ -26,9 +26,18 @@
     <ClInclude Include="..\ASM-SIMD-Bibliothèque-mathématique\Headers\Config\SimdConfig.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+    <ClInclude Include="QuaternionSIMD.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="SIMD_traits.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="VecSIMD.inl">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </None>
+    <None Include="QuaternionSIMD.inl">
       <Filter>Fichiers d%27en-tête</Filter>
     </None>
   </ItemGroup>
