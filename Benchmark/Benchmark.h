@@ -63,7 +63,7 @@ void Benchmark(const std::string& name, Fn&& fn, std::size_t iterations = 1'000'
 
 	const double err_pct = mean > 0 ? 100.0 * std::sqrt(var) / mean : 0.0;
 
-	std::println("{:<4} | {:<40} | {:>12.4e} | {:>12.4f} | {:>12.4f} | {:>12} | {:>12.4f}",
+	std::println("{:<4} | {:<30} | {:>12.4e} | {:>12.4f} | {:>12.4f} | {:>12} | {:>12.4f}",
 		g_benchmark_index++,
 		name,
 		1.0e9 / mean,                          // op/s
@@ -71,5 +71,5 @@ void Benchmark(const std::string& name, Fn&& fn, std::size_t iterations = 1'000'
 		err_pct,                               // err %
 		total_cycles / (per_sample * samples), // cycles/op (TSC ticks)
 		total_ns * 1.0e-6);                    // total ms
-	std::println("{:-<122}", "");
+	std::println("{:-<112}", "");
 }

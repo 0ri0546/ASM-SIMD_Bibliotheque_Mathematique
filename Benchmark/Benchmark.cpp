@@ -8,9 +8,9 @@
 
 void BenchmarkNoSimd() {
     std::println("Benchmark without SIMD optimizations:");
-    std::println("{:-<122}", "");
-    std::println("{:<4} | {:<40} | {:>12} | {:>12} | {:>12} | {:>12} | {:>12}", "No.", "Name", "op/s", "ns/op", "err%", "cyc/op", "total (ms)");
-    std::println("{:-<122}", "");
+    std::println("{:-<112}", "");
+    std::println("{:<4} | {:<30} | {:>12} | {:>12} | {:>12} | {:>12} | {:>12}", "No.", "Name", "op/s", "ns/op", "b.pred miss%", "cyc/op", "total (ms)");
+    std::println("{:-<112}", "");
 
     Benchmark("Vec4f::Normalize", []() {
         Vec4f v(1.5f, 2.5f, 3.5f, 4.5f);
@@ -410,9 +410,9 @@ void BenchmarkNoSimd() {
 
 void BenchmarkSIMD() {
     std::println("Benchmark with SIMD optimizations:");
-    std::println("{:-<122}", "");
-    std::println("{:<4} | {:<40} | {:>12} | {:>12} | {:>12} | {:>12} | {:>12}", "No.", "Name", "op/s", "ns/op", "err%", "cyc/op", "total (ms)");
-    std::println("{:-<122}", "");
+    std::println("{:-<112}", "");
+    std::println("{:<4} | {:<30} | {:>12} | {:>12} | {:>12} | {:>12} | {:>12}", "No.", "Name", "op/s", "ns/op", "b.pred miss%", "cyc/op", "total (ms)");
+    std::println("{:-<112}", "");
 
     Benchmark("VecSIMD<float, 4>::Normalize", []() {
         VecSIMD<float, 4> v(1.5f, 2.5f, 3.5f, 4.5f);
