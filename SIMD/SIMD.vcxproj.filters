@@ -20,25 +20,23 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="VecSIMD.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="..\ASM-SIMD-Bibliothèque-mathématique\Headers\Config\SimdConfig.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="QuaternionSIMD.h">
+      <ClInclude Include="..\ASM-SIMD-Bibliothèque-mathématique\Headers\Config\SimdConfig.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="SIMD_traits.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="VecSIMD.inl">
+    <ClInclude Include="MatSIMD.h">
       <Filter>Fichiers d%27en-tête</Filter>
-    </None>
-    <None Include="QuaternionSIMD.inl">
+    </ClInclude>
+    <ClInclude Include="VecSIMD.h">
       <Filter>Fichiers d%27en-tête</Filter>
-    </None>
+    </ClInclude>
+    <ClInclude Include="MatSIMD.inl">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="VecSIMD.inl">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

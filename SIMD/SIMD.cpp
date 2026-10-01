@@ -1,6 +1,7 @@
 #include <print>
 
 #include "VecSIMD.h"
+#include "MatSIMD.h"
 #include "QuaternionSIMD.h"
 
 int main()

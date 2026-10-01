@@ -7,6 +7,7 @@
 #include <cmath>
 #include <type_traits>
 #include <utility>
+
 #include <immintrin.h>
 
 #include "Concepts.h"
