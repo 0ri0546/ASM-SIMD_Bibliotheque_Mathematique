@@ -1,53 +1,5 @@
 #pragma once
 
-template <>
-struct simd_traits<double, 128>
-{
-    using type = __m128d;
-    static constexpr std::size_t width = 2;
-
-    static type load(const double* data)
-    {
-        return _mm_loadu_pd(data);
-    }
-};
-
-template <>
-struct simd_traits<float, 128>
-{
-    using type = __m128;
-    static constexpr std::size_t width = 4;
-
-    static type load(const float* data)
-    {
-        return _mm_loadu_ps(data);
-    }
-};
-
-template <>
-struct simd_traits<float, 256>
-{
-    using type = __m256;
-    static constexpr std::size_t width = 8;
-
-    static type load(const float* data)
-    {
-        return _mm256_loadu_ps(data);
-    }
-};
-
-template <>
-struct simd_traits<double, 256>
-{
-    using type = __m256d;
-    static constexpr std::size_t width = 4;
-
-    static type load(const double* data)
-    {
-        return _mm256_loadu_pd(data);
-    }
-};
-
 template <float_num T, std::size_t N>
 template <typename... Args>
     requires(sizeof...(Args) == N) &&
@@ -62,7 +14,6 @@ inline constexpr T& VecSIMD<T, N>::operator[](size_type index)
 {
     return m_data[index];
 }
-
 
 template <float_num T, std::size_t N>
 inline constexpr const T& VecSIMD<T, N>::operator[](size_type index) const
@@ -218,12 +169,9 @@ inline auto operator+(
         const __m256d vb = _mm256_loadu_pd(b.Data());
 
         _mm256_storeu_pd(result.Data(), _mm256_add_pd(va, vb));
-
     }
 
-
     return result;
-
 }
 
 template <float_num T, float_num U, std::size_t N>

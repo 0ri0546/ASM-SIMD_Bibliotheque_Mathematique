@@ -11,6 +11,7 @@
 #include <immintrin.h>
 
 #include "Concepts.h"
+#include "SIMD_traits.h"
 
 template <float_num T, std::size_t N>
 class VecSIMD
@@ -125,15 +126,6 @@ inline auto Dot(
     const VecSIMD<T, N>& a,
     const VecSIMD<U, N>& b
 ) -> std::common_type_t<T, U>;
-
-template <float_num T, std::size_t N>
-struct simd_traits;
-
-template <float_num T>
-struct std::formatter<simd_traits<T, 128>>;
-
-template <float_num T>
-struct std::formatter<simd_traits<T, 256>>;
 
 template <>
 struct std::formatter<__m128>;
