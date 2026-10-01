@@ -497,51 +497,71 @@ inline auto Dot(
 {
     using R = std::common_type_t<T, U>;
 
-    if constexpr (std::same_as<R, float> && N == 4)
+    if constexpr (std::same_as<R, float>)
     {
-        const __m128 va = _mm_loadu_ps(a.Data());
-        const __m128 vb = _mm_loadu_ps(b.Data());
-        const __m128 mul = _mm_mul_ps(va, vb);
+        if constexpr (N == 4)
+        {
+            const __m128 v = _mm_mul_ps(
+                _mm_loadu_ps(a.Data()),
+                _mm_loadu_ps(b.Data())
+            );
 
-        alignas(16) float values[4];
-        _mm_store_ps(values, mul);
+            __m128 h = _mm_add_ps(v, _mm_movehl_ps(v, v));
+            h = _mm_add_ss(h, _mm_shuffle_ps(h, h, 1));
 
-        return values[0] + values[1] + values[2] + values[3];
+            return _mm_cvtss_f32(h);
+        }
+        else if constexpr (N == 8)
+        {
+            const __m256 v = _mm256_mul_ps(
+                _mm256_loadu_ps(a.Data()),
+                _mm256_loadu_ps(b.Data())
+            );
+
+            __m128 lo = _mm256_castps256_ps128(v);
+            __m128 hi = _mm256_extractf128_ps(v, 1);
+
+            lo = _mm_add_ps(lo, hi);
+            lo = _mm_add_ps(lo, _mm_movehl_ps(lo, lo));
+            lo = _mm_add_ss(lo, _mm_shuffle_ps(lo, lo, 1));
+
+            return _mm_cvtss_f32(lo);
+        }
     }
-    else if constexpr (std::same_as<R, float> && N == 8)
+    else if constexpr (std::same_as<R, double>)
     {
-        const __m256 va = _mm256_loadu_ps(a.Data());
-        const __m256 vb = _mm256_loadu_ps(b.Data());
-        const __m256 mul = _mm256_mul_ps(va, vb);
+        if constexpr (N == 2)
+        {
+            const __m128d v = _mm_mul_pd(
+                _mm_loadu_pd(a.Data()),
+                _mm_loadu_pd(b.Data())
+            );
 
-        alignas(32) float values[8];
-        _mm256_store_ps(values, mul);
+            return _mm_cvtsd_f64(_mm_add_sd(v, _mm_unpackhi_pd(v, v)));
+        }
+        else if constexpr (N == 4)
+        {
+            const __m256d v = _mm256_mul_pd(
+                _mm256_loadu_pd(a.Data()),
+                _mm256_loadu_pd(b.Data())
+            );
 
-        return values[0] + values[1] + values[2] + values[3]
-            + values[4] + values[5] + values[6] + values[7];
+            __m128d lo = _mm256_castpd256_pd128(v);
+            __m128d hi = _mm256_extractf128_pd(v, 1);
+
+            lo = _mm_add_pd(lo, hi);
+            lo = _mm_add_sd(lo, _mm_unpackhi_pd(lo, lo));
+
+            return _mm_cvtsd_f64(lo);
+        }
     }
-    else if constexpr (std::same_as<R, double> && N == 2)
-    {
-        const __m128d va = _mm_loadu_pd(a.Data());
-        const __m128d vb = _mm_loadu_pd(b.Data());
-        const __m128d mul = _mm_mul_pd(va, vb);
 
-        alignas(16) double values[2];
-        _mm_store_pd(values, mul);
+    // Fallback
+    R result{};
+    for (std::size_t i = 0; i < N; ++i)
+        result += static_cast<R>(a[i]) * static_cast<R>(b[i]);
 
-        return values[0] + values[1];
-    }
-    else
-    {
-        const __m256d va = _mm256_loadu_pd(a.Data());
-        const __m256d vb = _mm256_loadu_pd(b.Data());
-        const __m256d mul = _mm256_mul_pd(va, vb);
-
-        alignas(32) double values[4];
-        _mm256_store_pd(values, mul);
-
-        return values[0] + values[1] + values[2] + values[3];
-    }
+    return result;
 }
 
 template <std::floating_point T, std::size_t N>
@@ -553,9 +573,7 @@ inline constexpr T VecSIMD<T, N>::LengthSquared() const
 template <std::floating_point T, std::size_t N>
 inline constexpr T VecSIMD<T, N>::Length() const
 {
-    return static_cast<T>(
-        std::sqrt(static_cast<double>(LengthSquared()))
-    );
+    return std::sqrt(LengthSquared());
 }
 
 template <std::floating_point T, std::size_t N>
