@@ -13,7 +13,7 @@ namespace {
         Assert::AreEqual(expected, actual, tolerance);
     }
 
-    template <std::floating_point T>
+    template <float_num T>
     void ExpectNear(const Quaternion<T>& a, const Quaternion<T>& b, T tolerance = static_cast<T>(1e-4)) {
         ExpectNear(a.X(), b.X(), tolerance);
         ExpectNear(a.Y(), b.Y(), tolerance);
@@ -21,7 +21,7 @@ namespace {
         ExpectNear(a.W(), b.W(), tolerance);
     }
 
-    template <std::floating_point T>
+    template <float_num T>
     void ExpectNear(const Vec3<T>& a, const Vec3<T>& b, T tolerance = static_cast<T>(1e-4)) {
         ExpectNear(a[0], b[0], tolerance);
         ExpectNear(a[1], b[1], tolerance);

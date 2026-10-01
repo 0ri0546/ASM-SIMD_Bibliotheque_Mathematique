@@ -1,11 +1,12 @@
 #include <print>
 
 #include "VecSIMD.h"
+#include "QuaternionSIMD.h"
 
 int main()
 {
-    VecSIMD<float, 4> a(1.f, 2.f, 3.f, 4.f);
-    VecSIMD<float, 4> b(5.f, 6.f, 7.f, 8.f);
+    VecSIMD<float, 4> a(1.0f, 2.0f, 3.0f, 4.0f);
+    VecSIMD<float, 4> b(5.0f, 6.0f, 7.0f, 8.0f);
 
 	std::println("a = {:.3f}", a);
 	std::println("b = {:.3f}", b);
@@ -48,5 +49,23 @@ int main()
     std::println("g * h = {:.3f}", g * h);
     std::println("g / h = {:.3f}", g / h);
     std::println("Dot(g, h) = {:.3f}", Dot(g, h));
+    std::println("");
+    std::println("--------------------------------QUATERNION----------------------------------");
+    std::println("");
+
+    Quaternionf i(1.0f, 2.0f, 3.0f, 4.0f);
+    Quaternionf j(5.0f, 6.0f, 7.0f, 8.0f);
+    std::println("g + h = {:.3f}", i + j);
+    std::println("g - h = {:.3f}", i - j);
+    std::println("g * h = {:.3f}", i * j);
+    std::println("g / h = {:.3f}", i / 2);
+    std::println("identity = {}", i.Identity());
+    std::println("FromEuler = {}", i.FromEuler(1.0, 2.0, 3.0));
+    VecSIMD<float, 3> vec3(1.0f, 2.0f, 3.0f);
+    VecSIMD<float, 3> vec3b(4.0f, 3.0f, 12.0f);
+    std::println("FromAxisAngle = {}", i.FromAxisAngle(vec3, 4.0f));
+    std::println("FromToRotation = {}", i.FromToRotation(vec3, vec3b));
+    std::println("LookRotation = {}", i.LookRotation(vec3, vec3b));
+
     return 0;
 }

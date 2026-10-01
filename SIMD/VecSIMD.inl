@@ -1,54 +1,6 @@
 #pragma once
 
-template <>
-struct simd_traits<double, 128>
-{
-    using type = __m128d;
-    static constexpr std::size_t width = 2;
-
-    static type load(const double* data)
-    {
-        return _mm_loadu_pd(data);
-    }
-};
-
-template <>
-struct simd_traits<float, 128>
-{
-    using type = __m128;
-    static constexpr std::size_t width = 4;
-
-    static type load(const float* data)
-    {
-        return _mm_loadu_ps(data);
-    }
-};
-
-template <>
-struct simd_traits<float, 256>
-{
-    using type = __m256;
-    static constexpr std::size_t width = 8;
-
-    static type load(const float* data)
-    {
-        return _mm256_loadu_ps(data);
-    }
-};
-
-template <>
-struct simd_traits<double, 256>
-{
-    using type = __m256d;
-    static constexpr std::size_t width = 4;
-
-    static type load(const double* data)
-    {
-        return _mm256_loadu_pd(data);
-    }
-};
-
-template <std::floating_point T, std::size_t N>
+template <float_num T, std::size_t N>
 template <typename... Args>
     requires(sizeof...(Args) == N) &&
 (std::convertible_to<Args, T> && ...)
@@ -57,20 +9,19 @@ inline constexpr VecSIMD<T, N>::VecSIMD(Args&&... args)
 {
 }
 
-template <std::floating_point T, std::size_t N>
+template <float_num T, std::size_t N>
 inline constexpr T& VecSIMD<T, N>::operator[](size_type index)
 {
     return m_data[index];
 }
 
-
-template <std::floating_point T, std::size_t N>
+template <float_num T, std::size_t N>
 inline constexpr const T& VecSIMD<T, N>::operator[](size_type index) const
 {
     return m_data[index];
 }
 
-template <std::floating_point T, std::size_t N>
+template <float_num T, std::size_t N>
 template <std::size_t I>
 inline auto VecSIMD<T, N>::get_m128() const
 {
@@ -81,7 +32,7 @@ inline auto VecSIMD<T, N>::get_m128() const
     return traits::load(m_data.data() + I * traits::width);
 }
 
-template <std::floating_point T, std::size_t N>
+template <float_num T, std::size_t N>
 template <std::size_t I>
 inline auto VecSIMD<T, N>::get_m256() const
 {
@@ -92,26 +43,26 @@ inline auto VecSIMD<T, N>::get_m256() const
     return traits::load(m_data.data() + I * traits::width);
 }
 
-template <std::floating_point T, std::size_t N>
+template <float_num T, std::size_t N>
 inline constexpr T* VecSIMD<T, N>::Data()
 {
     return m_data.data();
 }
 
-template <std::floating_point T, std::size_t N>
+template <float_num T, std::size_t N>
 inline constexpr const T* VecSIMD<T, N>::Data() const
 {
     return m_data.data();
 }
 
-template <std::floating_point T, std::size_t N>
+template <float_num T, std::size_t N>
 inline constexpr std::size_t VecSIMD<T, N>::Size()
 {
     return N;
 }
 
-template <std::floating_point T, std::size_t N>
-template <std::floating_point U>
+template <float_num T, std::size_t N>
+template <float_num U>
 inline constexpr bool VecSIMD<T, N>::operator==(
     const VecSIMD<U, N>& other
     ) const
@@ -125,8 +76,8 @@ inline constexpr bool VecSIMD<T, N>::operator==(
     return true;
 }
 
-template <std::floating_point T, std::size_t N>
-template <std::floating_point U>
+template <float_num T, std::size_t N>
+template <float_num U>
 inline constexpr VecSIMD<T, N>& VecSIMD<T, N>::operator+=(
     const VecSIMD<U, N>& other
     )
@@ -135,8 +86,8 @@ inline constexpr VecSIMD<T, N>& VecSIMD<T, N>::operator+=(
     return *this;
 }
 
-template <std::floating_point T, std::size_t N>
-template <std::floating_point U>
+template <float_num T, std::size_t N>
+template <float_num U>
 inline constexpr VecSIMD<T, N>& VecSIMD<T, N>::operator-=(
     const VecSIMD<U, N>& other
     )
@@ -145,8 +96,8 @@ inline constexpr VecSIMD<T, N>& VecSIMD<T, N>::operator-=(
     return *this;
 }
 
-template <std::floating_point T, std::size_t N>
-template <std::floating_point U>
+template <float_num T, std::size_t N>
+template <float_num U>
 inline constexpr VecSIMD<T, N>& VecSIMD<T, N>::operator*=(
     const VecSIMD<U, N>& other
     )
@@ -155,8 +106,8 @@ inline constexpr VecSIMD<T, N>& VecSIMD<T, N>::operator*=(
     return *this;
 }
 
-template <std::floating_point T, std::size_t N>
-template <std::floating_point U>
+template <float_num T, std::size_t N>
+template <float_num U>
 inline constexpr VecSIMD<T, N>& VecSIMD<T, N>::operator/=(
     const VecSIMD<U, N>& other
     )
@@ -165,23 +116,23 @@ inline constexpr VecSIMD<T, N>& VecSIMD<T, N>::operator/=(
     return *this;
 }
 
-template <std::floating_point T, std::size_t N>
-template <std::floating_point U>
+template <float_num T, std::size_t N>
+template <float_num U>
 inline constexpr VecSIMD<T, N>& VecSIMD<T, N>::operator*=(U scalar)
 {
     *this = *this * scalar;
     return *this;
 }
 
-template <std::floating_point T, std::size_t N>
-template <std::floating_point U>
+template <float_num T, std::size_t N>
+template <float_num U>
 inline constexpr VecSIMD<T, N>& VecSIMD<T, N>::operator/=(U scalar)
 {
     *this = *this / scalar;
     return *this;
 }
 
-template <std::floating_point T, std::floating_point U, std::size_t N>
+template <float_num T, float_num U, std::size_t N>
 inline auto operator+(
     const VecSIMD<T, N>& a,
     const VecSIMD<U, N>& b
@@ -218,15 +169,12 @@ inline auto operator+(
         const __m256d vb = _mm256_loadu_pd(b.Data());
 
         _mm256_storeu_pd(result.Data(), _mm256_add_pd(va, vb));
-
     }
 
-
     return result;
-
 }
 
-template <std::floating_point T, std::floating_point U, std::size_t N>
+template <float_num T, float_num U, std::size_t N>
 inline auto operator-(
     const VecSIMD<T, N>& a,
     const VecSIMD<U, N>& b
@@ -268,7 +216,7 @@ inline auto operator-(
     return result;
 }
 
-template <std::floating_point T, std::floating_point U, std::size_t N>
+template <float_num T, float_num U, std::size_t N>
 inline auto operator*(
     const VecSIMD<T, N>& a,
     const VecSIMD<U, N>& b
@@ -311,7 +259,7 @@ inline auto operator*(
     return result;
 }
 
-template <std::floating_point T, std::floating_point U, std::size_t N>
+template <float_num T, float_num U, std::size_t N>
 inline auto operator/(
     const VecSIMD<T, N>& a,
     const VecSIMD<U, N>& b
@@ -353,7 +301,7 @@ inline auto operator/(
     return result;
 }
 
-template <std::floating_point T, std::floating_point U, std::size_t N>
+template <float_num T, float_num U, std::size_t N>
 inline auto operator*(
     const VecSIMD<T, N>& v,
     U scalar
@@ -395,7 +343,7 @@ inline auto operator*(
     return result;
 }
 
-template <std::floating_point T, std::floating_point U, std::size_t N>
+template <float_num T, float_num U, std::size_t N>
 inline auto operator*(
     U scalar,
     const VecSIMD<T, N>& v
@@ -404,7 +352,7 @@ inline auto operator*(
     return v * scalar;
 }
 
-template <std::floating_point T, std::floating_point U, std::size_t N>
+template <float_num T, float_num U, std::size_t N>
 inline auto operator/(
     const VecSIMD<T, N>& v,
     U scalar
@@ -446,13 +394,13 @@ inline auto operator/(
     return result;
 }
 
-template <std::floating_point T, std::size_t N>
+template <float_num T, std::size_t N>
 inline constexpr VecSIMD<T, N> VecSIMD<T, N>::operator+() const
 {
     return *this;
 }
 
-template <std::floating_point T, std::size_t N>
+template <float_num T, std::size_t N>
 inline constexpr VecSIMD<T, N> VecSIMD<T, N>::operator-() const
 {
     VecSIMD result;
@@ -489,7 +437,7 @@ inline constexpr VecSIMD<T, N> VecSIMD<T, N>::operator-() const
     return result;
 }
 
-template <std::floating_point T, std::floating_point U, std::size_t N>
+template <float_num T, float_num U, std::size_t N>
 inline auto Dot(
     const VecSIMD<T, N>& a,
     const VecSIMD<U, N>& b
@@ -564,19 +512,19 @@ inline auto Dot(
     return result;
 }
 
-template <std::floating_point T, std::size_t N>
+template <float_num T, std::size_t N>
 inline constexpr T VecSIMD<T, N>::LengthSquared() const
 {
     return Dot(*this, *this);
 }
 
-template <std::floating_point T, std::size_t N>
+template <float_num T, std::size_t N>
 inline constexpr T VecSIMD<T, N>::Length() const
 {
     return std::sqrt(LengthSquared());
 }
 
-template <std::floating_point T, std::size_t N>
+template <float_num T, std::size_t N>
 inline constexpr VecSIMD<T, N> VecSIMD<T, N>::Normalized() const
 {
     const T length = Length();
@@ -587,7 +535,7 @@ inline constexpr VecSIMD<T, N> VecSIMD<T, N>::Normalized() const
     return *this / length;
 }
 
-template <std::floating_point T, std::size_t N>
+template <float_num T, std::size_t N>
 inline constexpr void VecSIMD<T, N>::Normalize()
 {
     *this = Normalized();
@@ -616,7 +564,7 @@ static consteval auto TypeName() {
 }
 
 
-template <std::floating_point T, std::size_t N>
+template <float_num T, std::size_t N>
 struct std::formatter<VecSIMD<T, N>>
 {
     std::formatter<T> underlying;

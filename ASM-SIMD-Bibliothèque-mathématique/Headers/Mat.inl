@@ -1,6 +1,6 @@
 #pragma once
 
-template <std::floating_point T, std::size_t RowCount, std::size_t ColCount, typename Layout>
+template <float_num T, std::size_t RowCount, std::size_t ColCount, typename Layout>
 template <typename... Args>
     requires(sizeof...(Args) == RowCount * ColCount) && (std::convertible_to<Args, T> && ...)
 inline constexpr Mat<T, RowCount, ColCount, Layout>::Mat(Args&&... args) {
@@ -13,8 +13,8 @@ inline constexpr Mat<T, RowCount, ColCount, Layout>::Mat(Args&&... args) {
     }
 }
 
-template <std::floating_point T, std::size_t RowCount, std::size_t ColCount, typename Layout>
-template <std::floating_point U, typename OtherLayout>
+template <float_num T, std::size_t RowCount, std::size_t ColCount, typename Layout>
+template <float_num U, typename OtherLayout>
 inline constexpr Mat<T, RowCount, ColCount, Layout>::Mat(const Mat<U, RowCount, ColCount, OtherLayout>& other) {
     for (size_type row = 0; row < RowCount; ++row) {
         for (size_type col = 0; col < ColCount; ++col) {
@@ -23,63 +23,63 @@ inline constexpr Mat<T, RowCount, ColCount, Layout>::Mat(const Mat<U, RowCount, 
     }
 }
 
-template <std::floating_point T, std::size_t RowCount, std::size_t ColCount, typename Layout>
+template <float_num T, std::size_t RowCount, std::size_t ColCount, typename Layout>
 inline constexpr T& Mat<T, RowCount, ColCount, Layout>::operator[](size_type row, size_type col) {
     return m_data[m_mapping(row, col)];
 }
 
-template <std::floating_point T, std::size_t RowCount, std::size_t ColCount, typename Layout>
+template <float_num T, std::size_t RowCount, std::size_t ColCount, typename Layout>
 inline constexpr const T& Mat<T, RowCount, ColCount, Layout>::operator[](size_type row, size_type col) const {
     return m_data[m_mapping(row, col)];
 }
 
-template <std::floating_point T, std::size_t RowCount, std::size_t ColCount, typename Layout>
+template <float_num T, std::size_t RowCount, std::size_t ColCount, typename Layout>
 inline constexpr T& Mat<T, RowCount, ColCount, Layout>::operator()(size_type row, size_type col) {
     return (*this)[row, col];
 }
 
-template <std::floating_point T, std::size_t RowCount, std::size_t ColCount, typename Layout>
+template <float_num T, std::size_t RowCount, std::size_t ColCount, typename Layout>
 inline constexpr const T& Mat<T, RowCount, ColCount, Layout>::operator()(size_type row, size_type col) const {
     return (*this)[row, col];
 }
 
-template <std::floating_point T, std::size_t RowCount, std::size_t ColCount, typename Layout>
+template <float_num T, std::size_t RowCount, std::size_t ColCount, typename Layout>
 inline constexpr T* Mat<T, RowCount, ColCount, Layout>::Data() {
     return m_data.data();
 }
 
-template <std::floating_point T, std::size_t RowCount, std::size_t ColCount, typename Layout>
+template <float_num T, std::size_t RowCount, std::size_t ColCount, typename Layout>
 inline constexpr const T* Mat<T, RowCount, ColCount, Layout>::Data() const {
     return m_data.data();
 }
 
-template <std::floating_point T, std::size_t RowCount, std::size_t ColCount, typename Layout>
+template <float_num T, std::size_t RowCount, std::size_t ColCount, typename Layout>
 inline constexpr auto Mat<T, RowCount, ColCount, Layout>::MDSpan() {
     return mdspan_type{m_data.data()};
 }
 
-template <std::floating_point T, std::size_t RowCount, std::size_t ColCount, typename Layout>
+template <float_num T, std::size_t RowCount, std::size_t ColCount, typename Layout>
 inline constexpr auto Mat<T, RowCount, ColCount, Layout>::MDSpan() const {
     return const_mdspan_type{m_data.data()};
 }
 
-template <std::floating_point T, std::size_t RowCount, std::size_t ColCount, typename Layout>
+template <float_num T, std::size_t RowCount, std::size_t ColCount, typename Layout>
 inline constexpr std::size_t Mat<T, RowCount, ColCount, Layout>::Rows() {
     return RowCount;
 }
 
-template <std::floating_point T, std::size_t RowCount, std::size_t ColCount, typename Layout>
+template <float_num T, std::size_t RowCount, std::size_t ColCount, typename Layout>
 inline constexpr std::size_t Mat<T, RowCount, ColCount, Layout>::Cols() {
     return ColCount;
 }
 
-template <std::floating_point T, std::size_t RowCount, std::size_t ColCount, typename Layout>
+template <float_num T, std::size_t RowCount, std::size_t ColCount, typename Layout>
 inline constexpr std::size_t Mat<T, RowCount, ColCount, Layout>::Size() {
     return RowCount * ColCount;
 }
 
-template <std::floating_point T, std::size_t RowCount, std::size_t ColCount, typename Layout>
-template <std::floating_point U>
+template <float_num T, std::size_t RowCount, std::size_t ColCount, typename Layout>
+template <float_num U>
 inline constexpr bool
 Mat<T, RowCount, ColCount, Layout>::operator==(const Mat<U, RowCount, ColCount, Layout>& other) const {
     for (size_type row = 0; row < RowCount; ++row) {
@@ -93,8 +93,8 @@ Mat<T, RowCount, ColCount, Layout>::operator==(const Mat<U, RowCount, ColCount, 
     return true;
 }
 
-template <std::floating_point T, std::size_t RowCount, std::size_t ColCount, typename Layout>
-template <std::floating_point U, typename OtherLayout>
+template <float_num T, std::size_t RowCount, std::size_t ColCount, typename Layout>
+template <float_num U, typename OtherLayout>
 inline constexpr bool
 Mat<T, RowCount, ColCount, Layout>::operator==(const Mat<U, RowCount, ColCount, OtherLayout>& other) const {
     for (size_type row = 0; row < RowCount; ++row) {
@@ -108,8 +108,8 @@ Mat<T, RowCount, ColCount, Layout>::operator==(const Mat<U, RowCount, ColCount, 
     return true;
 }
 
-template <std::floating_point T, std::size_t RowCount, std::size_t ColCount, typename Layout>
-template <std::floating_point U, typename OtherLayout>
+template <float_num T, std::size_t RowCount, std::size_t ColCount, typename Layout>
+template <float_num U, typename OtherLayout>
 inline constexpr Mat<T, RowCount, ColCount, Layout>&
 Mat<T, RowCount, ColCount, Layout>::operator+=(const Mat<U, RowCount, ColCount, OtherLayout>& other) {
     for (size_type row = 0; row < RowCount; ++row) {
@@ -121,8 +121,8 @@ Mat<T, RowCount, ColCount, Layout>::operator+=(const Mat<U, RowCount, ColCount, 
     return *this;
 }
 
-template <std::floating_point T, std::size_t RowCount, std::size_t ColCount, typename Layout>
-template <std::floating_point U, typename OtherLayout>
+template <float_num T, std::size_t RowCount, std::size_t ColCount, typename Layout>
+template <float_num U, typename OtherLayout>
 inline constexpr Mat<T, RowCount, ColCount, Layout>&
 Mat<T, RowCount, ColCount, Layout>::operator-=(const Mat<U, RowCount, ColCount, OtherLayout>& other) {
     for (size_type row = 0; row < RowCount; ++row) {
@@ -134,8 +134,8 @@ Mat<T, RowCount, ColCount, Layout>::operator-=(const Mat<U, RowCount, ColCount, 
     return *this;
 }
 
-template <std::floating_point T, std::size_t RowCount, std::size_t ColCount, typename Layout>
-template <std::floating_point U>
+template <float_num T, std::size_t RowCount, std::size_t ColCount, typename Layout>
+template <float_num U>
 inline constexpr Mat<T, RowCount, ColCount, Layout>& Mat<T, RowCount, ColCount, Layout>::operator*=(U scalar) {
     for (auto& value : m_data) {
         value *= scalar;
@@ -144,8 +144,8 @@ inline constexpr Mat<T, RowCount, ColCount, Layout>& Mat<T, RowCount, ColCount, 
     return *this;
 }
 
-template <std::floating_point T, std::size_t RowCount, std::size_t ColCount, typename Layout>
-template <std::floating_point U>
+template <float_num T, std::size_t RowCount, std::size_t ColCount, typename Layout>
+template <float_num U>
 inline constexpr Mat<T, RowCount, ColCount, Layout>& Mat<T, RowCount, ColCount, Layout>::operator/=(U scalar) {
     for (auto& value : m_data) {
         value /= scalar;
@@ -154,12 +154,12 @@ inline constexpr Mat<T, RowCount, ColCount, Layout>& Mat<T, RowCount, ColCount, 
     return *this;
 }
 
-template <std::floating_point T, std::size_t RowCount, std::size_t ColCount, typename Layout>
+template <float_num T, std::size_t RowCount, std::size_t ColCount, typename Layout>
 inline constexpr Mat<T, RowCount, ColCount, Layout> Mat<T, RowCount, ColCount, Layout>::operator+() const {
     return *this;
 }
 
-template <std::floating_point T, std::size_t RowCount, std::size_t ColCount, typename Layout>
+template <float_num T, std::size_t RowCount, std::size_t ColCount, typename Layout>
 inline constexpr Mat<T, RowCount, ColCount, Layout> Mat<T, RowCount, ColCount, Layout>::operator-() const {
     Mat result;
 
@@ -172,7 +172,7 @@ inline constexpr Mat<T, RowCount, ColCount, Layout> Mat<T, RowCount, ColCount, L
     return result;
 }
 
-template <std::floating_point T, std::size_t RowCount, std::size_t ColCount, typename Layout>
+template <float_num T, std::size_t RowCount, std::size_t ColCount, typename Layout>
 inline constexpr Mat<T, ColCount, RowCount, Layout> Mat<T, RowCount, ColCount, Layout>::Transpose() const {
     Mat<T, ColCount, RowCount, Layout> result;
 
@@ -185,7 +185,7 @@ inline constexpr Mat<T, ColCount, RowCount, Layout> Mat<T, RowCount, ColCount, L
     return result;
 }
 
-template <std::floating_point T, std::size_t RowCount, std::size_t ColCount, typename Layout>
+template <float_num T, std::size_t RowCount, std::size_t ColCount, typename Layout>
 template <std::size_t N>
     requires(RowCount == ColCount && N == RowCount)
 inline constexpr Mat<T, RowCount, ColCount, Layout> Mat<T, RowCount, ColCount, Layout>::Identity() {
@@ -198,7 +198,7 @@ inline constexpr Mat<T, RowCount, ColCount, Layout> Mat<T, RowCount, ColCount, L
     return result;
 }
 
-template <std::floating_point T, std::size_t RowCount, std::size_t ColCount, typename Layout>
+template <float_num T, std::size_t RowCount, std::size_t ColCount, typename Layout>
 template <std::size_t N>
     requires(RowCount == ColCount && N == RowCount)
 inline constexpr auto Mat<T, RowCount, ColCount, Layout>::Determinant() const {
@@ -228,7 +228,7 @@ inline constexpr auto Mat<T, RowCount, ColCount, Layout>::Determinant() const {
     return result;
 }
 
-template <std::floating_point T, std::size_t RowCount, std::size_t ColCount, typename Layout>
+template <float_num T, std::size_t RowCount, std::size_t ColCount, typename Layout>
 template <std::size_t N>
     requires(RowCount == ColCount && N == RowCount)
 inline constexpr Mat<T, RowCount, ColCount, Layout> Mat<T, RowCount, ColCount, Layout>::Inverse() const {
@@ -281,15 +281,15 @@ inline constexpr Mat<T, RowCount, ColCount, Layout> Mat<T, RowCount, ColCount, L
     return result;
 }
 
-template <std::floating_point T, std::size_t RowCount, std::size_t ColCount, typename Layout>
+template <float_num T, std::size_t RowCount, std::size_t ColCount, typename Layout>
 template <std::size_t R, std::size_t C>
     requires(R == RowCount && C == ColCount)
 inline constexpr Mat<T, RowCount, ColCount, Layout> Mat<T, RowCount, ColCount, Layout>::Zero() {
     return Mat{};
 }
 
-template <std::floating_point T, std::size_t RowCount, std::size_t ColCount, typename Layout>
-template <std::floating_point U, std::size_t R, std::size_t C>
+template <float_num T, std::size_t RowCount, std::size_t ColCount, typename Layout>
+template <float_num U, std::size_t R, std::size_t C>
     requires(R == RowCount && C == ColCount && R == 4 && C == 4)
 inline constexpr Mat<T, RowCount, ColCount, Layout> Mat<T, RowCount, ColCount, Layout>::RotationX(U angleRadians) {
     const U s = std::sin(angleRadians);
@@ -304,8 +304,8 @@ inline constexpr Mat<T, RowCount, ColCount, Layout> Mat<T, RowCount, ColCount, L
     return result;
 }
 
-template <std::floating_point T, std::size_t RowCount, std::size_t ColCount, typename Layout>
-template <std::floating_point U, std::size_t R, std::size_t C>
+template <float_num T, std::size_t RowCount, std::size_t ColCount, typename Layout>
+template <float_num U, std::size_t R, std::size_t C>
     requires(R == RowCount && C == ColCount && R == 4 && C == 4)
 inline constexpr Mat<T, RowCount, ColCount, Layout> Mat<T, RowCount, ColCount, Layout>::RotationY(U angleRadians) {
     const U s = std::sin(angleRadians);
@@ -320,8 +320,8 @@ inline constexpr Mat<T, RowCount, ColCount, Layout> Mat<T, RowCount, ColCount, L
     return result;
 }
 
-template <std::floating_point T, std::size_t RowCount, std::size_t ColCount, typename Layout>
-template <std::floating_point U, std::size_t R, std::size_t C>
+template <float_num T, std::size_t RowCount, std::size_t ColCount, typename Layout>
+template <float_num U, std::size_t R, std::size_t C>
     requires(R == RowCount && C == ColCount && R == 4 && C == 4)
 inline constexpr Mat<T, RowCount, ColCount, Layout> Mat<T, RowCount, ColCount, Layout>::RotationZ(U angleRadians) {
     const U s = std::sin(angleRadians);
@@ -336,8 +336,8 @@ inline constexpr Mat<T, RowCount, ColCount, Layout> Mat<T, RowCount, ColCount, L
     return result;
 }
 
-template <std::floating_point T, std::size_t RowCount, std::size_t ColCount, typename Layout>
-template <std::floating_point U, std::size_t R, std::size_t C>
+template <float_num T, std::size_t RowCount, std::size_t ColCount, typename Layout>
+template <float_num U, std::size_t R, std::size_t C>
     requires(R == RowCount && C == ColCount && R == 4 && C == 4)
 inline constexpr Mat<T, RowCount, ColCount, Layout> Mat<T, RowCount, ColCount, Layout>::Scale(const Vec3<U>& scale) {
     Mat result = Identity();
@@ -348,8 +348,8 @@ inline constexpr Mat<T, RowCount, ColCount, Layout> Mat<T, RowCount, ColCount, L
     return result;
 }
 
-template <std::floating_point T, std::size_t RowCount, std::size_t ColCount, typename Layout>
-template <std::floating_point U, std::size_t R, std::size_t C>
+template <float_num T, std::size_t RowCount, std::size_t ColCount, typename Layout>
+template <float_num U, std::size_t R, std::size_t C>
     requires(R == RowCount && C == ColCount && R == 4 && C == 4)
 inline constexpr Mat<T, RowCount, ColCount, Layout>
 Mat<T, RowCount, ColCount, Layout>::Translate(const Vec3<U>& translation) {
@@ -361,8 +361,8 @@ Mat<T, RowCount, ColCount, Layout>::Translate(const Vec3<U>& translation) {
     return result;
 }
 
-template <std::floating_point T, std::size_t RowCount, std::size_t ColCount, typename Layout>
-template <std::floating_point U, std::size_t R, std::size_t C>
+template <float_num T, std::size_t RowCount, std::size_t ColCount, typename Layout>
+template <float_num U, std::size_t R, std::size_t C>
     requires(R == RowCount && C == ColCount && R == 4 && C == 4)
 inline constexpr Mat<T, RowCount, ColCount, Layout>
 Mat<T, RowCount, ColCount, Layout>::Rotate(const Quaternion<U>& rotation) {
@@ -398,8 +398,8 @@ Mat<T, RowCount, ColCount, Layout>::Rotate(const Quaternion<U>& rotation) {
     return result;
 }
 
-template <std::floating_point T, std::size_t RowCount, std::size_t ColCount, typename Layout>
-template <std::floating_point U, std::size_t R, std::size_t C>
+template <float_num T, std::size_t RowCount, std::size_t ColCount, typename Layout>
+template <float_num U, std::size_t R, std::size_t C>
     requires(R == RowCount && C == ColCount && R == 4 && C == 4)
 inline constexpr Mat<T, RowCount, ColCount, Layout> Mat<T, RowCount, ColCount, Layout>::TRS(const Vec3<U>& translation,
                                                                                         const Quaternion<U>& rotation,
@@ -407,8 +407,8 @@ inline constexpr Mat<T, RowCount, ColCount, Layout> Mat<T, RowCount, ColCount, L
     return Translate(translation) * Rotate(rotation) * Mat::Scale(scale);
 }
 
-template <std::floating_point T, std::size_t RowCount, std::size_t ColCount, typename Layout>
-template <std::floating_point U, std::size_t R, std::size_t C>
+template <float_num T, std::size_t RowCount, std::size_t ColCount, typename Layout>
+template <float_num U, std::size_t R, std::size_t C>
     requires(R == RowCount && C == ColCount && R == 4 && C == 4)
 inline constexpr Mat<T, RowCount, ColCount, Layout>
 Mat<T, RowCount, ColCount, Layout>::Perspective(U fovYRadians, U aspect, U nearPlane, U farPlane) {
@@ -425,8 +425,8 @@ Mat<T, RowCount, ColCount, Layout>::Perspective(U fovYRadians, U aspect, U nearP
     return result;
 }
 
-template <std::floating_point T, std::size_t RowCount, std::size_t ColCount, typename Layout>
-template <std::floating_point U, std::size_t R, std::size_t C>
+template <float_num T, std::size_t RowCount, std::size_t ColCount, typename Layout>
+template <float_num U, std::size_t R, std::size_t C>
     requires(R == RowCount && C == ColCount && R == 4 && C == 4)
 inline constexpr Mat<T, RowCount, ColCount, Layout>
 Mat<T, RowCount, ColCount, Layout>::Ortho(U left, U right, U bottom, U top, U nearPlane, U farPlane) {
@@ -442,8 +442,8 @@ Mat<T, RowCount, ColCount, Layout>::Ortho(U left, U right, U bottom, U top, U ne
     return result;
 }
 
-template <std::floating_point T, std::size_t RowCount, std::size_t ColCount, typename Layout>
-template <std::floating_point U, std::size_t R, std::size_t C>
+template <float_num T, std::size_t RowCount, std::size_t ColCount, typename Layout>
+template <float_num U, std::size_t R, std::size_t C>
     requires(R == RowCount && C == ColCount && R == 4 && C == 4)
 inline constexpr Mat<T, RowCount, ColCount, Layout>
 Mat<T, RowCount, ColCount, Layout>::LookAt(const Vec3<U>& eye, const Vec3<U>& target, const Vec3<U>& up) {
@@ -472,8 +472,8 @@ Mat<T, RowCount, ColCount, Layout>::LookAt(const Vec3<U>& eye, const Vec3<U>& ta
     return result;
 }
 
-template <std::floating_point T, std::size_t RowCount, std::size_t ColCount, typename Layout>
-template <std::floating_point U, std::size_t R, std::size_t C>
+template <float_num T, std::size_t RowCount, std::size_t ColCount, typename Layout>
+template <float_num U, std::size_t R, std::size_t C>
     requires(R == RowCount && C == ColCount && R == 4 && C == 4)
 inline constexpr Vec3<std::common_type_t<T, U>>
 Mat<T, RowCount, ColCount, Layout>::MultiplyPoint(const Vec3<U>& point) const {
@@ -495,8 +495,8 @@ Mat<T, RowCount, ColCount, Layout>::MultiplyPoint(const Vec3<U>& point) const {
     return Vec3<Result>{x, y, z};
 }
 
-template <std::floating_point T, std::size_t RowCount, std::size_t ColCount, typename Layout>
-template <std::floating_point U, std::size_t R, std::size_t C>
+template <float_num T, std::size_t RowCount, std::size_t ColCount, typename Layout>
+template <float_num U, std::size_t R, std::size_t C>
     requires(R == RowCount && C == ColCount && R == 4 && C == 4)
 inline constexpr Vec3<std::common_type_t<T, U>>
 Mat<T, RowCount, ColCount, Layout>::MultiplyVector(const Vec3<U>& vector) const {
@@ -515,14 +515,14 @@ Mat<T, RowCount, ColCount, Layout>::MultiplyVector(const Vec3<U>& vector) const 
     return Vec3<Result>{x, y, z};
 }
 
-template <std::floating_point T, std::size_t RowCount, std::size_t ColCount, typename Layout>
+template <float_num T, std::size_t RowCount, std::size_t ColCount, typename Layout>
 template <std::size_t R, std::size_t C>
     requires(R == RowCount && C == ColCount && R == 4 && C == 4)
 inline constexpr Vec3<T> Mat<T, RowCount, ColCount, Layout>::ExtractPosition() const {
     return Vec3<T>{(*this)[0, 3], (*this)[1, 3], (*this)[2, 3]};
 }
 
-template <std::floating_point T, std::size_t RowCount, std::size_t ColCount, typename Layout>
+template <float_num T, std::size_t RowCount, std::size_t ColCount, typename Layout>
 template <std::size_t R, std::size_t C>
     requires(R == RowCount && C == ColCount && R == 4 && C == 4)
 inline constexpr Vec3<T> Mat<T, RowCount, ColCount, Layout>::ExtractScale() const {
@@ -533,8 +533,8 @@ inline constexpr Vec3<T> Mat<T, RowCount, ColCount, Layout>::ExtractScale() cons
     return Vec3<T>{col0.Length(), col1.Length(), col2.Length()};
 }
 
-template <std::floating_point T, std::size_t RowCount, std::size_t ColCount, typename Layout>
-template <std::floating_point U, std::size_t R, std::size_t C>
+template <float_num T, std::size_t RowCount, std::size_t ColCount, typename Layout>
+template <float_num U, std::size_t R, std::size_t C>
     requires(R == RowCount && C == ColCount && R == 4 && C == 4)
 inline constexpr Quaternion<U> Mat<T, RowCount, ColCount, Layout>::ExtractRotation() const {
     const Vec3<T> scale = ExtractScale();
@@ -574,7 +574,7 @@ inline constexpr Quaternion<U> Mat<T, RowCount, ColCount, Layout>::ExtractRotati
     return Quaternion<T>((m02 + m20) / s, (m12 + m21) / s, s * T{0.25}, (m10 - m01) / s);
 }
 
-template <std::floating_point T, std::floating_point U, std::size_t RowCount, std::size_t ColCount, typename Layout>
+template <float_num T, float_num U, std::size_t RowCount, std::size_t ColCount, typename Layout>
 inline constexpr auto operator+(const Mat<T, RowCount, ColCount, Layout>& a, const Mat<U, RowCount, ColCount, Layout>& b)
     -> MatCommon<T, U, RowCount, ColCount, Layout> {
     using R = std::common_type_t<T, U>;
@@ -590,7 +590,7 @@ inline constexpr auto operator+(const Mat<T, RowCount, ColCount, Layout>& a, con
     return result;
 }
 
-template <std::floating_point T, std::floating_point U, std::size_t RowCount, std::size_t ColCount, typename Layout>
+template <float_num T, float_num U, std::size_t RowCount, std::size_t ColCount, typename Layout>
 inline constexpr auto operator-(const Mat<T, RowCount, ColCount, Layout>& a, const Mat<U, RowCount, ColCount, Layout>& b)
     -> MatCommon<T, U, RowCount, ColCount, Layout> {
     using R = std::common_type_t<T, U>;
@@ -606,7 +606,7 @@ inline constexpr auto operator-(const Mat<T, RowCount, ColCount, Layout>& a, con
     return result;
 }
 
-template <std::floating_point T, std::floating_point U, std::size_t RowCount, std::size_t ColCount, typename Layout>
+template <float_num T, float_num U, std::size_t RowCount, std::size_t ColCount, typename Layout>
 inline constexpr auto operator*(const Mat<T, RowCount, ColCount, Layout>& mat, U scalar)
     -> MatCommon<T, U, RowCount, ColCount, Layout> {
     using R = std::common_type_t<T, U>;
@@ -622,13 +622,13 @@ inline constexpr auto operator*(const Mat<T, RowCount, ColCount, Layout>& mat, U
     return result;
 }
 
-template <std::floating_point T, std::floating_point U, std::size_t RowCount, std::size_t ColCount, typename Layout>
+template <float_num T, float_num U, std::size_t RowCount, std::size_t ColCount, typename Layout>
 inline constexpr auto operator*(U scalar, const Mat<T, RowCount, ColCount, Layout>& mat)
     -> MatCommon<T, U, RowCount, ColCount, Layout> {
     return mat * scalar;
 }
 
-template <std::floating_point T, std::floating_point U, std::size_t RowCount, std::size_t ColCount, typename Layout>
+template <float_num T, float_num U, std::size_t RowCount, std::size_t ColCount, typename Layout>
 inline constexpr auto operator/(const Mat<T, RowCount, ColCount, Layout>& mat, U scalar)
     -> MatCommon<T, U, RowCount, ColCount, Layout> {
     using R = std::common_type_t<T, U>;
@@ -644,7 +644,7 @@ inline constexpr auto operator/(const Mat<T, RowCount, ColCount, Layout>& mat, U
     return result;
 }
 
-template <std::floating_point T, std::floating_point U, std::size_t A, std::size_t B, std::size_t C, typename Layout>
+template <float_num T, float_num U, std::size_t A, std::size_t B, std::size_t C, typename Layout>
 inline constexpr auto operator*(const Mat<T, A, B, Layout>& lhs, const Mat<U, B, C, Layout>& rhs)
     -> MatCommon<T, U, A, C, Layout> {
     using R = std::common_type_t<T, U>;
@@ -666,7 +666,7 @@ inline constexpr auto operator*(const Mat<T, A, B, Layout>& lhs, const Mat<U, B,
     return result;
 }
 
-template <std::floating_point T, std::size_t RowCount, std::size_t ColCount, typename FromLayout, typename ToLayout>
+template <float_num T, std::size_t RowCount, std::size_t ColCount, typename FromLayout, typename ToLayout>
 inline constexpr Mat<T, RowCount, ColCount, ToLayout> MatCastLayout(const Mat<T, RowCount, ColCount, FromLayout>& mat) {
     Mat<T, RowCount, ColCount, ToLayout> result;
 
@@ -679,7 +679,7 @@ inline constexpr Mat<T, RowCount, ColCount, ToLayout> MatCastLayout(const Mat<T,
     return result;
 }
 
-template <std::floating_point T, std::floating_point U, std::size_t RowCount, std::size_t ColCount, typename Layout>
+template <float_num T, float_num U, std::size_t RowCount, std::size_t ColCount, typename Layout>
 inline constexpr auto operator*(const Mat<T, RowCount, ColCount, Layout>& mat, const Vec<U, ColCount>& vec)
     -> Vec<std::common_type_t<T, U>, RowCount> {
     using R = std::common_type_t<T, U>;
@@ -699,12 +699,12 @@ inline constexpr auto operator*(const Mat<T, RowCount, ColCount, Layout>& mat, c
     return result;
 }
 
-template <std::floating_point T>
+template <float_num T>
 inline constexpr T ToRadians(T degrees) {
     return degrees * (std::numbers::pi_v<T> / T{180});
 }
 
-template <std::floating_point T, std::size_t RowCount, std::size_t ColCount, typename Layout>
+template <float_num T, std::size_t RowCount, std::size_t ColCount, typename Layout>
 inline constexpr bool ValidTRS(const Mat<T, RowCount, ColCount, Layout>& mat) {
     if constexpr (RowCount != 4 || ColCount != 4) {
         return false;
@@ -731,7 +731,7 @@ inline constexpr bool ValidTRS(const Mat<T, RowCount, ColCount, Layout>& mat) {
     }
 }
 
-template <std::floating_point T, std::size_t RowCount, std::size_t ColCount, typename Layout>
+template <float_num T, std::size_t RowCount, std::size_t ColCount, typename Layout>
 struct std::formatter<Mat<T, RowCount, ColCount, Layout>> {
     std::formatter<T> underlying;
 
