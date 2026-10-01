@@ -1,24 +1,24 @@
 #pragma once
 
-template <std::floating_point T>
+template <float_num T>
 inline constexpr Quaternion<T>::Quaternion(T x, T y, T z, T w) : m_x(x),
                                                             m_y(y),
                                                             m_z(z),
                                                             m_w(w) {}
 
-template <std::floating_point T>
-template <std::floating_point U>
+template <float_num T>
+template <float_num U>
 inline constexpr Quaternion<T>::Quaternion(const Vec3<U>& axis, U angleRadians) {
     *this = FromAxisAngle(axis, angleRadians);
 }
 
-template <std::floating_point T>
+template <float_num T>
 inline constexpr Quaternion<T> Quaternion<T>::Identity() {
     return Quaternion(T{0}, T{0}, T{0}, T{1});
 }
 
-template <std::floating_point T>
-template <std::floating_point U>
+template <float_num T>
+template <float_num U>
 inline constexpr Quaternion<T> Quaternion<T>::FromEuler(U pitch, U yaw, U roll) {
     const U halfPitch = pitch * U{0.5};
     const U halfYaw = yaw * U{0.5};
@@ -35,8 +35,8 @@ inline constexpr Quaternion<T> Quaternion<T>::FromEuler(U pitch, U yaw, U roll) 
                         static_cast<T>(cp * cy * sr - sp * sy * cr), static_cast<T>(cp * cy * cr + sp * sy * sr));
 }
 
-template <std::floating_point T>
-template <std::floating_point U>
+template <float_num T>
+template <float_num U>
 inline constexpr Quaternion<T> Quaternion<T>::FromAxisAngle(const Vec3<U>& axis, U angleRadians) {
     const U halfAngle = angleRadians * U{0.5};
     const U s = std::sin(halfAngle);
@@ -55,8 +55,8 @@ inline constexpr Quaternion<T> Quaternion<T>::FromAxisAngle(const Vec3<U>& axis,
                         static_cast<T>(normalizedAxis[2] * s), static_cast<T>(c));
 }
 
-template <std::floating_point T>
-template <std::floating_point U>
+template <float_num T>
+template <float_num U>
 inline constexpr Quaternion<T> Quaternion<T>::FromToRotation(const Vec3<U>& from, const Vec3<U>& to) {
     const Vec3<U> nFrom = from.Normalized();
     const Vec3<U> nTo = to.Normalized();
@@ -86,8 +86,8 @@ inline constexpr Quaternion<T> Quaternion<T>::FromToRotation(const Vec3<U>& from
         .Normalized();
 }
 
-template <std::floating_point T>
-template <std::floating_point U>
+template <float_num T>
+template <float_num U>
 inline constexpr Quaternion<T> Quaternion<T>::LookRotation(const Vec3<U>& forward, const Vec3<U>& up) {
     const Vec3<U> f = forward.Normalized();
     const Vec3<U> right = Cross(up, f).Normalized();
@@ -122,69 +122,69 @@ inline constexpr Quaternion<T> Quaternion<T>::LookRotation(const Vec3<U>& forwar
                         static_cast<T>((m10 - m01) / s));
 }
 
-template <std::floating_point T>
+template <float_num T>
 inline constexpr T& Quaternion<T>::X() {
     return m_x;
 }
 
-template <std::floating_point T>
+template <float_num T>
 inline constexpr const T& Quaternion<T>::X() const {
     return m_x;
 }
 
-template <std::floating_point T>
+template <float_num T>
 inline constexpr T& Quaternion<T>::Y() {
     return m_y;
 }
 
-template <std::floating_point T>
+template <float_num T>
 inline constexpr const T& Quaternion<T>::Y() const {
     return m_y;
 }
 
-template <std::floating_point T>
+template <float_num T>
 inline constexpr T& Quaternion<T>::Z() {
     return m_z;
 }
 
-template <std::floating_point T>
+template <float_num T>
 inline constexpr const T& Quaternion<T>::Z() const {
     return m_z;
 }
 
-template <std::floating_point T>
+template <float_num T>
 inline constexpr T& Quaternion<T>::W() {
     return m_w;
 }
 
-template <std::floating_point T>
+template <float_num T>
 inline constexpr const T& Quaternion<T>::W() const {
     return m_w;
 }
 
-template <std::floating_point T>
+template <float_num T>
 inline constexpr T* Quaternion<T>::Data() {
     return &m_x;
 }
 
-template <std::floating_point T>
+template <float_num T>
 inline constexpr const T* Quaternion<T>::Data() const {
     return &m_x;
 }
 
-template <std::floating_point T>
+template <float_num T>
 inline constexpr std::size_t Quaternion<T>::Size() {
     return 4;
 }
 
-template <std::floating_point T>
-template <std::floating_point U>
+template <float_num T>
+template <float_num U>
 inline constexpr bool Quaternion<T>::operator==(const Quaternion<U>& other) const {
     return m_x == other.X() && m_y == other.Y() && m_z == other.Z() && m_w == other.W();
 }
 
-template <std::floating_point T>
-template <std::floating_point U>
+template <float_num T>
+template <float_num U>
 inline constexpr Quaternion<T>& Quaternion<T>::operator+=(const Quaternion<U>& other) {
     m_x += static_cast<T>(other.X());
     m_y += static_cast<T>(other.Y());
@@ -194,8 +194,8 @@ inline constexpr Quaternion<T>& Quaternion<T>::operator+=(const Quaternion<U>& o
     return *this;
 }
 
-template <std::floating_point T>
-template <std::floating_point U>
+template <float_num T>
+template <float_num U>
 inline constexpr Quaternion<T>& Quaternion<T>::operator-=(const Quaternion<U>& other) {
     m_x -= static_cast<T>(other.X());
     m_y -= static_cast<T>(other.Y());
@@ -205,8 +205,8 @@ inline constexpr Quaternion<T>& Quaternion<T>::operator-=(const Quaternion<U>& o
     return *this;
 }
 
-template <std::floating_point T>
-template <std::floating_point U>
+template <float_num T>
+template <float_num U>
 inline constexpr Quaternion<T>& Quaternion<T>::operator*=(const Quaternion<U>& other) {
     const T x = m_w * static_cast<T>(other.X()) + m_x * static_cast<T>(other.W()) +
                 m_y * static_cast<T>(other.Z()) - m_z * static_cast<T>(other.Y());
@@ -225,8 +225,8 @@ inline constexpr Quaternion<T>& Quaternion<T>::operator*=(const Quaternion<U>& o
     return *this;
 }
 
-template <std::floating_point T>
-template <std::floating_point U>
+template <float_num T>
+template <float_num U>
 inline constexpr Quaternion<T>& Quaternion<T>::operator*=(U scalar) {
     m_x *= static_cast<T>(scalar);
     m_y *= static_cast<T>(scalar);
@@ -236,8 +236,8 @@ inline constexpr Quaternion<T>& Quaternion<T>::operator*=(U scalar) {
     return *this;
 }
 
-template <std::floating_point T>
-template <std::floating_point U>
+template <float_num T>
+template <float_num U>
 inline constexpr Quaternion<T>& Quaternion<T>::operator/=(U scalar) {
     m_x /= static_cast<T>(scalar);
     m_y /= static_cast<T>(scalar);
@@ -247,27 +247,27 @@ inline constexpr Quaternion<T>& Quaternion<T>::operator/=(U scalar) {
     return *this;
 }
 
-template <std::floating_point T>
+template <float_num T>
 inline constexpr Quaternion<T> Quaternion<T>::operator+() const {
     return *this;
 }
 
-template <std::floating_point T>
+template <float_num T>
 inline constexpr Quaternion<T> Quaternion<T>::operator-() const {
     return Quaternion(-m_x, -m_y, -m_z, -m_w);
 }
 
-template <std::floating_point T>
+template <float_num T>
 inline constexpr T Quaternion<T>::LengthSquared() const {
     return m_x * m_x + m_y * m_y + m_z * m_z + m_w * m_w;
 }
 
-template <std::floating_point T>
+template <float_num T>
 inline constexpr T Quaternion<T>::Length() const {
     return std::sqrt(LengthSquared());
 }
 
-template <std::floating_point T>
+template <float_num T>
 inline constexpr Quaternion<T> Quaternion<T>::Normalized() const {
     const T length = Length();
 
@@ -279,17 +279,17 @@ inline constexpr Quaternion<T> Quaternion<T>::Normalized() const {
     return Quaternion(m_x * invLength, m_y * invLength, m_z * invLength, m_w * invLength);
 }
 
-template <std::floating_point T>
+template <float_num T>
 inline constexpr void Quaternion<T>::Normalize() {
     *this = Normalized();
 }
 
-template <std::floating_point T>
+template <float_num T>
 inline constexpr Quaternion<T> Quaternion<T>::Conjugate() const {
     return Quaternion(-m_x, -m_y, -m_z, m_w);
 }
 
-template <std::floating_point T>
+template <float_num T>
 inline constexpr Quaternion<T> Quaternion<T>::Inverse() const {
     const T lengthSquared = LengthSquared();
 
@@ -300,7 +300,7 @@ inline constexpr Quaternion<T> Quaternion<T>::Inverse() const {
     return Conjugate() / lengthSquared;
 }
 
-template <std::floating_point T>
+template <float_num T>
 inline constexpr Vec3<T> Quaternion<T>::RotateVector(const Vec3<T>& v) const {
     const Vec3<T> q{m_x, m_y, m_z};
 
@@ -312,12 +312,12 @@ inline constexpr Vec3<T> Quaternion<T>::RotateVector(const Vec3<T>& v) const {
     return v + (cross1 * (T{2} * m_w)) + (cross2 * T{2});
 }
 
-template <std::floating_point T>
+template <float_num T>
 inline constexpr Vec3<T> Quaternion<T>::ToEuler() const {
     return Vec3<T>{Pitch(), Yaw(), Roll()};
 }
 
-template <std::floating_point T>
+template <float_num T>
 inline constexpr T Quaternion<T>::Pitch() const {
     const T sinPitch = T{2} * (m_w * m_x + m_y * m_z);
     const T cosPitch = T{1} - T{2} * (m_x * m_x + m_y * m_y);
@@ -325,7 +325,7 @@ inline constexpr T Quaternion<T>::Pitch() const {
     return std::atan2(sinPitch, cosPitch);
 }
 
-template <std::floating_point T>
+template <float_num T>
 inline constexpr T Quaternion<T>::Yaw() const {
     const T sinYaw = T{2} * (m_w * m_y - m_z * m_x);
 
@@ -336,7 +336,7 @@ inline constexpr T Quaternion<T>::Yaw() const {
     return std::asin(sinYaw);
 }
 
-template <std::floating_point T>
+template <float_num T>
 inline constexpr T Quaternion<T>::Roll() const {
     const T sinRoll = T{2} * (m_w * m_z + m_x * m_y);
     const T cosRoll = T{1} - T{2} * (m_y * m_y + m_z * m_z);
@@ -344,7 +344,7 @@ inline constexpr T Quaternion<T>::Roll() const {
     return std::atan2(sinRoll, cosRoll);
 }
 
-template <std::floating_point T>
+template <float_num T>
 inline constexpr void Quaternion<T>::ToAxisAngle(Vec3<T>& outAxis, T& outAngleRadians) const {
     const Quaternion normalized = Normalized();
     const T clampedW = normalized.m_w < T{-1} ? T{-1} : (normalized.m_w > T{1} ? T{1} : normalized.m_w);
@@ -360,7 +360,7 @@ inline constexpr void Quaternion<T>::ToAxisAngle(Vec3<T>& outAxis, T& outAngleRa
     }
 }
 
-template <std::floating_point T, std::floating_point U>
+template <float_num T, float_num U>
 inline constexpr auto operator+(const Quaternion<T>& a, const Quaternion<U>& b) -> QuaternionCommon<T, U> {
     using R = std::common_type_t<T, U>;
 
@@ -369,7 +369,7 @@ inline constexpr auto operator+(const Quaternion<T>& a, const Quaternion<U>& b) 
         static_cast<R>(a.Z()) + static_cast<R>(b.Z()), static_cast<R>(a.W()) + static_cast<R>(b.W()));
 }
 
-template <std::floating_point T, std::floating_point U>
+template <float_num T, float_num U>
 inline constexpr auto operator-(const Quaternion<T>& a, const Quaternion<U>& b) -> QuaternionCommon<T, U> {
     using R = std::common_type_t<T, U>;
 
@@ -378,7 +378,7 @@ inline constexpr auto operator-(const Quaternion<T>& a, const Quaternion<U>& b) 
         static_cast<R>(a.Z()) - static_cast<R>(b.Z()), static_cast<R>(a.W()) - static_cast<R>(b.W()));
 }
 
-template <std::floating_point T, std::floating_point U>
+template <float_num T, float_num U>
 inline constexpr auto operator*(const Quaternion<T>& a, const Quaternion<U>& b) -> QuaternionCommon<T, U> {
     using R = std::common_type_t<T, U>;
 
@@ -391,7 +391,7 @@ inline constexpr auto operator*(const Quaternion<T>& a, const Quaternion<U>& b) 
     return result;
 }
 
-template <std::floating_point T, std::floating_point U>
+template <float_num T, float_num U>
 inline constexpr auto operator*(const Quaternion<T>& q, U scalar) -> QuaternionCommon<T, U> {
     using R = std::common_type_t<T, U>;
 
@@ -400,12 +400,12 @@ inline constexpr auto operator*(const Quaternion<T>& q, U scalar) -> QuaternionC
         static_cast<R>(q.Z()) * static_cast<R>(scalar), static_cast<R>(q.W()) * static_cast<R>(scalar));
 }
 
-template <std::floating_point T, std::floating_point U>
+template <float_num T, float_num U>
 inline constexpr auto operator*(U scalar, const Quaternion<T>& q) -> QuaternionCommon<T, U> {
     return q * scalar;
 }
 
-template <std::floating_point T, std::floating_point U>
+template <float_num T, float_num U>
 inline constexpr auto operator/(const Quaternion<T>& q, U scalar) -> QuaternionCommon<T, U> {
     using R = std::common_type_t<T, U>;
 
@@ -414,7 +414,7 @@ inline constexpr auto operator/(const Quaternion<T>& q, U scalar) -> QuaternionC
         static_cast<R>(q.Z()) / static_cast<R>(scalar), static_cast<R>(q.W()) / static_cast<R>(scalar));
 }
 
-template <std::floating_point T, std::floating_point U>
+template <float_num T, float_num U>
 inline constexpr auto operator*(const Quaternion<T>& q, const Vec3<U>& v) -> Vec3<std::common_type_t<T, U>> {
     using R = std::common_type_t<T, U>;
 
@@ -425,23 +425,23 @@ inline constexpr auto operator*(const Quaternion<T>& q, const Vec3<U>& v) -> Vec
     return qr.RotateVector(vr);
 }
 
-template <std::floating_point T>
+template <float_num T>
 inline constexpr T Dot(const Quaternion<T>& a, const Quaternion<T>& b) {
     return a.X() * b.X() + a.Y() * b.Y() + a.Z() * b.Z() + a.W() * b.W();
 }
 
-template <std::floating_point T>
+template <float_num T>
 inline constexpr Quaternion<T> LerpUnclamped(const Quaternion<T>& a, const Quaternion<T>& b, T t) {
     return (a * (T{1} - t) + b * t).Normalized();
 }
 
-template <std::floating_point T>
+template <float_num T>
 inline constexpr Quaternion<T> Lerp(const Quaternion<T>& a, const Quaternion<T>& b, T t) {
     const T clampedT = t < T{0} ? T{0} : (t > T{1} ? T{1} : t);
     return LerpUnclamped(a, b, clampedT);
 }
 
-template <std::floating_point T>
+template <float_num T>
 inline constexpr Quaternion<T> SlerpUnclamped(const Quaternion<T>& a, const Quaternion<T>& b, T t) {
     Quaternion<T> end = b;
     T cosOmega = Dot(a, b);
@@ -466,13 +466,13 @@ inline constexpr Quaternion<T> SlerpUnclamped(const Quaternion<T>& a, const Quat
     return (a * scaleA) + (end * scaleB);
 }
 
-template <std::floating_point T>
+template <float_num T>
 inline constexpr Quaternion<T> Slerp(const Quaternion<T>& a, const Quaternion<T>& b, T t) {
     const T clampedT = t < T{0} ? T{0} : (t > T{1} ? T{1} : t);
     return SlerpUnclamped(a, b, clampedT);
 }
 
-template <std::floating_point T>
+template <float_num T>
 inline constexpr T Angle(const Quaternion<T>& a, const Quaternion<T>& b) {
     const T cosHalfAngle = Dot(a, b);
     const T clamped = cosHalfAngle < T{-1} ? T{-1} : (cosHalfAngle > T{1} ? T{1} : cosHalfAngle);
@@ -480,7 +480,7 @@ inline constexpr T Angle(const Quaternion<T>& a, const Quaternion<T>& b) {
     return T{2} * std::acos(std::abs(clamped));
 }
 
-template <std::floating_point T>
+template <float_num T>
 inline constexpr Quaternion<T> RotateTowards(const Quaternion<T>& from, const Quaternion<T>& to, T maxAngleRadians) {
     const T angle = Angle(from, to);
 
@@ -497,7 +497,7 @@ inline constexpr Quaternion<T> RotateTowards(const Quaternion<T>& from, const Qu
     return SlerpUnclamped(from, to, t);
 }
 
-template <std::floating_point T>
+template <float_num T>
 struct std::formatter<Quaternion<T>> {
     std::formatter<T> underlying;
 
