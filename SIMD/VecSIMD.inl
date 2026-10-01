@@ -599,10 +599,13 @@ static consteval auto TypeName() {
 
 
 template <std::floating_point T, std::size_t N>
-struct std::formatter<VecSIMD<T, N>> {
+struct std::formatter<VecSIMD<T, N>>
+{
+    std::formatter<T> underlying;
+
     constexpr auto parse(std::format_parse_context& ctx)
     {
-        return ctx.begin();
+        return underlying.parse(ctx);
     }
 
     auto format(
@@ -612,7 +615,7 @@ struct std::formatter<VecSIMD<T, N>> {
     {
         auto out = ctx.out();
 
-        out = std::format_to(out, TypeName<VecSIMD<T, N>>());
+        out = std::format_to(out, "{}", TypeName<VecSIMD<T, N>>());
         out = std::format_to(out, "(");
 
         for (std::size_t i = 0; i < N; ++i)
@@ -620,7 +623,7 @@ struct std::formatter<VecSIMD<T, N>> {
             if (i != 0)
                 out = std::format_to(out, ", ");
 
-            out = std::format_to(out, "{}", value[i]);
+            out = underlying.format(value[i], ctx);
         }
 
         return std::format_to(out, ")");
