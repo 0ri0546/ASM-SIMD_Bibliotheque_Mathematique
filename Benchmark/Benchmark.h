@@ -10,6 +10,10 @@
 #include <string>
 #include <type_traits>
 #include <vector>
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <string>
 
 #include <intrin.h>
 
@@ -26,10 +30,27 @@ __forceinline inline void DoNotOptimizeAway(const T& value) {
 	_ReadWriteBarrier();
 }
 
+int fill_csv(std::string line) {
+	std::ofstream file("Benchmark.csv", std::ios::app);
+	if (!file.is_open()) {
+		std::cerr << "Error opening file!" << std::endl;
+		return 1;
+	}
+
+	file << line + "\n";
+
+	file.close();
+}
+
 inline std::size_t g_benchmark_index = 1;
 
+void BeginBenchmark() {
+	std::ofstream file("Benchmark.csv", std::ios::app);
+	file << "No.|Name|op / s|ns / op|b.pred miss %|cyc / op|total(ms)\n";
+}
+
 template <typename Fn>
-void Benchmark(const std::string& name, Fn&& fn, std::size_t iterations = 1'000'000, std::size_t samples = 10) {
+void Benchmark(const std::string& name, Fn&& fn, std::size_t iterations = 1'000'000'000, std::size_t samples = 10) {
 	using namespace std::chrono;
 
 	const std::size_t per_sample = std::max<std::size_t>(1, iterations / samples);
@@ -63,6 +84,15 @@ void Benchmark(const std::string& name, Fn&& fn, std::size_t iterations = 1'000'
 
 	const double err_pct = mean > 0 ? 100.0 * std::sqrt(var) / mean : 0.0;
 
+	std::string line = std::format("{:<4}|{:<30}|{:>12.4e}|{:>12.4f}|{:>12.4f}|{:>12}|{:>12.4f}",
+		g_benchmark_index++,
+		name,
+		1.0e9 / mean,                          // op/s
+		mean,                                  // ns/op
+		err_pct,                               // err %
+		total_cycles / (per_sample * samples), // cycles/op (TSC ticks)
+		total_ns * 1.0e-6);                    // total ms
+
 	std::println("{:<4} | {:<30} | {:>12.4e} | {:>12.4f} | {:>12.4f} | {:>12} | {:>12.4f}",
 		g_benchmark_index++,
 		name,
@@ -72,4 +102,5 @@ void Benchmark(const std::string& name, Fn&& fn, std::size_t iterations = 1'000'
 		total_cycles / (per_sample * samples), // cycles/op (TSC ticks)
 		total_ns * 1.0e-6);                    // total ms
 	std::println("{:-<112}", "");
+	fill_csv(line);
 }
