@@ -170,6 +170,11 @@ inline auto operator+(
 
         _mm256_storeu_pd(result.Data(), _mm256_add_pd(va, vb));
     }
+    else {
+        for (std::size_t i = 0; i < N; ++i) {
+            result[i] = static_cast<R>(a[i]) + static_cast<R>(b[i]);
+        }
+    }
 
     return result;
 }
@@ -211,6 +216,11 @@ inline auto operator-(
         const __m256d vb = _mm256_loadu_pd(b.Data());
 
         _mm256_storeu_pd(result.Data(), _mm256_sub_pd(va, vb));
+    }
+    else {
+        for (std::size_t i = 0; i < N; ++i) {
+            result[i] = static_cast<R>(a[i]) - static_cast<R>(b[i]);
+        }
     }
 
     return result;
@@ -255,6 +265,11 @@ inline auto operator*(
 
         _mm256_storeu_pd(result.Data(), _mm256_mul_pd(va, vb));
     }
+    else {
+        for (std::size_t i = 0; i < N; ++i) {
+            result[i] = static_cast<R>(a[i]) * static_cast<R>(b[i]);
+        }
+    }
 
     return result;
 }
@@ -297,6 +312,11 @@ inline auto operator/(
 
         _mm256_storeu_pd(result.Data(), _mm256_div_pd(va, vb));
     }
+    else {
+        for (std::size_t i = 0; i < N; ++i) {
+            result[i] = static_cast<R>(a[i]) / static_cast<R>(b[i]);
+        }
+    }
 
     return result;
 }
@@ -338,6 +358,11 @@ inline auto operator*(
         const __m256d vs = _mm256_set1_pd(static_cast<double>(scalar));
 
         _mm256_storeu_pd(result.Data(), _mm256_mul_pd(vv, vs));
+    }
+    else {
+        for (std::size_t i = 0; i < N; ++i) {
+            result[i] = static_cast<R>(v[i]) * static_cast<R>(scalar);
+        }
     }
 
     return result;
@@ -390,6 +415,11 @@ inline auto operator/(
 
         _mm256_storeu_pd(result.Data(), _mm256_div_pd(vv, vs));
     }
+    else {
+        for (std::size_t i = 0; i < N; ++i) {
+            result[i] = static_cast<R>(v[i]) / static_cast<R>(scalar);
+        }
+    }
 
     return result;
 }
@@ -432,6 +462,11 @@ inline constexpr VecSIMD<T, N> VecSIMD<T, N>::operator-() const
         const __m256d value = _mm256_loadu_pd(Data());
 
         _mm256_storeu_pd(result.Data(), _mm256_sub_pd(zero, value));
+    }
+    else {
+        for (std::size_t i = 0; i < N; ++i) {
+            result[i] = -m_data[i];
+        }
     }
 
     return result;
@@ -512,6 +547,333 @@ inline auto Dot(
     return result;
 }
 
+template <float_num T, float_num U>
+constexpr auto Cross(
+    const VecSIMD<T, 3>& a,
+    const VecSIMD<U, 3>& b
+) -> VecSIMDCommon<T, U, 3>
+{
+    using R = std::common_type_t<T, U>;
+
+    if (std::is_constant_evaluated())
+    {
+        return VecSIMD<R, 3>{
+            static_cast<R>(a[1])* static_cast<R>(b[2]) -
+                static_cast<R>(a[2]) * static_cast<R>(b[1]),
+
+                static_cast<R>(a[2])* static_cast<R>(b[0]) -
+                static_cast<R>(a[0]) * static_cast<R>(b[2]),
+
+                static_cast<R>(a[0])* static_cast<R>(b[1]) -
+                static_cast<R>(a[1]) * static_cast<R>(b[0])
+        };
+    }
+
+    VecSIMD<R, 3> result;
+
+    if constexpr (std::same_as<R, float>)
+    {
+        const __m128 va = _mm_set_ps(
+            0.0f,
+            static_cast<float>(a[2]),
+            static_cast<float>(a[1]),
+            static_cast<float>(a[0])
+        );
+
+        const __m128 vb = _mm_set_ps(
+            0.0f,
+            static_cast<float>(b[2]),
+            static_cast<float>(b[1]),
+            static_cast<float>(b[0])
+        );
+
+        const __m128 ayzx = _mm_shuffle_ps(
+            va, va, _MM_SHUFFLE(3, 0, 2, 1)
+        );
+
+        const __m128 azxy = _mm_shuffle_ps(
+            va, va, _MM_SHUFFLE(3, 1, 0, 2)
+        );
+
+        const __m128 byzx = _mm_shuffle_ps(
+            vb, vb, _MM_SHUFFLE(3, 0, 2, 1)
+        );
+
+        const __m128 bzxy = _mm_shuffle_ps(
+            vb, vb, _MM_SHUFFLE(3, 1, 0, 2)
+        );
+
+        const __m128 resultSIMD = _mm_sub_ps(
+            _mm_mul_ps(ayzx, bzxy),
+            _mm_mul_ps(azxy, byzx)
+        );
+
+        alignas(16) float values[4];
+        _mm_store_ps(values, resultSIMD);
+
+        result[0] = values[0];
+        result[1] = values[1];
+        result[2] = values[2];
+    }
+    else
+    {
+        const __m256d va = _mm256_set_pd(
+            0.0,
+            static_cast<double>(a[2]),
+            static_cast<double>(a[1]),
+            static_cast<double>(a[0])
+        );
+
+        const __m256d vb = _mm256_set_pd(
+            0.0,
+            static_cast<double>(b[2]),
+            static_cast<double>(b[1]),
+            static_cast<double>(b[0])
+        );
+
+        const __m256d ayzx = _mm256_permute4x64_pd(va, 0xC9);
+        const __m256d azxy = _mm256_permute4x64_pd(va, 0xD2);
+        const __m256d byzx = _mm256_permute4x64_pd(vb, 0xC9);
+        const __m256d bzxy = _mm256_permute4x64_pd(vb, 0xD2);
+
+        const __m256d resultSIMD = _mm256_sub_pd(
+            _mm256_mul_pd(ayzx, bzxy),
+            _mm256_mul_pd(azxy, byzx)
+        );
+
+        alignas(32) double values[4];
+        _mm256_store_pd(values, resultSIMD);
+
+        result[0] = values[0];
+        result[1] = values[1];
+        result[2] = values[2];
+    }
+
+    return result;
+}
+
+template <float_num T, float_num U, std::size_t N>
+constexpr auto Distance(
+    const VecSIMD<T, N>& a,
+    const VecSIMD<U, N>& b
+) -> std::common_type_t<T, U>
+{
+    return (a - b).Length();
+}
+
+template <float_num T, float_num U, std::size_t N>
+constexpr auto Angle(
+    const VecSIMD<T, N>& a,
+    const VecSIMD<U, N>& b
+) -> std::common_type_t<T, U>
+{
+    using R = std::common_type_t<T, U>;
+
+    const R lengthA = a.Length();
+    const R lengthB = b.Length();
+
+    if (lengthA <= R{ 0 } || lengthB <= R{ 0 })
+        return R{ 0 };
+
+    R cosine = Dot(a, b) / (lengthA * lengthB);
+
+    cosine = std::clamp(cosine, R{ -1 }, R{ 1 });
+
+    return std::acos(cosine);
+}
+
+template <float_num T, float_num U, float_num V, std::size_t N>
+constexpr auto Lerp(
+    const VecSIMD<T, N>& a,
+    const VecSIMD<U, N>& b,
+    V t
+) -> VecSIMDCommon<T, U, N>
+{
+    using R = std::common_type_t<T, U, V>;
+
+    return a + (b - a) * static_cast<R>(t);
+}
+
+template <float_num T, float_num U, std::size_t N>
+constexpr auto Scale(
+    const VecSIMD<T, N>& a,
+    const VecSIMD<U, N>& b
+) -> VecSIMDCommon<T, U, N>
+{
+    return a * b;
+}
+
+template <float_num T, float_num U, std::size_t N>
+constexpr auto Min(
+    const VecSIMD<T, N>& a,
+    const VecSIMD<U, N>& b
+) -> VecSIMDCommon<T, U, N>
+{
+    using R = std::common_type_t<T, U>;
+
+    if (std::is_constant_evaluated())
+    {
+        VecSIMD<R, N> result;
+
+        for (std::size_t i = 0; i < N; ++i)
+            result[i] = std::min(
+                static_cast<R>(a[i]),
+                static_cast<R>(b[i])
+            );
+
+        return result;
+    }
+
+    VecSIMD<R, N> result;
+
+    if constexpr (std::same_as<R, float> && N == 4)
+    {
+        const __m128 va = _mm_loadu_ps(a.Data());
+        const __m128 vb = _mm_loadu_ps(b.Data());
+
+        _mm_storeu_ps(result.Data(), _mm_min_ps(va, vb));
+    }
+    else if constexpr (std::same_as<R, float> && N == 8)
+    {
+        const __m256 va = _mm256_loadu_ps(a.Data());
+        const __m256 vb = _mm256_loadu_ps(b.Data());
+
+        _mm256_storeu_ps(result.Data(), _mm256_min_ps(va, vb));
+    }
+    else if constexpr (std::same_as<R, double> && N == 2)
+    {
+        const __m128d va = _mm_loadu_pd(a.Data());
+        const __m128d vb = _mm_loadu_pd(b.Data());
+
+        _mm_storeu_pd(result.Data(), _mm_min_pd(va, vb));
+    }
+    else if constexpr (std::same_as<R, double> && N == 4)
+    {
+        const __m256d va = _mm256_loadu_pd(a.Data());
+        const __m256d vb = _mm256_loadu_pd(b.Data());
+
+        _mm256_storeu_pd(result.Data(), _mm256_min_pd(va, vb));
+    }
+    else
+    {
+        for (std::size_t i = 0; i < N; ++i)
+            result[i] = std::min(
+                static_cast<R>(a[i]),
+                static_cast<R>(b[i])
+            );
+    }
+
+    return result;
+}
+
+template <float_num T, float_num U, std::size_t N>
+constexpr auto Max(
+    const VecSIMD<T, N>& a,
+    const VecSIMD<U, N>& b
+) -> VecSIMDCommon<T, U, N>
+{
+    using R = std::common_type_t<T, U>;
+
+    if (std::is_constant_evaluated())
+    {
+        VecSIMD<R, N> result;
+
+        for (std::size_t i = 0; i < N; ++i)
+            result[i] = std::max(
+                static_cast<R>(a[i]),
+                static_cast<R>(b[i])
+            );
+
+        return result;
+    }
+
+    VecSIMD<R, N> result;
+
+    if constexpr (std::same_as<R, float> && N == 4)
+    {
+        const __m128 va = _mm_loadu_ps(a.Data());
+        const __m128 vb = _mm_loadu_ps(b.Data());
+
+        _mm_storeu_ps(result.Data(), _mm_max_ps(va, vb));
+    }
+    else if constexpr (std::same_as<R, float> && N == 8)
+    {
+        const __m256 va = _mm256_loadu_ps(a.Data());
+        const __m256 vb = _mm256_loadu_ps(b.Data());
+
+        _mm256_storeu_ps(result.Data(), _mm256_max_ps(va, vb));
+    }
+    else if constexpr (std::same_as<R, double> && N == 2)
+    {
+        const __m128d va = _mm_loadu_pd(a.Data());
+        const __m128d vb = _mm_loadu_pd(b.Data());
+
+        _mm_storeu_pd(result.Data(), _mm_max_pd(va, vb));
+    }
+    else if constexpr (std::same_as<R, double> && N == 4)
+    {
+        const __m256d va = _mm256_loadu_pd(a.Data());
+        const __m256d vb = _mm256_loadu_pd(b.Data());
+
+        _mm256_storeu_pd(result.Data(), _mm256_max_pd(va, vb));
+    }
+    else
+    {
+        for (std::size_t i = 0; i < N; ++i)
+            result[i] = std::max(
+                static_cast<R>(a[i]),
+                static_cast<R>(b[i])
+            );
+    }
+
+    return result;
+
+}
+
+template <float_num T, float_num U, float_num V, std::size_t N>
+constexpr auto MoveTowards(
+    const VecSIMD<T, N>& current,
+    const VecSIMD<U, N>& target,
+    V maxDistanceDelta
+) -> VecSIMDCommon<T, U, N>
+{
+    using R = std::common_type_t<T, U, V>;
+
+    const auto delta = target - current;
+    const R distance = delta.Length();
+    const R maxDelta = static_cast<R>(maxDistanceDelta);
+
+    if (distance <= maxDelta)
+        return target;
+
+    if (distance <= R{ 0 })
+        return current;
+
+    return current + delta * (maxDelta / distance);
+}
+
+template <float_num T, float_num U, std::size_t N>
+constexpr auto Reflect(
+    const VecSIMD<T, N>& direction,
+    const VecSIMD<U, N>& normal
+) -> VecSIMDCommon<T, U, N>
+{
+    using R = std::common_type_t<T, U>;
+
+    return direction - normal * (R{ 2 } *Dot(direction, normal));
+}
+
+template <float_num T>
+constexpr VecSIMD<T, 2> Perpendicular(
+    const VecSIMD<T, 2>& v
+)
+{
+    return VecSIMD<T, 2>{
+        -v[1],
+            v[0]
+    };
+}
+
 template <float_num T, std::size_t N>
 inline constexpr T VecSIMD<T, N>::LengthSquared() const
 {
@@ -580,8 +942,7 @@ struct std::formatter<VecSIMD<T, N>>
     ) const
     {
         auto out = ctx.out();
-
-        out = std::format_to(out, "{}", TypeName<VecSIMD<T, N>>());
+        
         out = std::format_to(out, "(");
 
         for (std::size_t i = 0; i < N; ++i)

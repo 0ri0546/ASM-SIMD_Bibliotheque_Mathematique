@@ -7,7 +7,7 @@
 #include <cmath>
 #include <type_traits>
 #include <utility>
-
+#include <algorithm>
 #include <immintrin.h>
 
 #include "Concepts.h"
@@ -126,6 +126,67 @@ inline auto Dot(
     const VecSIMD<T, N>& a,
     const VecSIMD<U, N>& b
 ) -> std::common_type_t<T, U>;
+
+template <float_num T, float_num U>
+constexpr auto Cross(
+    const VecSIMD<T, 3>& a,
+    const VecSIMD<U, 3>& b
+) -> VecSIMDCommon<T, U, 3>;
+
+template <float_num T, float_num U, std::size_t N>
+constexpr auto Distance(
+    const VecSIMD<T, N>& a,
+    const VecSIMD<U, N>& b
+) -> std::common_type_t<T, U>;
+
+template <float_num T, float_num U, std::size_t N>
+constexpr auto Angle(
+    const VecSIMD<T, N>& a,
+    const VecSIMD<U, N>& b
+) -> std::common_type_t<T, U>;
+
+template <float_num T, float_num U, float_num V, std::size_t N>
+constexpr auto Lerp(
+    const VecSIMD<T, N>& a,
+    const VecSIMD<U, N>& b,
+    V t
+) -> VecSIMDCommon<T, U, N>;
+
+template <float_num T, float_num U, std::size_t N>
+constexpr auto Scale(
+    const VecSIMD<T, N>& a,
+    const VecSIMD<U, N>& b
+) -> VecSIMDCommon<T, U, N>;
+
+template <float_num T, float_num U, std::size_t N>
+constexpr auto Min(
+    const VecSIMD<T, N>& a,
+    const VecSIMD<U, N>& b
+) -> VecSIMDCommon<T, U, N>;
+
+template <float_num T, float_num U, std::size_t N>
+constexpr auto Max(
+    const VecSIMD<T, N>& a,
+    const VecSIMD<U, N>& b
+) -> VecSIMDCommon<T, U, N>;
+
+template <float_num T, float_num U, float_num V, std::size_t N>
+constexpr auto MoveTowards(
+    const VecSIMD<T, N>& current,
+    const VecSIMD<U, N>& target,
+    V maxDistanceDelta
+) -> VecSIMDCommon<T, U, N>;
+
+template <float_num T, float_num U, std::size_t N>
+constexpr auto Reflect(
+    const VecSIMD<T, N>& direction,
+    const VecSIMD<U, N>& normal
+) -> VecSIMDCommon<T, U, N>;
+
+template <float_num T>
+constexpr VecSIMD<T, 2> Perpendicular(
+    const VecSIMD<T, 2>& v
+);
 
 template <>
 struct std::formatter<__m128>;
