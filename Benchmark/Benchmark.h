@@ -50,7 +50,7 @@ void BeginBenchmark() {
 }
 
 template <typename Fn>
-void Benchmark(const std::string& name, Fn&& fn, std::size_t iterations = 1'000'000'000, std::size_t samples = 10) {
+void Benchmark(const std::string& name, Fn&& fn, std::size_t iterations = 1'000'000, std::size_t samples = 10) {
 	using namespace std::chrono;
 
 	const std::size_t per_sample = std::max<std::size_t>(1, iterations / samples);
@@ -94,7 +94,7 @@ void Benchmark(const std::string& name, Fn&& fn, std::size_t iterations = 1'000'
 		total_ns * 1.0e-6);                    // total ms
 
 	std::println("{:<4} | {:<30} | {:>12.4e} | {:>12.4f} | {:>12.4f} | {:>12} | {:>12.4f}",
-		g_benchmark_index++,
+		g_benchmark_index,
 		name,
 		1.0e9 / mean,                          // op/s
 		mean,                                  // ns/op

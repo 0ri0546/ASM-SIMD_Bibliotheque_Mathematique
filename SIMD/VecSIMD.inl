@@ -334,7 +334,7 @@ inline auto operator*(
     if constexpr (std::same_as<R, float> && N == 4)
     {
         const __m128 vv = _mm_loadu_ps(v.Data());
-        const __m128 vs = _mm_set1_ps(static_cast<float>(scalar));
+        const __m128 vs = _mm_set_ps1(static_cast<float>(scalar));
 
         _mm_storeu_ps(result.Data(), _mm_mul_ps(vv, vs));
     }
@@ -484,62 +484,61 @@ inline auto Dot(
     {
         if constexpr (N == 4)
         {
-            const __m128 v = _mm_mul_ps(
-                _mm_loadu_ps(a.Data()),
-                _mm_loadu_ps(b.Data())
-            );
+            const __m128 va = _mm_loadu_ps(a.Data());
+            const __m128 vb = _mm_loadu_ps(b.Data());
+            const __m128 v = _mm_mul_ps(va, vb);
 
-            __m128 h = _mm_add_ps(v, _mm_movehl_ps(v, v));
-            h = _mm_add_ss(h, _mm_shuffle_ps(h, h, 1));
+            const __m128 h = _mm_add_ps(v, _mm_movehl_ps(v, v));
+            const __m128 s = _mm_add_ss(h, _mm_shuffle_ps(h, h, 1));
 
-            return _mm_cvtss_f32(h);
+            return _mm_cvtss_f32(s);
         }
         else if constexpr (N == 8)
         {
-            const __m256 v = _mm256_mul_ps(
-                _mm256_loadu_ps(a.Data()),
-                _mm256_loadu_ps(b.Data())
-            );
+            const __m128 va0 = _mm_loadu_ps(a.Data());
+            const __m128 vb0 = _mm_loadu_ps(b.Data());
+            const __m128 va1 = _mm_loadu_ps(a.Data() + 4);
+            const __m128 vb1 = _mm_loadu_ps(b.Data() + 4);
 
-            __m128 lo = _mm256_castps256_ps128(v);
-            __m128 hi = _mm256_extractf128_ps(v, 1);
+            const __m128 v0 = _mm_mul_ps(va0, vb0);
+            const __m128 v1 = _mm_mul_ps(va1, vb1);
+            const __m128 v = _mm_add_ps(v0, v1);
 
-            lo = _mm_add_ps(lo, hi);
-            lo = _mm_add_ps(lo, _mm_movehl_ps(lo, lo));
-            lo = _mm_add_ss(lo, _mm_shuffle_ps(lo, lo, 1));
+            const __m128 h = _mm_add_ps(v, _mm_movehl_ps(v, v));
+            const __m128 s = _mm_add_ss(h, _mm_shuffle_ps(h, h, 1));
 
-            return _mm_cvtss_f32(lo);
+            return _mm_cvtss_f32(s);
         }
     }
     else if constexpr (std::same_as<R, double>)
     {
         if constexpr (N == 2)
         {
-            const __m128d v = _mm_mul_pd(
-                _mm_loadu_pd(a.Data()),
-                _mm_loadu_pd(b.Data())
-            );
+            const __m128d va = _mm_loadu_pd(a.Data());
+            const __m128d vb = _mm_loadu_pd(b.Data());
+            const __m128d v = _mm_mul_pd(va, vb);
 
-            return _mm_cvtsd_f64(_mm_add_sd(v, _mm_unpackhi_pd(v, v)));
+            return _mm_cvtsd_f64(
+                _mm_add_sd(v, _mm_unpackhi_pd(v, v))
+            );
         }
         else if constexpr (N == 4)
         {
-            const __m256d v = _mm256_mul_pd(
-                _mm256_loadu_pd(a.Data()),
-                _mm256_loadu_pd(b.Data())
+            const __m128d va0 = _mm_loadu_pd(a.Data());
+            const __m128d vb0 = _mm_loadu_pd(b.Data());
+            const __m128d va1 = _mm_loadu_pd(a.Data() + 2);
+            const __m128d vb1 = _mm_loadu_pd(b.Data() + 2);
+
+            const __m128d v0 = _mm_mul_pd(va0, vb0);
+            const __m128d v1 = _mm_mul_pd(va1, vb1);
+            const __m128d v = _mm_add_pd(v0, v1);
+
+            return _mm_cvtsd_f64(
+                _mm_add_sd(v, _mm_unpackhi_pd(v, v))
             );
-
-            __m128d lo = _mm256_castpd256_pd128(v);
-            __m128d hi = _mm256_extractf128_pd(v, 1);
-
-            lo = _mm_add_pd(lo, hi);
-            lo = _mm_add_sd(lo, _mm_unpackhi_pd(lo, lo));
-
-            return _mm_cvtsd_f64(lo);
         }
     }
 
-    // Fallback
     R result{};
     for (std::size_t i = 0; i < N; ++i)
         result += static_cast<R>(a[i]) * static_cast<R>(b[i]);
@@ -894,7 +893,7 @@ inline constexpr VecSIMD<T, N> VecSIMD<T, N>::Normalized() const
     if (length <= T{ 0 })
         return *this;
 
-    return *this / length;
+    return *this * (T{ 1 } / length);
 }
 
 template <float_num T, std::size_t N>

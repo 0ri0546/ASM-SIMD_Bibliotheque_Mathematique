@@ -103,6 +103,9 @@ inline auto operator/(
     const VecSIMD<U, N>& b
     ) -> VecSIMDCommon<T, U, N>;
 
+/// <summary>
+/// Slower because compiler optimizes loops better
+/// </summary>
 template <float_num T, float_num U, std::size_t N>
 inline auto operator*(
     const VecSIMD<T, N>& v,
