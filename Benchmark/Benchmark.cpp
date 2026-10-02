@@ -6,6 +6,8 @@
 
 #include "VecSIMD.h"
 
+#include <filesystem>
+
 void BenchmarkNoSimd() {
     std::println("Benchmark without SIMD optimizations:");
     std::println("{:-<112}", "");
@@ -471,7 +473,10 @@ void BenchmarkSIMD() {
 }
 
 int main() {
+    if (std::filesystem::exists("Benchmark.csv")) std::filesystem::remove("Benchmark.csv");
+    BeginBenchmark();
     BenchmarkNoSimd();
     BenchmarkSIMD();
+
     return 0;
 }
