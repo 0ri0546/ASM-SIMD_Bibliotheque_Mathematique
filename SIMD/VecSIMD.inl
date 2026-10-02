@@ -581,7 +581,6 @@ struct std::formatter<VecSIMD<T, N>>
     {
         auto out = ctx.out();
 
-        out = std::format_to(out, "{}", TypeName<VecSIMD<T, N>>());
         out = std::format_to(out, "(");
 
         for (std::size_t i = 0; i < N; ++i)

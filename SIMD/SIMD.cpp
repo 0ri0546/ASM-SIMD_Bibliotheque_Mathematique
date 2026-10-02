@@ -67,6 +67,24 @@ int main()
     std::println("FromAxisAngle = {}", i.FromAxisAngle(vec3, 4.0f));
     std::println("FromToRotation = {}", i.FromToRotation(vec3, vec3b));
     std::println("LookRotation = {}", i.LookRotation(vec3, vec3b));
+    std::println("");
+    std::println("--------------------------------MATRIX----------------------------------");
+    std::println("");
+
+    MatSIMD<double, 8, 3> mat_a = { 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24 };
+    mat_a *= 2.0f;
+    mat_a /= 4.0f;
+    std::println("{}", mat_a);
+
+    MatSIMD<double, 4, 3> mat_b = { 1,2,3,4,5,6,7,8,9,10,11,12 };
+    mat_b *= 2.0f;
+    mat_b /= 4.0f;
+    std::println("{}", mat_b);
+
+    MatSIMD<double, 3, 3> mat_c = { 1,2,3,4,5,6,7,8,9 };
+    mat_c *= 2.0f;
+    mat_c /= 4.0f;
+    std::println("{}", mat_c);
 
     return 0;
 }

@@ -8,6 +8,7 @@
 #include <type_traits>
 #include <utility>
 
+#include <xmmintrin.h>
 #include <immintrin.h>
 
 #include "Concepts.h"

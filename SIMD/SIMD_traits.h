@@ -22,6 +22,41 @@ struct simd_traits<double, 128>
     {
         return _mm_loadu_pd(data);
     }
+
+    static void store(double* data, type vec)
+    {
+        return _mm_storeu_pd(data, vec);
+    }
+
+    static double* from (type data)
+    {
+        return reinterpret_cast<double*>(&data);
+    }
+
+    static type set1(double scalar)
+    {
+        return _mm_set1_pd(scalar);
+    }
+
+    static type add(type a, type b)
+    {
+        return _mm_add_pd(a, b);
+    }
+
+    static type sub(type a, type b)
+    {
+        return _mm_sub_pd(a, b);
+    }
+
+    static type mul(type a, type b)
+    {
+        return _mm_mul_pd(a, b);
+    }
+
+    static type div(type a, type b)
+    {
+        return _mm_div_pd(a, b);
+    }
 };
 
 template <>
@@ -33,6 +68,41 @@ struct simd_traits<float, 128>
     static type load(const float* data)
     {
         return _mm_loadu_ps(data);
+    }
+
+    static void store(float* data, type vec)
+    {
+        return _mm_storeu_ps(data, vec);
+    }
+
+    static float* from(type data)
+    {
+        return reinterpret_cast<float*>(&data);
+    }
+
+    static type set1(float scalar)
+    {
+        return _mm_set_ps1(scalar);
+    }
+
+    static type add(type a, type b)
+    {
+        return _mm_add_ps(a, b);
+    }
+
+    static type sub(type a, type b)
+    {
+        return _mm_sub_ps(a, b);
+    }
+
+    static type mul(type a, type b)
+    {
+        return _mm_mul_ps(a, b);
+    }
+
+    static type div(type a, type b)
+    {
+        return _mm_div_ps(a, b);
     }
 };
 
@@ -46,6 +116,41 @@ struct simd_traits<float, 256>
     {
         return _mm256_loadu_ps(data);
     }
+
+    static void store(float* data, type vec)
+    {
+        return _mm256_storeu_ps(data, vec);
+    }
+
+    static float* from(type data)
+    {
+        return reinterpret_cast<float*>(&data);
+    }
+
+    static type set1(float scalar)
+    {
+        return _mm256_set1_ps(scalar);
+    }
+
+    static type add(type a, type b)
+    {
+        return _mm256_add_ps(a, b);
+    }
+
+    static type sub(type a, type b)
+    {
+        return _mm256_sub_ps(a, b);
+    }
+
+    static type mul(type a, type b)
+    {
+        return _mm256_mul_ps(a, b);
+    }
+
+    static type div(type a, type b)
+    {
+        return _mm256_div_ps(a, b);
+    }
 };
 
 template <>
@@ -57,5 +162,40 @@ struct simd_traits<double, 256>
     static type load(const double* data)
     {
         return _mm256_loadu_pd(data);
+    }
+
+    static void store(double* data, type vec)
+    {
+        return _mm256_storeu_pd(data, vec);
+    }
+
+    static double* from(type data)
+    {
+        return reinterpret_cast<double*>(&data);
+    }
+
+    static type set1(double scalar)
+    {
+        return _mm256_set1_pd(scalar);
+    }
+
+    static type add(type a, type b)
+    {
+        return _mm256_add_pd(a, b);
+    }
+
+    static type sub(type a, type b)
+    {
+        return _mm256_sub_pd(a, b);
+    }
+
+    static type mul(type a, type b)
+    {
+        return _mm256_mul_pd(a, b);
+    }
+
+    static type div(type a, type b)
+    {
+        return _mm256_div_pd(a, b);
     }
 };

@@ -137,8 +137,28 @@ MatSIMD<T, RowCount, ColCount, Layout>::operator-=(const MatSIMD<U, RowCount, Co
 template <float_num T, std::size_t RowCount, std::size_t ColCount, typename Layout>
 template <float_num U>
 inline constexpr MatSIMD<T, RowCount, ColCount, Layout>& MatSIMD<T, RowCount, ColCount, Layout>::operator*=(U scalar) {
-    for (auto& value : m_data) {
-        value *= scalar;
+    constexpr std::size_t total_elements = RowCount * ColCount;
+
+    constexpr std::size_t bit_width =
+        (total_elements % simd_traits<T, 256>::width == 0) ? 256 :
+        (total_elements % simd_traits<T, 128>::width == 0) ? 128 : 0;
+
+    if constexpr (bit_width > 0 && std::assignable_from<T&, U>) {
+        using traits = simd_traits<T, bit_width>;
+
+        for (size_type i = 0; i < total_elements; i += traits::width) {
+            auto data_vec = traits::load(m_data.data() + i);
+            auto scalar_vec = traits::set1(static_cast<T>(scalar));
+            auto res_vec = traits::mul(data_vec, scalar_vec);
+
+            traits::store(m_data.data() + i, res_vec);
+        }
+    }
+    else {
+        std::println("SIMD mul fallback");
+        for (auto& value : m_data) {
+            value *= scalar;
+        }
     }
 
     return *this;
@@ -147,8 +167,28 @@ inline constexpr MatSIMD<T, RowCount, ColCount, Layout>& MatSIMD<T, RowCount, Co
 template <float_num T, std::size_t RowCount, std::size_t ColCount, typename Layout>
 template <float_num U>
 inline constexpr MatSIMD<T, RowCount, ColCount, Layout>& MatSIMD<T, RowCount, ColCount, Layout>::operator/=(U scalar) {
-    for (auto& value : m_data) {
-        value /= scalar;
+    constexpr std::size_t total_elements = RowCount * ColCount;
+
+    constexpr std::size_t bit_width =
+        (total_elements % simd_traits<T, 256>::width == 0) ? 256 :
+        (total_elements % simd_traits<T, 128>::width == 0) ? 128 : 0;
+
+    if constexpr (bit_width > 0 && std::assignable_from<T&, U>) {
+        using traits = simd_traits<T, bit_width>;
+
+        for (size_type i = 0; i < total_elements; i += traits::width) {
+            auto data_vec = traits::load(m_data.data() + i);
+            auto scalar_vec = traits::set1(static_cast<T>(scalar));
+            auto res_vec = traits::div(data_vec, scalar_vec);
+
+            traits::store(m_data.data() + i, res_vec);
+        }
+    }
+    else {
+        std::println("SIMD div fallback");
+        for (auto& value : m_data) {
+            value *= scalar;
+        }
     }
 
     return *this;
