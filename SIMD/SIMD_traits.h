@@ -2,9 +2,8 @@
 
 #include <cstddef>
 #include <cstdint>
-#include <immintrin.h>
 
-#include "VecSIMD.h"
+#include <immintrin.h>
 
 // Bit widths: 256 (AVX/AVX2), 128 (SSE/SSE2, AVX2 gather) and 0 (plain scalar, width 1).
 // Everything below is AVX2 at most (no AVX-512, no FMA).
