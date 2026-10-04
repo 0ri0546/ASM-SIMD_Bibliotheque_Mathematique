@@ -247,7 +247,7 @@ constexpr QuaternionSIMD<T> RotateTowards(
 template <float_num T>
 struct std::formatter<QuaternionSIMD<T>>;
 
-using Quaternionf = QuaternionSIMD<float>;
-using Quaterniond = QuaternionSIMD<double>;
+using QuaternionSIMDf = QuaternionSIMD<float>;
+using QuaternionSIMDd = QuaternionSIMD<double>;
 
 #include "QuaternionSIMD.inl"

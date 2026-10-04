@@ -140,13 +140,11 @@
   <ItemGroup>
     <ClInclude Include="Concepts.h" />
     <ClInclude Include="Headers\Quaternion.h" />
+    <ClInclude Include="Headers\Mat.h" />
     <ClInclude Include="Headers\Vec.h" />
     <ClInclude Include="Headers\Quaternion.inl" />
+    <ClInclude Include="Headers\Mat.inl" />
     <ClInclude Include="Headers\Vec.inl" />
-    <ClInclude Include="Mat.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Mat.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

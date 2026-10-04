@@ -3,6 +3,8 @@
 #include "Headers/Mat.h"
 #include "Headers/Quaternion.h"
 #include "Headers/Vec.h"
+
+#include "MatSIMD.h"
 #include "VecSIMD.h"
 
 #include <filesystem>
@@ -1721,6 +1723,555 @@ void BenchmarkSIMD()
 
         PrintBenchmarkResult(result, g_simdResults);
     }
+
+    {
+        std::vector<MatSIMD<float, 4, 4>> a4(g_batchSize);
+        std::vector<VecSIMD<float, 3>> v3(g_batchSize);
+        std::vector<VecSIMD<float, 3>> results(g_batchSize);
+
+        for (std::size_t i = 0; i < g_batchSize; ++i)
+        {
+            a4[i] = MatSIMD<float, 4, 4>(
+                1.f, 2.f, 3.f, 4.f,
+                5.f, 6.f, 7.f, 8.f,
+                9.f, 10.f, 11.f, 12.f,
+                13.f, 14.f, 15.f, 16.f
+            );
+            v3[i] = VecSIMD<float, 3>(1.5f, 2.5f, 3.5f);
+        }
+
+        auto result = Benchmark(
+            "MatSIMD<float, 4, 4>::MultiplyPoint",
+            [&]()
+            {
+                for (std::size_t i = 0; i < g_batchSize; ++i)
+                {
+                    results[i] = a4[i].MultiplyPoint(v3[i]);
+                }
+
+                DoNotOptimizeAway(results);
+            },
+            g_batchSize
+        );
+
+        PrintBenchmarkResult(result, g_simdResults);
+    }
+    {
+        std::vector<MatSIMD<float, 4, 4>> a4(g_batchSize);
+        std::vector<VecSIMD<float, 3>> v3(g_batchSize);
+        std::vector<VecSIMD<float, 3>> results(g_batchSize);
+
+        for (std::size_t i = 0; i < g_batchSize; ++i)
+        {
+            a4[i] = MatSIMD<float, 4, 4>(
+                1.f, 2.f, 3.f, 4.f,
+                5.f, 6.f, 7.f, 8.f,
+                9.f, 10.f, 11.f, 12.f,
+                13.f, 14.f, 15.f, 16.f
+            );
+            v3[i] = VecSIMD<float, 3>(1.5f, 2.5f, 3.5f);
+        }
+
+        auto result = Benchmark(
+            "MatSIMD<float, 4, 4>::MultiplyVector",
+            [&]()
+            {
+                for (std::size_t i = 0; i < g_batchSize; ++i)
+                {
+                    results[i] = a4[i].MultiplyVector(v3[i]);
+                }
+
+                DoNotOptimizeAway(results);
+            },
+            g_batchSize
+        );
+
+        PrintBenchmarkResult(result, g_simdResults);
+    }
+    {
+        std::vector<MatSIMD<float, 4, 4>> a4(g_batchSize);
+        std::vector<MatSIMD<float, 4, 4>> results(g_batchSize);
+
+        for (std::size_t i = 0; i < g_batchSize; ++i)
+        {
+            a4[i] = MatSIMD<float, 4, 4>(
+                1.f, 2.f, 3.f, 4.f,
+                5.f, 6.f, 7.f, 8.f,
+                9.f, 10.f, 11.f, 12.f,
+                13.f, 14.f, 15.f, 16.f
+            );
+        }
+
+        auto result = Benchmark(
+            "MatSIMD<float, 4, 4>::Transpose",
+            [&]()
+            {
+                for (std::size_t i = 0; i < g_batchSize; ++i)
+                {
+                    results[i] = a4[i].Transpose();
+                }
+
+                DoNotOptimizeAway(results);
+            },
+            g_batchSize
+        );
+
+        PrintBenchmarkResult(result, g_simdResults);
+    }
+    {
+        std::vector<MatSIMD<float, 4, 4>> a4(g_batchSize);
+        std::vector<MatSIMD<float, 4, 4>> results(g_batchSize);
+
+        for (std::size_t i = 0; i < g_batchSize; ++i)
+        {
+            a4[i] = MatSIMD<float, 4, 4>(
+                1.f, 2.f, 3.f, 4.f,
+                5.f, 6.f, 7.f, 8.f,
+                9.f, 10.f, 11.f, 12.f,
+                13.f, 14.f, 15.f, 16.f
+            );
+        }
+
+        auto result = Benchmark(
+            "MatSIMD<float, 4, 4>::Inverse",
+            [&]()
+            {
+                for (std::size_t i = 0; i < g_batchSize; ++i)
+                {
+                    results[i] = a4[i].Inverse();
+                }
+
+                DoNotOptimizeAway(results);
+            },
+            g_batchSize
+        );
+
+        PrintBenchmarkResult(result, g_simdResults);
+    }
+    {
+        std::vector<MatSIMD<float, 4, 4>> a4(g_batchSize);
+        std::vector<float> results(g_batchSize);
+
+        for (std::size_t i = 0; i < g_batchSize; ++i)
+        {
+            a4[i] = MatSIMD<float, 4, 4>(
+                1.f, 2.f, 3.f, 4.f,
+                5.f, 6.f, 7.f, 8.f,
+                9.f, 10.f, 11.f, 12.f,
+                13.f, 14.f, 15.f, 16.f
+            );
+        }
+
+        auto result = Benchmark(
+            "MatSIMD<float, 4, 4>::Determinant",
+            [&]()
+            {
+                for (std::size_t i = 0; i < g_batchSize; ++i)
+                {
+                    results[i] = a4[i].Determinant();
+                }
+
+                DoNotOptimizeAway(results);
+            },
+            g_batchSize
+        );
+
+        PrintBenchmarkResult(result, g_simdResults);
+    }
+    {
+        std::vector<MatSIMD<float, 4, 4>> results(g_batchSize);
+
+        auto result = Benchmark(
+            "MatSIMD<float, 4, 4>::Identity",
+            [&]()
+            {
+                for (std::size_t i = 0; i < g_batchSize; ++i)
+                {
+                    results[i] = MatSIMD<float, 4, 4>::Identity();
+                }
+
+                DoNotOptimizeAway(results);
+            },
+            g_batchSize
+        );
+
+        PrintBenchmarkResult(result, g_simdResults);
+    }
+    {
+        std::vector<VecSIMD<float, 3>> v3(g_batchSize);
+        std::vector<MatSIMD<float, 4, 4>> results(g_batchSize);
+
+        for (std::size_t i = 0; i < g_batchSize; ++i)
+        {
+            v3[i] = VecSIMD<float, 3>(1.5f, 2.5f, 3.5f);
+        }
+
+        auto result = Benchmark(
+            "MatSIMD<float, 4, 4>::Translate",
+            [&]()
+            {
+                for (std::size_t i = 0; i < g_batchSize; ++i)
+                {
+                    results[i] = MatSIMD<float, 4, 4>::Translate(v3[i]);
+                }
+
+                DoNotOptimizeAway(results);
+            },
+            g_batchSize
+        );
+
+        PrintBenchmarkResult(result, g_simdResults);
+    }
+    {
+        std::vector<VecSIMD<float, 3>> v3(g_batchSize);
+        std::vector<MatSIMD<float, 4, 4>> results(g_batchSize);
+
+        for (std::size_t i = 0; i < g_batchSize; ++i)
+        {
+            v3[i] = VecSIMD<float, 3>(1.5f, 2.5f, 3.5f);
+        }
+
+        auto result = Benchmark(
+            "MatSIMD<float, 4, 4>::Scale",
+            [&]()
+            {
+                for (std::size_t i = 0; i < g_batchSize; ++i)
+                {
+                    results[i] = MatSIMD<float, 4, 4>::Scale(v3[i]);
+                }
+
+                DoNotOptimizeAway(results);
+            },
+            g_batchSize
+        );
+
+        PrintBenchmarkResult(result, g_simdResults);
+    }
+    {
+        std::vector<float> angle(g_batchSize, 0.7f);
+        std::vector<MatSIMD<float, 4, 4>> results(g_batchSize);
+
+        auto result = Benchmark(
+            "MatSIMD<float, 4, 4>::RotationX",
+            [&]()
+            {
+                for (std::size_t i = 0; i < g_batchSize; ++i)
+                {
+                    results[i] = MatSIMD<float, 4, 4>::RotationX(angle[i]);
+                }
+
+                DoNotOptimizeAway(results);
+            },
+            g_batchSize
+        );
+
+        PrintBenchmarkResult(result, g_simdResults);
+    }
+    {
+        std::vector<float> fov(g_batchSize, 1.0f);
+        std::vector<float> aspect(g_batchSize, 1.777f);
+        std::vector<float> nearPlane(g_batchSize, 0.1f);
+        std::vector<float> farPlane(g_batchSize, 100.f);
+        std::vector<MatSIMD<float, 4, 4>> results(g_batchSize);
+
+        auto result = Benchmark(
+            "MatSIMD<float, 4, 4>::Perspective",
+            [&]()
+            {
+                for (std::size_t i = 0; i < g_batchSize; ++i)
+                {
+                    results[i] = MatSIMD<float, 4, 4>::Perspective(fov[i], aspect[i], nearPlane[i], farPlane[i]);
+                }
+
+                DoNotOptimizeAway(results);
+            },
+            g_batchSize
+        );
+
+        PrintBenchmarkResult(result, g_simdResults);
+    }
+    {
+        std::vector<float> fov(g_batchSize, 1.0f);
+        std::vector<float> nearPlane(g_batchSize, 0.1f);
+        std::vector<float> farPlane(g_batchSize, 100.f);
+        std::vector<MatSIMD<float, 4, 4>> results(g_batchSize);
+
+        auto result = Benchmark(
+            "MatSIMD<float, 4, 4>::Ortho",
+            [&]()
+            {
+                for (std::size_t i = 0; i < g_batchSize; ++i)
+                {
+                    results[i] = MatSIMD<float, 4, 4>::Ortho(-fov[i], fov[i], -fov[i], fov[i], nearPlane[i], farPlane[i]);
+                }
+
+                DoNotOptimizeAway(results);
+            },
+            g_batchSize
+        );
+
+        PrintBenchmarkResult(result, g_simdResults);
+    }
+    {
+        std::vector<VecSIMD<float, 3>> eye(g_batchSize);
+        std::vector<VecSIMD<float, 3>> target(g_batchSize);
+        std::vector<VecSIMD<float, 3>> up(g_batchSize);
+        std::vector<MatSIMD<float, 4, 4>> results(g_batchSize);
+
+        for (std::size_t i = 0; i < g_batchSize; ++i)
+        {
+            eye[i] = VecSIMD<float, 3>(0.f, 0.f, 5.f);
+            target[i] = VecSIMD<float, 3>(1.5f, 2.5f, 3.5f);
+            up[i] = VecSIMD<float, 3>(0.f, 1.f, 0.f);
+        }
+
+        auto result = Benchmark(
+            "MatSIMD<float, 4, 4>::LookAt",
+            [&]()
+            {
+                for (std::size_t i = 0; i < g_batchSize; ++i)
+                {
+                    results[i] = MatSIMD<float, 4, 4>::LookAt(eye[i], target[i], up[i]);
+                }
+
+                DoNotOptimizeAway(results);
+            },
+            g_batchSize
+        );
+
+        PrintBenchmarkResult(result, g_simdResults);
+    }
+    {
+        std::vector<VecSIMD<float, 3>> translation(g_batchSize);
+        std::vector<QuaternionSIMDf> rotation(g_batchSize);
+        std::vector<VecSIMD<float, 3>> scale(g_batchSize);
+        std::vector<MatSIMD<float, 4, 4>> results(g_batchSize);
+
+        for (std::size_t i = 0; i < g_batchSize; ++i)
+        {
+            translation[i] = VecSIMD<float, 3>(1.5f, 2.5f, 3.5f);
+            rotation[i] = QuaternionSIMDf(1.5f, 2.5f, 3.5f, 4.5f);
+            scale[i] = VecSIMD<float, 3>(1.5f, 2.5f, 3.5f);
+        }
+
+        auto result = Benchmark(
+            "MatSIMD<float, 4, 4>::TRS",
+            [&]()
+            {
+                for (std::size_t i = 0; i < g_batchSize; ++i)
+                {
+                    results[i] = MatSIMD<float, 4, 4>::TRS(translation[i], rotation[i], scale[i]);
+                }
+
+                DoNotOptimizeAway(results);
+            },
+            g_batchSize
+        );
+
+        PrintBenchmarkResult(result, g_simdResults);
+    }
+    {
+        std::vector<MatSIMD<float, 4, 4>> a4(g_batchSize);
+        std::vector<bool> results(g_batchSize);
+
+        for (std::size_t i = 0; i < g_batchSize; ++i)
+        {
+            a4[i] = MatSIMD<float, 4, 4>(
+                1.f, 2.f, 3.f, 4.f,
+                5.f, 6.f, 7.f, 8.f,
+                9.f, 10.f, 11.f, 12.f,
+                13.f, 14.f, 15.f, 16.f
+            );
+        }
+
+        auto result = Benchmark(
+            "MatSIMD<float, 4, 4>::ValidTRS",
+            [&]()
+            {
+                for (std::size_t i = 0; i < g_batchSize; ++i)
+                {
+                    results[i] = ValidTRS(a4[i]);
+                }
+
+                DoNotOptimizeAway(results);
+            },
+            g_batchSize
+        );
+
+        PrintBenchmarkResult(result, g_simdResults);
+    }
+    {
+        std::vector<MatSIMD<double, 4, 4>> a4d(g_batchSize);
+        std::vector<VecSIMD<double, 3>> v3d(g_batchSize);
+        std::vector<VecSIMD<double, 3>> results(g_batchSize);
+
+        for (std::size_t i = 0; i < g_batchSize; ++i)
+        {
+            a4d[i] = MatSIMD<double, 4, 4>(
+                1.0, 2.0, 3.0, 4.0,
+                5.0, 6.0, 7.0, 8.0,
+                9.0, 10.0, 11.0, 12.0,
+                13.0, 14.0, 15.0, 16.0
+            );
+            v3d[i] = VecSIMD<double, 3>(1.5, 2.5, 3.5);
+        }
+
+        auto result = Benchmark(
+            "MatSIMD<double, 4, 4>::MultiplyPoint",
+            [&]()
+            {
+                for (std::size_t i = 0; i < g_batchSize; ++i)
+                {
+                    results[i] = a4d[i].MultiplyPoint(v3d[i]);
+                }
+
+                DoNotOptimizeAway(results);
+            },
+            g_batchSize
+        );
+
+        PrintBenchmarkResult(result, g_simdResults);
+    }
+    {
+        std::vector<MatSIMD<double, 4, 4>> a4d(g_batchSize);
+        std::vector<MatSIMD<double, 4, 4>> results(g_batchSize);
+
+        for (std::size_t i = 0; i < g_batchSize; ++i)
+        {
+            a4d[i] = MatSIMD<double, 4, 4>(
+                1.0, 2.0, 3.0, 4.0,
+                5.0, 6.0, 7.0, 8.0,
+                9.0, 10.0, 11.0, 12.0,
+                13.0, 14.0, 15.0, 16.0
+            );
+        }
+
+        auto result = Benchmark(
+            "MatSIMD<double, 4, 4>::Transpose",
+            [&]()
+            {
+                for (std::size_t i = 0; i < g_batchSize; ++i)
+                {
+                    results[i] = a4d[i].Transpose();
+                }
+
+                DoNotOptimizeAway(results);
+            },
+            g_batchSize
+        );
+
+        PrintBenchmarkResult(result, g_simdResults);
+    }
+    {
+        std::vector<MatSIMD<double, 4, 4>> a4d(g_batchSize);
+        std::vector<MatSIMD<double, 4, 4>> results(g_batchSize);
+
+        for (std::size_t i = 0; i < g_batchSize; ++i)
+        {
+            a4d[i] = MatSIMD<double, 4, 4>(
+                1.0, 2.0, 3.0, 4.0,
+                5.0, 6.0, 7.0, 8.0,
+                9.0, 10.0, 11.0, 12.0,
+                13.0, 14.0, 15.0, 16.0
+            );
+        }
+
+        auto result = Benchmark(
+            "MatSIMD<double, 4, 4>::Inverse",
+            [&]()
+            {
+                for (std::size_t i = 0; i < g_batchSize; ++i)
+                {
+                    results[i] = a4d[i].Inverse();
+                }
+
+                DoNotOptimizeAway(results);
+            },
+            g_batchSize
+        );
+
+        PrintBenchmarkResult(result, g_simdResults);
+    }
+    {
+        std::vector<MatSIMD<double, 4, 4>> a4d(g_batchSize);
+        std::vector<double> results(g_batchSize);
+
+        for (std::size_t i = 0; i < g_batchSize; ++i)
+        {
+            a4d[i] = MatSIMD<double, 4, 4>(
+                1.0, 2.0, 3.0, 4.0,
+                5.0, 6.0, 7.0, 8.0,
+                9.0, 10.0, 11.0, 12.0,
+                13.0, 14.0, 15.0, 16.0
+            );
+        }
+
+        auto result = Benchmark(
+            "MatSIMD<double, 4, 4>::Determinant",
+            [&]()
+            {
+                for (std::size_t i = 0; i < g_batchSize; ++i)
+                {
+                    results[i] = a4d[i].Determinant();
+                }
+
+                DoNotOptimizeAway(results);
+            },
+            g_batchSize
+        );
+
+        PrintBenchmarkResult(result, g_simdResults);
+    }
+    {
+        std::vector<VecSIMD<double, 3>> translation(g_batchSize);
+        std::vector<QuaternionSIMDd> rotation(g_batchSize);
+        std::vector<VecSIMD<double, 3>> scale(g_batchSize);
+        std::vector<MatSIMD<double, 4, 4>> results(g_batchSize);
+
+        for (std::size_t i = 0; i < g_batchSize; ++i)
+        {
+            translation[i] = VecSIMD<double, 3>(1.5, 2.5, 3.5);
+            rotation[i] = QuaternionSIMDd(1.5, 2.5, 3.5, 4.5);
+            scale[i] = VecSIMD<double, 3>(1.5, 2.5, 3.5);
+        }
+
+        auto result = Benchmark(
+            "MatSIMD<double, 4, 4>::TRS",
+            [&]()
+            {
+                for (std::size_t i = 0; i < g_batchSize; ++i)
+                {
+                    results[i] = MatSIMD<double, 4, 4>::TRS(translation[i], rotation[i], scale[i]);
+                }
+
+                DoNotOptimizeAway(results);
+            },
+            g_batchSize
+        );
+
+        PrintBenchmarkResult(result, g_simdResults);
+    }
+    {
+        std::vector<double> angle(g_batchSize, 0.7);
+        std::vector<MatSIMD<double, 4, 4>> results(g_batchSize);
+
+        auto result = Benchmark(
+            "MatSIMD<double, 4, 4>::RotationX",
+            [&]()
+            {
+                for (std::size_t i = 0; i < g_batchSize; ++i)
+                {
+                    results[i] = MatSIMD<double, 4, 4>::RotationX(angle[i]);
+                }
+
+                DoNotOptimizeAway(results);
+            },
+            g_batchSize
+        );
+
+        PrintBenchmarkResult(result, g_simdResults);
+    }
+
 }
 
 int main()

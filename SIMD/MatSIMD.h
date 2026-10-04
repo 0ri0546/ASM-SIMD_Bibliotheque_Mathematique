@@ -5,7 +5,7 @@
 #include <mdspan>
 #include <numbers>
 
-#include "VecSIMD.h"
+#include "QuaternionSIMD.h"
 
 #include "Concepts.h"
 
@@ -114,13 +114,13 @@ public:
         requires(R == RowCount && C == ColCount && R == 4 && C == 4)
     static inline constexpr MatSIMD Translate(const VecSIMD<U, 3>& translation);
 
-    //template <float_num U = T, std::size_t R = RowCount, std::size_t C = ColCount>
-    //    requires(R == RowCount && C == ColCount && R == 4 && C == 4)
-    //static inline constexpr MatSIMD Rotate(const QuaternionSIMD<U>& rotation);
+    template <float_num U = T, std::size_t R = RowCount, std::size_t C = ColCount>
+        requires(R == RowCount && C == ColCount && R == 4 && C == 4)
+    static inline constexpr MatSIMD Rotate(const QuaternionSIMD<U>& rotation);
 
-    //template <float_num U = T, std::size_t R = RowCount, std::size_t C = ColCount>
-    //    requires(R == RowCount && C == ColCount && R == 4 && C == 4)
-    //static inline constexpr MatSIMD TRS(const VecSIMD<U, 3>& translation, const QuaternionSIMD<U>& rotation, const VecSIMD<U, 3>& scale);
+    template <float_num U = T, std::size_t R = RowCount, std::size_t C = ColCount>
+        requires(R == RowCount && C == ColCount && R == 4 && C == 4)
+    static inline constexpr MatSIMD TRS(const VecSIMD<U, 3>& translation, const QuaternionSIMD<U>& rotation, const VecSIMD<U, 3>& scale);
 
     template <float_num U = T, std::size_t R = RowCount, std::size_t C = ColCount>
         requires(R == RowCount && C == ColCount && R == 4 && C == 4)
@@ -134,6 +134,7 @@ public:
         requires(R == RowCount && C == ColCount && R == 4 && C == 4)
     static inline constexpr MatSIMD LookAt(const VecSIMD<U, 3>& eye, const VecSIMD<U, 3>& target, const VecSIMD<U, 3>& up);
 
+	// Slower on benchmarks because it calls underlying operator* for each row, prefer Non-SIMD version for performance
     template <float_num U, std::size_t R = RowCount, std::size_t C = ColCount>
         requires(R == RowCount && C == ColCount && R == 4 && C == 4)
     inline constexpr VecSIMD<std::common_type_t<T, U>, 3> MultiplyPoint(const VecSIMD<U, 3>& point) const;
@@ -150,9 +151,9 @@ public:
         requires(R == RowCount && C == ColCount && R == 4 && C == 4)
     inline constexpr VecSIMD<T, 3> ExtractScale() const;
 
-    //template <float_num U = T, std::size_t R = RowCount, std::size_t C = ColCount>
-    //    requires(R == RowCount && C == ColCount && R == 4 && C == 4)
-    //inline constexpr QuaternionSIMD<U> ExtractRotation() const;
+    template <float_num U = T, std::size_t R = RowCount, std::size_t C = ColCount>
+        requires(R == RowCount && C == ColCount && R == 4 && C == 4)
+    inline constexpr QuaternionSIMD<U> ExtractRotation() const;
 };
 
 template <float_num T, float_num U, std::size_t RowCount, std::size_t ColCount, typename Layout>
@@ -191,59 +192,10 @@ inline constexpr auto operator*(const MatSIMD<T, RowCount, ColCount, Layout>& ma
     -> VecSIMD<std::common_type_t<T, U>, RowCount>;
 
 template <float_num T>
-inline constexpr T ToRadians(T degrees);
+inline constexpr T ToRadiansSIMD(T degrees);
 
 template <float_num T, std::size_t RowCount, std::size_t ColCount, typename Layout>
 inline constexpr bool ValidTRS(const MatSIMD<T, RowCount, ColCount, Layout>& mat);
-
-template <float_num T, std::size_t RowCount, std::size_t ColCount>
-using MatRowMajor = MatSIMD<T, RowCount, ColCount, RowMajor>;
-
-template <float_num T, std::size_t RowCount, std::size_t ColCount>
-using MatColumnMajor = MatSIMD<T, RowCount, ColCount, ColumnMajor>;
-
-template <float_num T, std::size_t N>
-using SquareMatrix = MatSIMD<T, N, N>;
-
-template <float_num T, std::size_t N>
-using SquareMatrixRowMajor = MatSIMD<T, N, N, RowMajor>;
-
-template <float_num T, std::size_t N>
-using SquareMatrixColumnMajor = MatSIMD<T, N, N, ColumnMajor>;
-
-template <float_num T>
-using Mat2 = MatSIMD<T, 2, 2>;
-
-template <float_num T>
-using Mat2ColumnMajor = MatSIMD<T, 2, 2, ColumnMajor>;
-
-template <float_num T>
-using Mat3 = MatSIMD<T, 3, 3>;
-
-template <float_num T>
-using Mat3ColumnMajor = MatSIMD<T, 3, 3, ColumnMajor>;
-
-template <float_num T>
-using Mat4 = MatSIMD<T, 4, 4>;
-
-template <float_num T>
-using Mat4ColumnMajor = MatSIMD<T, 4, 4, ColumnMajor>;
-
-using Mat2f = Mat2<float>;
-using Mat3f = Mat3<float>;
-using Mat4f = Mat4<float>;
-
-using Mat2fColumnMajor = Mat2ColumnMajor<float>;
-using Mat3fColumnMajor = Mat3ColumnMajor<float>;
-using Mat4fColumnMajor = Mat4ColumnMajor<float>;
-
-using Mat2d = Mat2<double>;
-using Mat3d = Mat3<double>;
-using Mat4d = Mat4<double>;
-
-using Mat2dColumnMajor = Mat2ColumnMajor<double>;
-using Mat3dColumnMajor = Mat3ColumnMajor<double>;
-using Mat4dColumnMajor = Mat4ColumnMajor<double>;
 
 template <float_num T, std::size_t RowCount, std::size_t ColCount, typename Layout>
 struct std::formatter<MatSIMD<T, RowCount, ColCount, Layout>>;

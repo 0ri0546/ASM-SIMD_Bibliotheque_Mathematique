@@ -138,12 +138,13 @@
     <ClCompile Include="SIMD.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\ASM-SIMD-Bibliothèque-mathématique\Headers\Config\SimdConfig.h" />
     <ClInclude Include="SIMD_traits.h" />
     <ClInclude Include="MatSIMD.h" />
+    <ClInclude Include="QuaternionSIMD.h" />
     <ClInclude Include="VecSIMD.h" />
     <ClInclude Include="MatSIMD.inl" />
     <ClInclude Include="VecSIMD.inl" />
+    <ClInclude Include="QuaternionSIMD.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

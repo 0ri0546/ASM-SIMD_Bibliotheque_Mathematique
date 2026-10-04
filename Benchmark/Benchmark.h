@@ -211,7 +211,7 @@ inline void BeginBenchmark(
 inline void PrintBenchmarkHeader()
 {
     std::println(
-        "{:<4} | {:<34} | {:>10} | {:>12} | {:>12} | {:>12} | {:>12} | {:>12} | {:>12}",
+        "{:<4} | {:<40} | {:>10} | {:>12} | {:>12} | {:>12} | {:>12} | {:>12} | {:>12}",
         "No.",
         "Name",
         "Batch",
@@ -223,7 +223,7 @@ inline void PrintBenchmarkHeader()
         "total(ms)"
     );
 
-    std::println("{:-<165}", "");
+    std::println("{:-<150}", "");
 }
 
 inline void WriteBenchmarkCSV(
@@ -265,7 +265,7 @@ inline void PrintBenchmarkResult(
         : "-";
 
     std::println(
-        "{:<4} | {:<34} | {:>10} | {:>12} | {:>12.4e} | {:>12.4f} | {:>12.4f} | {:>12.0f} | {:>12.4f}",
+        "{:<4} | {:<40} | {:>10} | {:>12} | {:>12.4e} | {:>12.4f} | {:>12.4f} | {:>12.0f} | {:>12.4f}",
         index,
         result.name,
         result.batchSize,
@@ -438,6 +438,90 @@ inline void CalculateSpeedups()
 
             if (simd.name == "VecSIMD<float, 8>::Dot" &&
                 ref.name == "Vec8f::Dot")
+            {
+                reference = &ref;
+                break;
+            }
+
+            if (simd.name == "MatSIMD<float, 4, 4>::Translate" &&
+                ref.name == "Mat4f::Translate")
+            {
+                reference = &ref;
+                break;
+            }
+
+            if (simd.name == "MatSIMD<float, 4, 4>::MultiplyPoint" &&
+                ref.name == "Mat4f::MultiplyPoint")
+            {
+                reference = &ref;
+                break;
+            }
+
+            if (simd.name == "MatSIMD<float, 4, 4>::TRS" &&
+                ref.name == "Mat4f::TRS")
+            {
+                reference = &ref;
+                break;
+            }
+
+            if (simd.name == "MatSIMD<float, 4, 4>::RotationX" &&
+                ref.name == "Mat4f::RotationX")
+            {
+                reference = &ref;
+                break;
+            }
+
+            if (simd.name == "..." &&
+                ref.name == "Mat4f::Multiplication")
+            {
+                reference = &ref;
+                break;
+            }
+
+            if (simd.name == "MatSIMD<float, 4, 4>::Inverse" &&
+                ref.name == "Mat4f::Inverse")
+            {
+                reference = &ref;
+                break;
+            }
+
+            if (simd.name == "MatSIMD<float, 4, 4>::Translate" &&
+                ref.name == "Mat4d::Translate")
+            {
+                reference = &ref;
+                break;
+            }
+
+            if (simd.name == "MatSIMD<double, 4, 4>::MultiplyPoint" &&
+                ref.name == "Mat4d::MultiplyPoint")
+            {
+                reference = &ref;
+                break;
+            }
+
+            if (simd.name == "MatSIMD<double, 4, 4>::TRS" &&
+                ref.name == "Mat4d::TRS")
+            {
+                reference = &ref;
+                break;
+            }
+
+            if (simd.name == "MatSIMD<double, 4, 4>::RotationX" &&
+                ref.name == "Mat4d::RotationX")
+            {
+                reference = &ref;
+                break;
+            }
+
+            if (simd.name == "..." &&
+                ref.name == "Mat4d::Multiplication")
+            {
+                reference = &ref;
+                break;
+            }
+
+            if (simd.name == "MatSIMD<double, 4, 4>::Inverse" &&
+                ref.name == "Mat4d::Inverse")
             {
                 reference = &ref;
                 break;
