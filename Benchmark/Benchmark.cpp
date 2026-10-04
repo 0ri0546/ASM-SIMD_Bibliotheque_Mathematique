@@ -27,15 +27,11 @@ namespace
 
         if (choice == 1)
             return 1'000;
-
         if (choice == 2)
             return 100'000;
-
         if (choice == 3)
             return 1'000'000;
-
-        if (choice == 4)
-        {
+        if (choice == 4) {
             std::size_t size = 0;
 
             std::cout << "Taille du lot : ";
@@ -44,11 +40,11 @@ namespace
             if (size > 0)
                 return size;
 
-            std::println("Taille invalide. Utilisation de 1 000.");
+            std::println("error, on utilise 1000");
             return 1'000;
         }
 
-        std::println("Choix invalide. Utilisation de 1 000.");
+        std::println("error, on utilise 1000");
         return 1'000;
     }
 
@@ -70,7 +66,7 @@ namespace
         if (choice >= 1 && choice <= 3)
             return choice;
 
-        std::println("Choix invalide. Les deux seront executes.");
+        std::println("Choix invalide. Les deux seront fait.");
         return 3;
     }
 }

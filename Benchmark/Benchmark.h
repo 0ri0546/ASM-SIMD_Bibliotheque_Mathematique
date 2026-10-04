@@ -297,7 +297,7 @@ BenchmarkResult Benchmark(
     result.batchSize = batchSize;
     result.iterations = iterations;
 
-    for (std::size_t i = 0; i < warmupIterations; ++i){
+    for (std::size_t i = 0; i < warmupIterations; ++i) {
         fn();
     }
 
@@ -317,8 +317,7 @@ BenchmarkResult Benchmark(
         const std::uint64_t cycleBegin =
             ReadTSC();
 
-        for (std::size_t i = 0; i < iterations; ++i)
-        {
+        for (std::size_t i = 0; i < iterations; ++i) {
             fn();
         }
 
