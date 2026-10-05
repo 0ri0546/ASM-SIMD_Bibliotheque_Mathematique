@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <array>
 #include <concepts>
 #include <cstddef>
@@ -7,7 +8,8 @@
 #include <cmath>
 #include <type_traits>
 #include <utility>
-#include <algorithm>
+
+#include <xmmintrin.h>
 #include <immintrin.h>
 
 #include "Concepts.h"

@@ -32,16 +32,14 @@
     <ClInclude Include="Headers\Vec.inl">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="Mat.h">
+    <ClInclude Include="Headers\Mat.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Mat.inl">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="Concepts.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Mat.inl">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </None>
   </ItemGroup>
 </Project>
