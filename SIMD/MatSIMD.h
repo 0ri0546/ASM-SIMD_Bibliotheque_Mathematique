@@ -191,6 +191,12 @@ template <float_num T, float_num U, std::size_t RowCount, std::size_t ColCount, 
 inline constexpr auto operator*(const MatSIMD<T, RowCount, ColCount, Layout>& mat, const VecSIMD<U, ColCount>& vec)
     -> VecSIMD<std::common_type_t<T, U>, RowCount>;
 
+template <float_num T, std::size_t RowCount, std::size_t ColCount>
+using MatSIMDRowMajor = MatSIMD<T, RowCount, ColCount, RowMajor>;
+
+template <float_num T, std::size_t RowCount, std::size_t ColCount>
+using MatSIMDColumnMajor = MatSIMD<T, RowCount, ColCount, ColumnMajor>;
+
 template <float_num T>
 inline constexpr T ToRadiansSIMD(T degrees);
 
