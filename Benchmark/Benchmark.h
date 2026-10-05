@@ -43,6 +43,7 @@ struct BenchmarkResult
     double totalMs = 0.0;
 
     double speedup = 0.0;
+    double dispersion = 0.0;
 };
 
 inline std::size_t g_benchmarkIndex = 1;
@@ -189,7 +190,7 @@ inline void BeginBenchmark(
     if (file.is_open())
     {
         file
-            << "No.|Name|Batch|Iterations|op / s|ns / op|err %|cyc / op|total(ms)|Speedup\n";
+            << "No.|Name|Batch|Iterations|op / s|ns / op|err %|cyc / op|total(ms)|dispersion(cyc)\n";
     }
 
     std::println();
@@ -211,7 +212,7 @@ inline void BeginBenchmark(
 inline void PrintBenchmarkHeader()
 {
     std::println(
-        "{:<4} | {:<40} | {:>10} | {:>12} | {:>12} | {:>12} | {:>12} | {:>12} | {:>12}",
+        "{:<4} | {:<40} | {:>10} | {:>12} | {:>12} | {:>12} | {:>12} | {:>12} | {:>12} | {:>12}",
         "No.",
         "Name",
         "Batch",
@@ -220,10 +221,11 @@ inline void PrintBenchmarkHeader()
         "ns / op",
         "err %",
         "cyc / op",
-        "total(ms)"
+        "total(ms)",
+        "dispersion (cyc)"
     );
 
-    std::println("{:-<150}", "");
+    std::println("{:-<170}", "");
 }
 
 inline void WriteBenchmarkCSV(
@@ -239,7 +241,7 @@ inline void WriteBenchmarkCSV(
         return;
 
     file << std::format(
-        "{}|{}|{}|{}|{:.4e}|{:.4f}|{:.4f}|{:.0f}|{:.4f}|{:.3f}\n",
+        "{}|{}|{}|{}|{:.4e}|{:.4f}|{:.4f}|{:.0f}|{:.4f}|{:>.4}|\n",
         index,
         result.name,
         result.batchSize,
@@ -249,7 +251,7 @@ inline void WriteBenchmarkCSV(
         result.errorPercent,
         result.cyclesPerOperation,
         result.totalMs,
-        result.speedup
+        result.dispersion
     );
 }
 
@@ -265,7 +267,7 @@ inline void PrintBenchmarkResult(
         : "-";
 
     std::println(
-        "{:<4} | {:<40} | {:>10} | {:>12} | {:>12.4e} | {:>12.4f} | {:>12.4f} | {:>12.0f} | {:>12.4f}",
+        "{:<4} | {:<40} | {:>10} | {:>12} | {:>12.4e} | {:>12.4f} | {:>12.4f} | {:>12.0f} | {:>12.4f} | {:>12.4} |",
         index,
         result.name,
         result.batchSize,
@@ -274,7 +276,8 @@ inline void PrintBenchmarkResult(
         result.nsPerOperation,
         result.errorPercent,
         result.cyclesPerOperation,
-        result.totalMs
+        result.totalMs,
+        result.dispersion
     );
 
     destination.push_back(result);
@@ -304,6 +307,8 @@ BenchmarkResult Benchmark(
     cyclesPerOperation.reserve(samples);
 
     double totalNanoseconds = 0.0;
+    double minCycles = 0.0;
+    double maxCycles = 0.0;
 
     auto start = std::chrono::steady_clock::now();
     auto end = std::chrono::steady_clock::now() + std::chrono::milliseconds(10);
@@ -341,6 +346,20 @@ BenchmarkResult Benchmark(
                 cycleEnd - cycleBegin
                 );
 
+        if (maxCycles == 0.0)
+        {
+            maxCycles = elapsedCycles;
+            minCycles = elapsedCycles;
+        }
+        if (elapsedCycles < minCycles)
+        {
+            minCycles = elapsedCycles;
+        }
+        else
+        {
+            maxCycles = elapsedCycles;
+        }
+
         const double totalOperations =
             static_cast<double>(batchSize) *
             static_cast<double>(iterations);
@@ -375,6 +394,8 @@ BenchmarkResult Benchmark(
 
     result.totalMs =
         totalNanoseconds * 1.0e-6;
+
+    result.dispersion = (maxCycles - minCycles) / batchSize;
 
     return result;
 }
@@ -473,7 +494,7 @@ inline void CalculateSpeedups()
                 break;
             }
 
-            if (simd.name == "..." &&
+            if (simd.name == "MatSIMD<float, 4, 4>::Multiplication" &&
                 ref.name == "Mat4f::Multiplication")
             {
                 reference = &ref;
@@ -515,7 +536,7 @@ inline void CalculateSpeedups()
                 break;
             }
 
-            if (simd.name == "..." &&
+            if (simd.name == "MatSIMD<double, 4, 4>::Multiplication" &&
                 ref.name == "Mat4d::Multiplication")
             {
                 reference = &ref;
@@ -528,6 +549,105 @@ inline void CalculateSpeedups()
                 reference = &ref;
                 break;
             }
+
+            if (simd.name == "QuaternionSIMD<float>::FromEuler" &&
+                ref.name == "Quaternionf::FromEuler")
+            {
+                reference = &ref;
+                break;
+            }
+
+            if (simd.name == "QuaternionSIMD<float>::FromAxisAngle" &&
+                ref.name == "Quaternionf::FromAxisAngle")
+            {
+                reference = &ref;
+                break;
+            }
+
+            if (simd.name == "QuaternionSIMD<float>::FromToRotation" &&
+                ref.name == "Quaternionf::FromToRotation")
+            {
+                reference = &ref;
+                break;
+            }
+
+            if (simd.name == "QuaternionSIMD<float>::LookRotation" &&
+                ref.name == "Quaternionf::LookRotation")
+            {
+                reference = &ref;
+                break;
+            }
+
+            if (simd.name == "QuaternionSIMD<float>::Addition" &&
+                ref.name == "Quaternionf::Addition")
+            {
+                reference = &ref;
+                break;
+            }
+
+            if (simd.name == "QuaternionSIMD<float>::Soustraction" &&
+                ref.name == "Quaternionf::Soustraction")
+            {
+                reference = &ref;
+                break;
+            }
+
+            if (simd.name == "QuaternionSIMD<float>::Multiplication" &&
+                ref.name == "Quaternionf::Multiplication")
+            {
+                reference = &ref;
+                break;
+            }
+
+            if (simd.name == "QuaternionSIMD<float>::Dot" &&
+                ref.name == "Quaternionf::Dot")
+            {
+                reference = &ref;
+                break;
+            }
+
+            if (simd.name == "QuaternionSIMD<float>::LerpUnclamped" &&
+                ref.name == "Quaternionf::LerpUnclamped")
+            {
+                reference = &ref;
+                break;
+            }
+
+            if (simd.name == "QuaternionSIMD<float>::Lerp" &&
+                ref.name == "Quaternionf::Lerp")
+            {
+                reference = &ref;
+                break;
+            }
+
+            if (simd.name == "QuaternionSIMD<float>::SlerpUnclamped" &&
+                ref.name == "Quaternionf::SlerpUnclamped")
+            {
+                reference = &ref;
+                break;
+            }
+
+            if (simd.name == "QuaternionSIMD<float>::Slerp" &&
+                ref.name == "Quaternionf::Slerp")
+            {
+                reference = &ref;
+                break;
+            }
+
+            if (simd.name == "QuaternionSIMD<float>::Angle" &&
+                ref.name == "Quaternionf::Angle")
+            {
+                reference = &ref;
+                break;
+            }
+
+            if (simd.name == "QuaternionSIMD<float>::RotateTowards" &&
+                ref.name == "Quaternionf::RotateTowards")
+            {
+                reference = &ref;
+                break;
+            }
+
         }
 
         if (reference != nullptr &&
