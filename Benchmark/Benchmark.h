@@ -648,6 +648,104 @@ inline void CalculateSpeedups()
                 break;
             }
 
+            if (simd.name == "QuaternionSIMD<double>::FromEuler" &&
+                ref.name == "Quaterniond::FromEuler")
+            {
+                reference = &ref;
+                break;
+            }
+
+            if (simd.name == "QuaternionSIMD<double>::FromAxisAngle" &&
+                ref.name == "Quaterniond::FromAxisAngle")
+            {
+                reference = &ref;
+                break;
+            }
+
+            if (simd.name == "QuaternionSIMD<double>::FromToRotation" &&
+                ref.name == "Quaterniond::FromToRotation")
+            {
+                reference = &ref;
+                break;
+            }
+
+            if (simd.name == "QuaternionSIMD<double>::LookRotation" &&
+                ref.name == "Quaterniond::LookRotation")
+            {
+                reference = &ref;
+                break;
+            }
+
+            if (simd.name == "QuaternionSIMD<double>::Addition" &&
+                ref.name == "Quaterniond::Addition")
+            {
+                reference = &ref;
+                break;
+            }
+
+            if (simd.name == "QuaternionSIMD<double>::Soustraction" &&
+                ref.name == "Quaterniond::Soustraction")
+            {
+                reference = &ref;
+                break;
+            }
+
+            if (simd.name == "QuaternionSIMD<double>::Multiplication" &&
+                ref.name == "Quaterniond::Multiplication")
+            {
+                reference = &ref;
+                break;
+            }
+
+            if (simd.name == "QuaternionSIMD<double>::Dot" &&
+                ref.name == "Quaterniond::Dot")
+            {
+                reference = &ref;
+                break;
+            }
+
+            if (simd.name == "QuaternionSIMD<double>::LerpUnclamped" &&
+                ref.name == "Quaterniond::LerpUnclamped")
+            {
+                reference = &ref;
+                break;
+            }
+
+            if (simd.name == "QuaternionSIMD<double>::Lerp" &&
+                ref.name == "Quaterniond::Lerp")
+            {
+                reference = &ref;
+                break;
+            }
+
+            if (simd.name == "QuaternionSIMD<double>::SlerpUnclamped" &&
+                ref.name == "Quaterniond::SlerpUnclamped")
+            {
+                reference = &ref;
+                break;
+            }
+
+            if (simd.name == "QuaternionSIMD<double>::Slerp" &&
+                ref.name == "Quaterniond::Slerp")
+            {
+                reference = &ref;
+                break;
+            }
+
+            if (simd.name == "QuaternionSIMD<double>::Angle" &&
+                ref.name == "Quaterniond::Angle")
+            {
+                reference = &ref;
+                break;
+            }
+
+            if (simd.name == "QuaternionSIMD<double>::RotateTowards" &&
+                ref.name == "Quaterniond::RotateTowards")
+            {
+                reference = &ref;
+                break;
+            }
+
         }
 
         if (reference != nullptr &&

@@ -5,7 +5,7 @@
 
 void BenchmarkQuaternionNoSIMD() {
     {
-        std::vector<Quaternionf> results(g_batchSize);
+        std::vector<Quaternion<float>> results(g_batchSize);
 
         auto result = Benchmark(
             "Quaternionf::FromEuler",
@@ -13,7 +13,7 @@ void BenchmarkQuaternionNoSIMD() {
             {
                 for (std::size_t i = 0; i < g_batchSize; ++i)
                 {
-                    results[i] = Quaternionf::FromEuler(
+                    results[i] = Quaternion<float>::FromEuler(
                         0.5f,
                         0.5f,
                         0.5f
@@ -39,7 +39,7 @@ void BenchmarkQuaternionNoSIMD() {
             {
                 for (std::size_t i = 0; i < g_batchSize; ++i)
                 {
-                    results[i] = Quaternionf::FromAxisAngle(axis, std::numbers::pi_v<float> / 2.0f);
+                    results[i] = Quaternion<float>::FromAxisAngle(axis, std::numbers::pi_v<float> / 2.0f);
                 }
 
                 DoNotOptimizeAway(results);
@@ -61,7 +61,7 @@ void BenchmarkQuaternionNoSIMD() {
             {
                 for (std::size_t i = 0; i < g_batchSize; ++i)
                 {
-                    results[i] = Quaternionf::FromToRotation(v, v);
+                    results[i] = Quaternion<float>::FromToRotation(v, v);
                 }
 
                 DoNotOptimizeAway(results);
@@ -468,6 +468,235 @@ void BenchmarkQuaternionNoSIMD() {
 
         PrintBenchmarkResult(result, g_referenceResults);
     }
+
+    {
+        std::vector<Quaternion<double>> results(g_batchSize);
+
+        auto result = Benchmark(
+            "Quaterniond::FromEuler",
+            [&]()
+            {
+                for (std::size_t i = 0; i < g_batchSize; ++i)
+                {
+                    results[i] = Quaternion<double>::FromEuler(
+                        0.5,
+                        0.5,
+                        0.5
+                    );
+                }
+
+                DoNotOptimizeAway(results);
+            },
+            g_batchSize
+        );
+
+        PrintBenchmarkResult(result, g_referenceResults);
+    }
+
+    {
+        std::vector<Quaternion<double>> q(g_batchSize);
+        std::vector<Quaternion<double>> results(g_batchSize);
+        const Vec<double, 3> axis{ 0.0, 1.0, 0.0 };
+
+        auto result = Benchmark(
+            "Quaterniond::FromAxisAngle",
+            [&]()
+            {
+                for (std::size_t i = 0; i < g_batchSize; ++i)
+                {
+                    results[i] = Quaternion<double>::FromAxisAngle(axis, std::numbers::pi_v<double> / 2.0);
+                }
+
+                DoNotOptimizeAway(results);
+            },
+            g_batchSize
+        );
+
+        PrintBenchmarkResult(result, g_referenceResults);
+    }
+
+    {
+        std::vector<Quaternion<double>> q(g_batchSize);
+        std::vector<Quaternion<double>> results(g_batchSize);
+        constexpr Vec<double, 3> v{ 1.0, 0.0, 0.0 };
+
+        auto result = Benchmark(
+            "Quaterniond::FromToRotation",
+            [&]()
+            {
+                for (std::size_t i = 0; i < g_batchSize; ++i)
+                {
+                    results[i] = Quaternion<double>::FromToRotation(v, v);
+                }
+
+                DoNotOptimizeAway(results);
+            },
+            g_batchSize
+        );
+
+        PrintBenchmarkResult(result, g_referenceResults);
+    }
+
+    {
+        std::vector<Quaternion<double>> q(g_batchSize);
+        std::vector<Quaternion<double>> results(g_batchSize);
+        constexpr Vec<double, 3> forward{ 0.0f, 0.0f, 1.0f };
+        constexpr Vec<double, 3> up{ 0.0f, 1.0f, 0.0f };
+
+        auto result = Benchmark(
+            "Quaterniond::LookRotation",
+            [&]()
+            {
+                for (std::size_t i = 0; i < g_batchSize; ++i)
+                {
+                    results[i] = Quaternion<double>::LookRotation(forward, up);
+                }
+
+                DoNotOptimizeAway(results);
+            },
+            g_batchSize
+        );
+
+        PrintBenchmarkResult(result, g_referenceResults);
+    }
+
+    {
+        std::vector<Quaternion<double>> q(g_batchSize);
+        std::vector<Quaternion<double>> results(g_batchSize);
+        Quaternion<double> a{ 1.0f, 2.0f, 3.0f, 4.0f };
+        constexpr Quaternion<double> b{ 4.0f, 5.0f, 6.0f, 7.0f };
+
+        auto result = Benchmark(
+            "Quaterniond::Addition",
+            [&]()
+            {
+                for (std::size_t i = 0; i < g_batchSize; ++i)
+                {
+                    results[i] = a + b;
+                }
+
+                DoNotOptimizeAway(results);
+            },
+            g_batchSize
+        );
+
+        PrintBenchmarkResult(result, g_referenceResults);
+    }
+
+    {
+        std::vector<Quaternion<double>> q(g_batchSize);
+        std::vector<Quaternion<double>> results(g_batchSize);
+        Quaternion<double> a{ 1.0f, 2.0f, 3.0f, 4.0f };
+        constexpr Quaternion<double> b{ 4.0f, 5.0f, 6.0f, 7.0f };
+
+        auto result = Benchmark(
+            "Quaterniond::Soustraction",
+            [&]()
+            {
+                for (std::size_t i = 0; i < g_batchSize; ++i)
+                {
+                    results[i] = a - b;
+                }
+
+                DoNotOptimizeAway(results);
+            },
+            g_batchSize
+        );
+
+        PrintBenchmarkResult(result, g_referenceResults);
+    }
+
+    {
+        std::vector<Quaternion<double>> q(g_batchSize);
+        std::vector<Quaternion<double>> results(g_batchSize);
+        Quaternion<double> a{ 1.0f, 2.0f, 3.0f, 4.0f };
+        constexpr Quaternion<double> b{ 4.0f, 5.0f, 6.0f, 7.0f };
+
+        auto result = Benchmark(
+            "Quaterniond::Multiplication",
+            [&]()
+            {
+                for (std::size_t i = 0; i < g_batchSize; ++i)
+                {
+                    results[i] = a * b;
+                }
+
+                DoNotOptimizeAway(results);
+            },
+            g_batchSize
+        );
+
+        PrintBenchmarkResult(result, g_referenceResults);
+    }
+
+    {
+        std::vector<Quaternion<double>> q(g_batchSize);
+        std::vector<double> results(g_batchSize);
+        Quaternion<double> a{ 1.0f, 2.0f, 3.0f, 4.0f };
+        constexpr Quaternion<double> b{ 4.0f, 5.0f, 6.0f, 7.0f };
+
+        auto result = Benchmark(
+            "Quaterniond::Dot",
+            [&]()
+            {
+                for (std::size_t i = 0; i < g_batchSize; ++i)
+                {
+                    results[i] = Dot(a, b);
+                }
+
+                DoNotOptimizeAway(results);
+            },
+            g_batchSize
+        );
+
+        PrintBenchmarkResult(result, g_referenceResults);
+    }
+
+    {
+        std::vector<Quaternion<double>> q(g_batchSize);
+        std::vector<double> results(g_batchSize);
+        Quaternion<double> a{ 1.0f, 2.0f, 3.0f, 4.0f };
+        constexpr Quaternion<double> b{ 4.0f, 5.0f, 6.0f, 7.0f };
+
+        auto result = Benchmark(
+            "Quaterniond::Angle",
+            [&]()
+            {
+                for (std::size_t i = 0; i < g_batchSize; ++i)
+                {
+                    results[i] = Angle(a, b);
+                }
+
+                DoNotOptimizeAway(results);
+            },
+            g_batchSize
+        );
+
+        PrintBenchmarkResult(result, g_referenceResults);
+    }
+
+    {
+        std::vector<Quaternion<double>> q(g_batchSize);
+        std::vector<Quaternion<double>> results(g_batchSize);
+        Quaternion<double> a{ 1.0f, 2.0f, 3.0f, 4.0f };
+        constexpr Quaternion<double> b{ 4.0f, 5.0f, 6.0f, 7.0f };
+
+        auto result = Benchmark(
+            "Quaterniond::RotateTowards",
+            [&]()
+            {
+                for (std::size_t i = 0; i < g_batchSize; ++i)
+                {
+                    results[i] = RotateTowards(a, b, std::numbers::pi_v<double>);
+                }
+
+                DoNotOptimizeAway(results);
+            },
+            g_batchSize
+        );
+
+        PrintBenchmarkResult(result, g_referenceResults);
+    }
 }
 
 void BenchmarkQuaternionSIMD() {
@@ -779,6 +1008,326 @@ void BenchmarkQuaternionSIMD() {
                 for (std::size_t i = 0; i < g_batchSize; ++i)
                 {
                     results[i] = RotateTowards(a, b, std::numbers::pi_v<float>);
+                }
+
+                DoNotOptimizeAway(results);
+            },
+            g_batchSize
+        );
+
+        PrintBenchmarkResult(result, g_simdResults);
+    }
+
+    //------------------double-------------------
+
+    {
+        std::vector<QuaternionSIMD<double>> q(g_batchSize);
+        std::vector<QuaternionSIMD<double>> results(g_batchSize);
+
+        auto result = Benchmark(
+            "QuaternionSIMD<double>::FromEuler",
+            [&]()
+            {
+                for (std::size_t i = 0; i < g_batchSize; ++i)
+                {
+                    results[i] = QuaternionSIMD<double>::FromEuler(std::numbers::pi_v<double> / 6.0, 0.0, 0.0);
+                }
+
+                DoNotOptimizeAway(results);
+            },
+            g_batchSize
+        );
+
+        PrintBenchmarkResult(result, g_simdResults);
+    }
+
+    {
+        std::vector<QuaternionSIMD<double>> q(g_batchSize);
+        std::vector<QuaternionSIMD<double>> results(g_batchSize);
+        const VecSIMD<double, 3> axis{ 0.0f, 1.0f, 0.0f };
+
+        auto result = Benchmark(
+            "QuaternionSIMD<double>::FromAxisAngle",
+            [&]()
+            {
+                for (std::size_t i = 0; i < g_batchSize; ++i)
+                {
+                    results[i] = QuaternionSIMD<double>::FromAxisAngle(axis, std::numbers::pi_v<double> / 2.0);
+                }
+
+                DoNotOptimizeAway(results);
+            },
+            g_batchSize
+        );
+
+        PrintBenchmarkResult(result, g_simdResults);
+    }
+
+    {
+        std::vector<QuaternionSIMD<double>> q(g_batchSize);
+        std::vector<QuaternionSIMD<double>> results(g_batchSize);
+        const VecSIMD<double, 3> v{ 1.0f, 0.0f, 0.0f };
+
+        auto result = Benchmark(
+            "QuaternionSIMD<double>::FromToRotation",
+            [&]()
+            {
+                for (std::size_t i = 0; i < g_batchSize; ++i)
+                {
+                    results[i] = QuaternionSIMD<double>::FromToRotation(v, v);
+                }
+
+                DoNotOptimizeAway(results);
+            },
+            g_batchSize
+        );
+
+        PrintBenchmarkResult(result, g_simdResults);
+    }
+
+    {
+        std::vector<QuaternionSIMD<double>> q(g_batchSize);
+        std::vector<QuaternionSIMD<double>> results(g_batchSize);
+        constexpr VecSIMD<double, 3> forward{ 0.0f, 0.0f, 1.0f };
+        constexpr VecSIMD<double, 3> up{ 0.0f, 1.0f, 0.0f };
+
+        auto result = Benchmark(
+            "QuaternionSIMD<double>::LookRotation",
+            [&]()
+            {
+                for (std::size_t i = 0; i < g_batchSize; ++i)
+                {
+                    results[i] = QuaternionSIMD<double>::LookRotation(forward, up);
+                }
+
+                DoNotOptimizeAway(results);
+            },
+            g_batchSize
+        );
+
+        PrintBenchmarkResult(result, g_simdResults);
+    }
+
+    {
+        std::vector<QuaternionSIMD<double>> q(g_batchSize);
+        std::vector<QuaternionSIMD<double>> results(g_batchSize);
+        QuaternionSIMD<double> a{ 1.0f, 2.0f, 3.0f, 4.0f };
+        constexpr QuaternionSIMD<double> b{ 4.0f, 5.0f, 6.0f, 7.0f };
+
+        auto result = Benchmark(
+            "QuaternionSIMD<double>::Addition",
+            [&]()
+            {
+                for (std::size_t i = 0; i < g_batchSize; ++i)
+                {
+                    results[i] = a + b;
+                }
+
+                DoNotOptimizeAway(results);
+            },
+            g_batchSize
+        );
+
+        PrintBenchmarkResult(result, g_simdResults);
+    }
+
+    {
+        std::vector<QuaternionSIMD<double>> q(g_batchSize);
+        std::vector<QuaternionSIMD<double>> results(g_batchSize);
+        QuaternionSIMD<double> a{ 1.0f, 2.0f, 3.0f, 4.0f };
+        constexpr QuaternionSIMD<double> b{ 4.0f, 5.0f, 6.0f, 7.0f };
+
+        auto result = Benchmark(
+            "QuaternionSIMD<double>::Soustraction",
+            [&]()
+            {
+                for (std::size_t i = 0; i < g_batchSize; ++i)
+                {
+                    results[i] = a - b;
+                }
+
+                DoNotOptimizeAway(results);
+            },
+            g_batchSize
+        );
+
+        PrintBenchmarkResult(result, g_simdResults);
+    }
+
+    {
+        std::vector<QuaternionSIMD<double>> q(g_batchSize);
+        std::vector<QuaternionSIMD<double>> results(g_batchSize);
+        QuaternionSIMD<double> a{ 1.0f, 2.0f, 3.0f, 4.0f };
+        constexpr QuaternionSIMD<double> b{ 4.0f, 5.0f, 6.0f, 7.0f };
+
+        auto result = Benchmark(
+            "QuaternionSIMD<double>::Multiplication",
+            [&]()
+            {
+                for (std::size_t i = 0; i < g_batchSize; ++i)
+                {
+                    results[i] = a * b;
+                }
+
+                DoNotOptimizeAway(results);
+            },
+            g_batchSize
+        );
+
+        PrintBenchmarkResult(result, g_simdResults);
+    }
+
+    {
+        std::vector<QuaternionSIMD<double>> q(g_batchSize);
+        std::vector<double> results(g_batchSize);
+        QuaternionSIMD<double> a{ 1.0f, 2.0f, 3.0f, 4.0f };
+        constexpr QuaternionSIMD<double> b{ 4.0f, 5.0f, 6.0f, 7.0f };
+
+        auto result = Benchmark(
+            "QuaternionSIMD<double>::Dot",
+            [&]()
+            {
+                for (std::size_t i = 0; i < g_batchSize; ++i)
+                {
+                    results[i] = Dot(a, b);
+                }
+
+                DoNotOptimizeAway(results);
+            },
+            g_batchSize
+        );
+
+        PrintBenchmarkResult(result, g_simdResults);
+    }
+
+    {
+        std::vector<QuaternionSIMD<double>> q(g_batchSize);
+        std::vector<QuaternionSIMD<double>> results(g_batchSize);
+        QuaternionSIMD<double> a{ 1.0f, 2.0f, 3.0f, 4.0f };
+        constexpr QuaternionSIMD<double> b{ 4.0f, 5.0f, 6.0f, 7.0f };
+
+        auto result = Benchmark(
+            "QuaternionSIMD<double>::LerpUnclamped",
+            [&]()
+            {
+                for (std::size_t i = 0; i < g_batchSize; ++i)
+                {
+                    results[i] = LerpUnclamped(a, b, 1.5);
+                }
+
+                DoNotOptimizeAway(results);
+            },
+            g_batchSize
+        );
+
+        PrintBenchmarkResult(result, g_simdResults);
+    }
+
+    {
+        std::vector<QuaternionSIMD<double>> q(g_batchSize);
+        std::vector<QuaternionSIMD<double>> results(g_batchSize);
+        QuaternionSIMD<double> a{ 1.0f, 2.0f, 3.0f, 4.0f };
+        constexpr QuaternionSIMD<double> b{ 4.0f, 5.0f, 6.0f, 7.0f };
+
+        auto result = Benchmark(
+            "QuaternionSIMD<double>::Lerp",
+            [&]()
+            {
+                for (std::size_t i = 0; i < g_batchSize; ++i)
+                {
+                    results[i] = Lerp(a, b, 1.5);
+                }
+
+                DoNotOptimizeAway(results);
+            },
+            g_batchSize
+        );
+
+        PrintBenchmarkResult(result, g_simdResults);
+    }
+
+    {
+        std::vector<QuaternionSIMD<double>> q(g_batchSize);
+        std::vector<QuaternionSIMD<double>> results(g_batchSize);
+        QuaternionSIMD<double> a{ 1.0f, 2.0f, 3.0f, 4.0f };
+        constexpr QuaternionSIMD<double> b{ 4.0f, 5.0f, 6.0f, 7.0f };
+
+        auto result = Benchmark(
+            "QuaternionSIMD<double>::SlerpUnclamped",
+            [&]()
+            {
+                for (std::size_t i = 0; i < g_batchSize; ++i)
+                {
+                    results[i] = SlerpUnclamped(a, b, 1.5);
+                }
+
+                DoNotOptimizeAway(results);
+            },
+            g_batchSize
+        );
+
+        PrintBenchmarkResult(result, g_simdResults);
+    }
+
+    {
+        std::vector<QuaternionSIMD<double>> q(g_batchSize);
+        std::vector<QuaternionSIMD<double>> results(g_batchSize);
+        QuaternionSIMD<double> a{ 1.0f, 2.0f, 3.0f, 4.0f };
+        constexpr QuaternionSIMD<double> b{ 4.0f, 5.0f, 6.0f, 7.0f };
+
+        auto result = Benchmark(
+            "QuaternionSIMD<double>::Slerp",
+            [&]()
+            {
+                for (std::size_t i = 0; i < g_batchSize; ++i)
+                {
+                    results[i] = Slerp(a, b, 1.5);
+                }
+
+                DoNotOptimizeAway(results);
+            },
+            g_batchSize
+        );
+
+        PrintBenchmarkResult(result, g_simdResults);
+    }
+
+    {
+        std::vector<QuaternionSIMD<double>> q(g_batchSize);
+        std::vector<double> results(g_batchSize);
+        QuaternionSIMD<double> a{ 1.0f, 2.0f, 3.0f, 4.0f };
+        constexpr QuaternionSIMD<double> b{ 4.0f, 5.0f, 6.0f, 7.0f };
+
+        auto result = Benchmark(
+            "QuaternionSIMD<double>::Angle",
+            [&]()
+            {
+                for (std::size_t i = 0; i < g_batchSize; ++i)
+                {
+                    results[i] = Angle(a, b);
+                }
+
+                DoNotOptimizeAway(results);
+            },
+            g_batchSize
+        );
+
+        PrintBenchmarkResult(result, g_simdResults);
+    }
+
+    {
+        std::vector<QuaternionSIMD<double>> q(g_batchSize);
+        std::vector<QuaternionSIMD<double>> results(g_batchSize);
+        QuaternionSIMD<double> a{ 1.0f, 2.0f, 3.0f, 4.0f };
+        constexpr QuaternionSIMD<double> b{ 4.0f, 5.0f, 6.0f, 7.0f };
+
+        auto result = Benchmark(
+            "QuaternionSIMD<double>::RotateTowards",
+            [&]()
+            {
+                for (std::size_t i = 0; i < g_batchSize; ++i)
+                {
+                    results[i] = RotateTowards(a, b, std::numbers::pi_v<double>);
                 }
 
                 DoNotOptimizeAway(results);
