@@ -3,6 +3,7 @@
 #include <concepts>
 #include <cstdint>
 #include <format>
+#include <numbers>
 
 #include "Vec.h"
 

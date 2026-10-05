@@ -688,5 +688,17 @@ inline void PrintSpeedupTable()
     }
 }
 
+std::size_t ChooseBatchSize();
+int ChooseBenchmarkType();
+
 void BenchmarkNoSimd();
 void BenchmarkSIMD();
+
+void BenchmarkVecNoSIMD();
+void BenchmarkVecSIMD();
+
+void BenchmarkMatNoSIMD();
+void BenchmarkMatSIMD();
+
+void BenchmarkQuaternionNoSIMD();
+void BenchmarkQuaternionSIMD();

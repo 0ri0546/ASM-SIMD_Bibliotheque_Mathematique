@@ -165,6 +165,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Benchmark.cpp" />
+    <ClCompile Include="BenchmarkHelpers.cpp" />
+    <ClCompile Include="BenchmarkMat.cpp" />
+    <ClCompile Include="BenchmarkQuaternion.cpp" />
+    <ClCompile Include="BenchmarkVec.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
