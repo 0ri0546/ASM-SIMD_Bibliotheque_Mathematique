@@ -7,6 +7,9 @@
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
+// Test MASMx64 function (usage: Vec4fAdd(a.Data(), b.Data(), result))
+extern "C" void Vec4fAdd(const float* a, const float* b, float* result);
+
 namespace {
     // Compares two floating-point values through Assert::AreEqual's tolerance overload.
     void ExpectNear(double expected, double actual, double tolerance = 1e-4) {
@@ -190,6 +193,16 @@ namespace MathLibraryTests
             ExpectNear(7.0, a[1]);
             ExpectNear(9.0, a[2]);
         }
+
+        TEST_METHOD(AdditionASM) {
+			VecSIMD<float, 4> a{ 1.0f, 2.0f, 3.0f, 4.0f };
+			VecSIMD<float, 4> b{ 0.5f, 1.5f, 2.5f, 3.5f };
+			Vec4fAdd(a.Data(), b.Data(), a.Data()); // a += b;
+			Assert::AreEqual(1.5f, a[0]);
+            Assert::AreEqual(3.5f, a[1]);
+            Assert::AreEqual(5.5f, a[2]);
+			Assert::AreEqual(7.5f, a[3]);
+		}
 
         // =========================================================================
         // Subtraction

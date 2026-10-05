@@ -3,7 +3,48 @@
 #include "Headers/Vec.h"
 #include "VecSIMD.h"
 
+// MASM function
+extern "C" void Vec4fAdd(const float* a, const float* b, float* result);
+
 void BenchmarkVecNoSIMD() {
+    {
+        std::vector<VecSIMD<float, 4>> a(g_batchSize);
+        std::vector<VecSIMD<float, 4>> b(g_batchSize);
+
+        for (std::size_t i = 0; i < g_batchSize; ++i)
+        {
+            a[i] = VecSIMD<float, 4>(
+                1.5f,
+                2.5f,
+                3.5f,
+                4.5f
+            );
+            b[i] = VecSIMD<float, 4>(
+                1.5f,
+                2.5f,
+                3.5f,
+                4.5f
+            );
+        }
+
+        auto result = Benchmark(
+            "Vec4fAdd_NoSIMD",
+            [&]()
+            {
+                for (std::size_t i = 0; i < g_batchSize; ++i)
+                {
+                    a[i] += b[i];
+                }
+
+                DoNotOptimizeAway(a);
+                DoNotOptimizeAway(b);
+            },
+            g_batchSize
+        );
+
+        PrintBenchmarkResult(result, g_referenceResults);
+    }
+
     {
         std::vector<Vec4f> values(g_batchSize);
         std::vector<Vec4f> results(g_batchSize);
@@ -862,6 +903,44 @@ void BenchmarkVecNoSIMD() {
 }
 
 void BenchmarkVecSIMD() {
+    {
+        std::vector<VecSIMD<float, 4>> a(g_batchSize);
+        std::vector<VecSIMD<float, 4>> b(g_batchSize);
+
+        for (std::size_t i = 0; i < g_batchSize; ++i)
+        {
+            a[i] = VecSIMD<float, 4>(
+                1.5f,
+                2.5f,
+                3.5f,
+                4.5f
+            );
+            b[i] = VecSIMD<float, 4>(
+                1.5f,
+                2.5f,
+                3.5f,
+                4.5f
+            );
+        }
+
+        auto result = Benchmark(
+            "Vec4fAdd_SIMD",
+            [&]()
+            {
+                for (std::size_t i = 0; i < g_batchSize; ++i)
+                {
+                    Vec4fAdd(a[i].Data(), b[i].Data(), a[i].Data());
+                }
+
+                DoNotOptimizeAway(a);
+                DoNotOptimizeAway(b);
+            },
+            g_batchSize
+        );
+
+        PrintBenchmarkResult(result, g_simdResults);
+    }
+
     {
         std::vector<VecSIMD<float, 4>> values(g_batchSize);
         std::vector<VecSIMD<float, 4>> results(g_batchSize);

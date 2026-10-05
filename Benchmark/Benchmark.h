@@ -410,6 +410,13 @@ inline void CalculateSpeedups()
 
         for (const auto& ref : g_referenceResults)
         {
+            if (simd.name == "Vec4fAdd_SIMD" &&
+                ref.name == "Vec4fAdd_NoSIMD")
+            {
+                reference = &ref;
+                break;
+            }
+
             if (simd.name == "VecSIMD<float, 4>::Normalize" &&
                 ref.name == "Vec4f::Normalize")
             {

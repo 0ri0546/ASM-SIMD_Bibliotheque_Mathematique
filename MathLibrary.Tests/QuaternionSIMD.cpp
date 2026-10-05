@@ -1162,15 +1162,15 @@ namespace MathLibraryTests
             const auto sum = a + b;
             const auto difference = a - b;
 
-            sum.X() == 5.0f;
-            sum.Y() == 7.0f;
-            sum.Z() == 9.0f;
-            sum.W() == 11.0f;
+            Assert::AreEqual(sum.X(), 5.0f);
+            Assert::AreEqual(sum.Y(), 7.0f);
+            Assert::AreEqual(sum.Z(), 9.0f);
+            Assert::AreEqual(sum.W(), 11.0f);
 
-            difference.X() == -3.0f;
-            difference.Y() == -3.0f;
-            difference.Z() == -3.0f;
-            difference.W() == -3.0f;
+            Assert::AreEqual(difference.X(), -3.0f);
+            Assert::AreEqual(difference.Y(), -3.0f);
+            Assert::AreEqual(difference.Z(), -3.0f);
+            Assert::AreEqual(difference.W(), -3.0f);
         }
 
         // =========================================================================
