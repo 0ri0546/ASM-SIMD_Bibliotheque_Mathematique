@@ -3,6 +3,7 @@
 #include <array>
 #include <cmath>
 #include <cstdint>
+#include <print>
 #include <type_traits>
 #include <utility>
 
@@ -744,46 +745,46 @@ inline constexpr VecSIMD<T, 3> MatSIMD<T, RowCount, ColCount, Layout>::ExtractSc
     return VecSIMD<T, 3>(column0.Length(), column1.Length(), column2.Length());
 }
 
-//template <float_num T, std::size_t RowCount, std::size_t ColCount, typename Layout>
-//template <float_num U, std::size_t R, std::size_t C>
-//    requires(R == RowCount && C == ColCount && R == 4 && C == 4)
-//inline constexpr QuaternionSIMD<U> MatSIMD<T, RowCount, ColCount, Layout>::ExtractRotation() const {
-//    const VecSIMD<T, 3> scale = ExtractScale();
-//
-//    const T sx = scale[0] != T{0} ? scale[0] : T{1};
-//    const T sy = scale[1] != T{0} ? scale[1] : T{1};
-//    const T sz = scale[2] != T{0} ? scale[2] : T{1};
-//
-//    const T m00 = (*this)[0, 0] / sx;
-//    const T m10 = (*this)[1, 0] / sx;
-//    const T m20 = (*this)[2, 0] / sx;
-//    const T m01 = (*this)[0, 1] / sy;
-//    const T m11 = (*this)[1, 1] / sy;
-//    const T m21 = (*this)[2, 1] / sy;
-//    const T m02 = (*this)[0, 2] / sz;
-//    const T m12 = (*this)[1, 2] / sz;
-//    const T m22 = (*this)[2, 2] / sz;
-//
-//    const T trace = m00 + m11 + m22;
-//
-//    if (trace > T{0}) {
-//        const T s = std::sqrt(trace + T{1}) * T{2};
-//        return QuaternionSIMD<T>((m21 - m12) / s, (m02 - m20) / s, (m10 - m01) / s, s * T{0.25});
-//    }
-//
-//    if (m00 > m11 && m00 > m22) {
-//        const T s = std::sqrt(T{1} + m00 - m11 - m22) * T{2};
-//        return QuaternionSIMD<T>(s * T{0.25}, (m01 + m10) / s, (m02 + m20) / s, (m21 - m12) / s);
-//    }
-//
-//    if (m11 > m22) {
-//        const T s = std::sqrt(T{1} + m11 - m00 - m22) * T{2};
-//        return QuaternionSIMD<T>((m01 + m10) / s, s * T{0.25}, (m12 + m21) / s, (m02 - m20) / s);
-//    }
-//
-//    const T s = std::sqrt(T{1} + m22 - m00 - m11) * T{2};
-//    return QuaternionSIMD<T>((m02 + m20) / s, (m12 + m21) / s, s * T{0.25}, (m10 - m01) / s);
-//}
+template <float_num T, std::size_t RowCount, std::size_t ColCount, typename Layout>
+template <float_num U, std::size_t R, std::size_t C>
+    requires(R == RowCount && C == ColCount && R == 4 && C == 4)
+inline constexpr QuaternionSIMD<U> MatSIMD<T, RowCount, ColCount, Layout>::ExtractRotation() const {
+    const VecSIMD<T, 3> scale = ExtractScale();
+
+    const T sx = scale[0] != T{0} ? scale[0] : T{1};
+    const T sy = scale[1] != T{0} ? scale[1] : T{1};
+    const T sz = scale[2] != T{0} ? scale[2] : T{1};
+
+    const T m00 = (*this)[0, 0] / sx;
+    const T m10 = (*this)[1, 0] / sx;
+    const T m20 = (*this)[2, 0] / sx;
+    const T m01 = (*this)[0, 1] / sy;
+    const T m11 = (*this)[1, 1] / sy;
+    const T m21 = (*this)[2, 1] / sy;
+    const T m02 = (*this)[0, 2] / sz;
+    const T m12 = (*this)[1, 2] / sz;
+    const T m22 = (*this)[2, 2] / sz;
+
+    const T trace = m00 + m11 + m22;
+
+    if (trace > T{0}) {
+        const T s = std::sqrt(trace + T{1}) * T{2};
+        return QuaternionSIMD<T>((m21 - m12) / s, (m02 - m20) / s, (m10 - m01) / s, s * T{0.25});
+    }
+
+    if (m00 > m11 && m00 > m22) {
+        const T s = std::sqrt(T{1} + m00 - m11 - m22) * T{2};
+        return QuaternionSIMD<T>(s * T{0.25}, (m01 + m10) / s, (m02 + m20) / s, (m21 - m12) / s);
+    }
+
+    if (m11 > m22) {
+        const T s = std::sqrt(T{1} + m11 - m00 - m22) * T{2};
+        return QuaternionSIMD<T>((m01 + m10) / s, s * T{0.25}, (m12 + m21) / s, (m02 - m20) / s);
+    }
+
+    const T s = std::sqrt(T{1} + m22 - m00 - m11) * T{2};
+    return QuaternionSIMD<T>((m02 + m20) / s, (m12 + m21) / s, s * T{0.25}, (m10 - m01) / s);
+}
 
 template <float_num T, float_num U, std::size_t RowCount, std::size_t ColCount, typename Layout>
 inline constexpr auto operator+(const MatSIMD<T, RowCount, ColCount, Layout>& a, const MatSIMD<U, RowCount, ColCount, Layout>& b)
