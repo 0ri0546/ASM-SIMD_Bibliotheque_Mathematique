@@ -297,10 +297,6 @@ BenchmarkResult Benchmark(
     result.batchSize = batchSize;
     result.iterations = iterations;
 
-    for (std::size_t i = 0; i < warmupIterations; ++i) {
-        fn();
-    }
-
     std::vector<double> nsPerOperation;
     std::vector<double> cyclesPerOperation;
 
@@ -308,6 +304,12 @@ BenchmarkResult Benchmark(
     cyclesPerOperation.reserve(samples);
 
     double totalNanoseconds = 0.0;
+
+    auto start = std::chrono::steady_clock::now();
+    auto end = std::chrono::steady_clock::now() + std::chrono::milliseconds(10);
+    while (std::chrono::steady_clock::now() < end) {
+        fn();
+    }
 
     for (std::size_t sample = 0; sample < samples; ++sample)
     {
