@@ -261,11 +261,6 @@ inline void PrintBenchmarkResult(
 {
     const std::size_t index = g_benchmarkIndex++;
 
-    const std::string speedup =
-        result.speedup > 0.0
-        ? std::format("{:.3f}x", result.speedup)
-        : "-";
-
     std::println(
         "{:<4} | {:<40} | {:>10} | {:>12} | {:>12.4e} | {:>12.4f} | {:>12.4f} | {:>12.0f} | {:>12.4f} | {:>12.4} |",
         index,
@@ -768,17 +763,20 @@ inline void CalculateSpeedups()
 inline void PrintSpeedupTable()
 {
     std::println();
-    std::println("==============================================================");
-    std::println("                         SPEEDUP");
-    std::println("==============================================================");
+    std::println("{:=<72}", "");
+    std::println("                                SPEEDUP");
+    std::println("{:=<72}", "");
 
     std::println(
-        "{:<38} | {:>14}",
+        "{:<38} | {:>14} | {}",
         "Benchmark",
-        "Speedup"
+        "Speedup",
+        "Comparison"
     );
 
-    std::println("{:-<58}", "");
+    std::println("{:-<72}", "");
+
+	constexpr double TOLERANCE = 0.05;
 
     for (const auto& simd : g_simdResults)
     {
@@ -786,9 +784,10 @@ inline void PrintSpeedupTable()
             continue;
 
         std::println(
-            "{:<38} | {:>13.3f}x",
+            "{:<38} | {:>13.3f}x | {}",
             simd.name,
-            simd.speedup
+            simd.speedup,
+			std::abs(simd.speedup - 1.0) < TOLERANCE ? "About equal" : simd.speedup > 1.0 ? "SIMD is faster" : "SIMD is slower"
         );
     }
 }
