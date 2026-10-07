@@ -15,6 +15,10 @@
 #include <string>
 #include <vector>
 
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
+#include <windows.h>
+
 #pragma optimize("", off)
 inline void DoNotOptimizeAwaySink(const void* value)
 {
@@ -28,6 +32,10 @@ __forceinline inline void DoNotOptimizeAway(const T& value)
     DoNotOptimizeAwaySink(&value);
     _ReadWriteBarrier();
 }
+
+bool SetTerminalColors();
+
+std::string ANSI_RGB(int r, int g, int b);
 
 struct BenchmarkResult
 {
@@ -261,8 +269,12 @@ inline void PrintBenchmarkResult(
 {
     const std::size_t index = g_benchmarkIndex++;
 
+    std::string ansi_rgb{};
+    if (index % 2 == 0) ansi_rgb = ANSI_RGB(255, 20, 228);
+
     std::println(
-        "{:<4} | {:<40} | {:>10} | {:>12} | {:>12.4e} | {:>12.4f} | {:>12.4f} | {:>12.0f} | {:>12.4f} | {:>12.4} |",
+        "{}{:<4} | {:<40} | {:>10} | {:>12} | {:>12.4e} | {:>12.4f} | {:>12.4f} | {:>12.0f} | {:>12.4f} | {:>12.4} |",
+        ansi_rgb,
         index,
         result.name,
         result.batchSize,
@@ -274,6 +286,9 @@ inline void PrintBenchmarkResult(
         result.totalMs,
         result.dispersion
     );
+
+    if (index % 2 == 0) ansi_rgb = ANSI_RGB(255, 255, 255);
+    std::print("{}", ansi_rgb);
 
     destination.push_back(result);
 
@@ -587,8 +602,8 @@ inline void CalculateSpeedups()
                 break;
             }
 
-            if (simd.name == "QuaternionSIMD<float>::Soustraction" &&
-                ref.name == "Quaternionf::Soustraction")
+            if (simd.name == "QuaternionSIMD<float>::Subtraction" &&
+                ref.name == "Quaternionf::Subtraction")
             {
                 reference = &ref;
                 break;
@@ -596,6 +611,20 @@ inline void CalculateSpeedups()
 
             if (simd.name == "QuaternionSIMD<float>::Multiplication" &&
                 ref.name == "Quaternionf::Multiplication")
+            {
+                reference = &ref;
+                break;
+            }
+
+            if (simd.name == "QuaternionSIMD<float>::ScalarMul" &&
+                ref.name == "Quaternionf::ScalarMul")
+            {
+                reference = &ref;
+                break;
+            }
+
+            if (simd.name == "QuaternionSIMD<float>::Division" &&
+                ref.name == "Quaternionf::Division")
             {
                 reference = &ref;
                 break;
@@ -685,8 +714,8 @@ inline void CalculateSpeedups()
                 break;
             }
 
-            if (simd.name == "QuaternionSIMD<double>::Soustraction" &&
-                ref.name == "Quaterniond::Soustraction")
+            if (simd.name == "QuaternionSIMD<double>::Subtraction" &&
+                ref.name == "Quaterniond::Subtraction")
             {
                 reference = &ref;
                 break;
@@ -694,6 +723,20 @@ inline void CalculateSpeedups()
 
             if (simd.name == "QuaternionSIMD<double>::Multiplication" &&
                 ref.name == "Quaterniond::Multiplication")
+            {
+                reference = &ref;
+                break;
+            }
+
+            if (simd.name == "QuaternionSIMD<double>::ScalarMul" &&
+                ref.name == "Quaterniond::ScalarMul")
+            {
+                reference = &ref;
+                break;
+            }
+
+            if (simd.name == "QuaternionSIMD<double>::Division" &&
+                ref.name == "Quaterniond::Division")
             {
                 reference = &ref;
                 break;
@@ -762,6 +805,7 @@ inline void CalculateSpeedups()
 
 inline void PrintSpeedupTable()
 {
+    static int index = 0;
     std::println();
     std::println("{:=<72}", "");
     std::println("                                SPEEDUP");
@@ -783,13 +827,21 @@ inline void PrintSpeedupTable()
         if (simd.speedup <= 0.0)
             continue;
 
+        std::string ansi_rgb{};
+        if (index % 2 == 0) ansi_rgb = ANSI_RGB(255, 20, 228);
+        
         std::println(
-            "{:<38} | {:>13.3f}x | {}",
+            "{}{:<38} | {:>13.3f}x | {}",
+            ansi_rgb,
             simd.name,
             simd.speedup,
 			std::abs(simd.speedup - 1.0) < TOLERANCE ? "About equal" : simd.speedup > 1.0 ? "SIMD is faster" : "SIMD is slower"
         );
+        if (index % 2 == 0) ansi_rgb = ANSI_RGB(255, 255, 255);
+        std::print("{}", ansi_rgb);
+        index++;
     }
+    
 }
 
 std::size_t ChooseBatchSize();

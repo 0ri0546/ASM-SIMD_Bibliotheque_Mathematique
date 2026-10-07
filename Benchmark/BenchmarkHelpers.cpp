@@ -59,3 +59,17 @@ int ChooseBenchmarkType()
     std::println("Choix invalide. Les deux seront fait.");
     return 3;
 }
+
+bool SetTerminalColors() {
+    const HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
+    DWORD mode;
+    if (!GetConsoleMode(h, &mode))
+        return false;
+    if (!SetConsoleMode(h, mode | ENABLE_VIRTUAL_TERMINAL_PROCESSING))
+        return false;
+    return true;
+}
+
+std::string ANSI_RGB(int r, int g, int b) {
+    return std::format("\x1B[38;2;{};{};{}m", r, g, b);
+}

@@ -631,7 +631,7 @@ namespace MathLibraryTests
         }
 
         TEST_METHOD(InverseTimesSelfIsIdentity) {
-            const QuaternionSIMD<float> q = QuaternionSIMD<float>::FromAxisAngle(VecSIMD<float, 3>{1.0f, 1.0f, 0.0f}, kPi / 4.0f);
+            const QuaternionSIMD<float> q = {1.0f, 1.0f, 0.0f, 0.0f};
 
             const QuaternionSIMD<float> result = q * q.Inverse();
 

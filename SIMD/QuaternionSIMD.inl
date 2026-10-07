@@ -1328,53 +1328,104 @@ inline constexpr void QuaternionSIMD<T>::ToAxisAngle(
 }
 
 template <float_num T, float_num U>
-inline constexpr auto operator+(
+constexpr auto operator+(
     const QuaternionSIMD<T>& a,
-    const QuaternionSIMD<U>& b)
-    -> QuaternionCommonSIMD<T, U>
+    const QuaternionSIMD<U>& b
+    ) -> QuaternionCommonSIMD<T, U>
 {
-    using R = std::common_type_t<T, U>;
+    QuaternionCommonSIMD<T, U> result;
 
-    QuaternionCommonSIMD<T, U> result{
-        static_cast<R>(a.X()),
-        static_cast<R>(a.Y()),
-        static_cast<R>(a.Z()),
-        static_cast<R>(a.W())
-    };
+    if constexpr (!std::same_as<T, U>)
+    {
+        if constexpr (std::same_as<T, float>)
+        {
+            const __m256d va = _mm256_cvtps_pd(_mm_loadu_ps(a.Data()));
+            const __m256d vb = _mm256_loadu_pd(b.Data());
 
-    result += QuaternionCommonSIMD<T, U>{
-        static_cast<R>(b.X()),
-            static_cast<R>(b.Y()),
-            static_cast<R>(b.Z()),
-            static_cast<R>(b.W())
-    };
+            _mm256_storeu_pd(result.Data(), _mm256_add_pd(va, vb));
+        }
+        else
+        {
+            const __m256d va = _mm256_loadu_pd(a.Data());
+            const __m256d vb = _mm256_cvtps_pd(_mm_loadu_ps(b.Data()));
+
+            _mm256_storeu_pd(result.Data(), _mm256_add_pd(va, vb));
+        }
+
+        return result;
+    }
+
+    if constexpr (std::same_as<T, float> && std::same_as<U, float>)
+    {
+        const __m128 va = _mm_loadu_ps(a.Data());
+        const __m128 vb = _mm_loadu_ps(b.Data());
+
+        _mm_storeu_ps(result.Data(), _mm_add_ps(va, vb));
+    }
+    else if constexpr (std::same_as<T, double> && std::same_as<U, double>)
+    {
+        const __m256d va = _mm256_loadu_pd(a.Data());
+        const __m256d vb = _mm256_loadu_pd(b.Data());
+
+        _mm256_storeu_pd(result.Data(), _mm256_add_pd(va, vb));
+    }
 
     return result;
 }
 
 template <float_num T, float_num U>
-inline constexpr auto operator-(
+constexpr auto operator-(
     const QuaternionSIMD<T>& a,
-    const QuaternionSIMD<U>& b)
-    -> QuaternionCommonSIMD<T, U>
+    const QuaternionSIMD<U>& b
+    ) -> QuaternionCommonSIMD<T, U>
 {
-    using R = std::common_type_t<T, U>;
+    QuaternionCommonSIMD<T, U> result;
 
-    QuaternionCommonSIMD<T, U> result{
-        static_cast<R>(a.X()),
-        static_cast<R>(a.Y()),
-        static_cast<R>(a.Z()),
-        static_cast<R>(a.W())
-    };
+    if constexpr (!std::same_as<T, U>)
+    {
+        if constexpr (std::same_as<T, float>)
+        {
+            const __m256d va = _mm256_cvtps_pd(_mm_loadu_ps(a.Data()));
+            const __m256d vb = _mm256_loadu_pd(b.Data());
 
-    result -= QuaternionCommonSIMD<T, U>{
-        static_cast<R>(b.X()),
-            static_cast<R>(b.Y()),
-            static_cast<R>(b.Z()),
-            static_cast<R>(b.W())
-    };
+            _mm256_storeu_pd(result.Data(), _mm256_sub_pd(va, vb));
+        }
+        else
+        {
+            const __m256d va = _mm256_loadu_pd(a.Data());
+            const __m256d vb = _mm256_cvtps_pd(_mm_loadu_ps(b.Data()));
+
+            _mm256_storeu_pd(result.Data(), _mm256_sub_pd(va, vb));
+        }
+
+        return result;
+    }
+
+    if constexpr (std::same_as<T, float> && std::same_as<U, float>)
+    {
+        const __m128 va = _mm_loadu_ps(a.Data());
+        const __m128 vb = _mm_loadu_ps(b.Data());
+
+        _mm_storeu_ps(result.Data(), _mm_sub_ps(va, vb));
+    }
+    else if constexpr (std::same_as<T, double> && std::same_as<U, double>)
+    {
+        const __m256d va = _mm256_loadu_pd(a.Data());
+        const __m256d vb = _mm256_loadu_pd(b.Data());
+
+        _mm256_storeu_pd(result.Data(), _mm256_sub_pd(va, vb));
+    }
 
     return result;
+}
+
+template <typename Tr, float_num S>
+static inline auto LoadQuat(const QuaternionSIMD<S>& q)
+{
+    if constexpr (std::same_as<typename Tr::type, __m256d> && std::same_as<S, float>)
+        return _mm256_cvtps_pd(simd_traits<float, 128>::load(q.Data()));
+    else
+        return Tr::load(q.Data());
 }
 
 template <float_num T, float_num U>
@@ -1384,40 +1435,78 @@ inline constexpr auto operator*(
     -> QuaternionCommonSIMD<T, U>
 {
     using R = std::common_type_t<T, U>;
+    using Tr = simd_traits<R, std::same_as<R, float> ? 128 : 256>;
 
-    QuaternionCommonSIMD<T, U> result{
-        static_cast<R>(a.X()),
-        static_cast<R>(a.Y()),
-        static_cast<R>(a.Z()),
-        static_cast<R>(a.W())
-    };
+    QuaternionCommonSIMD<T, U> result;
 
-    result *= QuaternionCommonSIMD<T, U>{
-        static_cast<R>(b.X()),
-            static_cast<R>(b.Y()),
-            static_cast<R>(b.Z()),
-            static_cast<R>(b.W())
-    };
+    const auto va = LoadQuat<Tr>(a);
+    const auto vb = LoadQuat<Tr>(b);
 
+    // parties vectorielles (w mis à 0)
+    const auto zero = Tr::set1(R{ 0 });
+    const auto av = Tr::template blend<0b1000>(va, zero);
+    const auto bv = Tr::template blend<0b1000>(vb, zero);
+
+    const auto aw = Tr::template permute<3, 3, 3, 3>(va);
+    const auto bw = Tr::template permute<3, 3, 3, 3>(vb);
+
+    // a.v x b.v = a.yzx * b.zxy - a.zxy * b.yzx
+    const auto cross = Tr::sub(
+        Tr::mul(Tr::template permute<1, 2, 0, 3>(av), Tr::template permute<2, 0, 1, 3>(bv)),
+        Tr::mul(Tr::template permute<2, 0, 1, 3>(av), Tr::template permute<1, 2, 0, 3>(bv)));
+
+    // v = aw*bv + bw*av + cross
+    const auto v = Tr::add(cross, Tr::add(Tr::mul(aw, bv), Tr::mul(bw, av)));
+
+    // w = aw*bw - dot(av, bv)
+    const auto w = Tr::sub(Tr::mul(aw, bw), Tr::set1(Tr::reduce_add(Tr::mul(av, bv))));
+
+    Tr::store(result.Data(), Tr::template blend<0b1000>(v, w));
     return result;
 }
 
 template <float_num T, float_num U>
-inline constexpr auto operator*(
+constexpr auto operator*(
     const QuaternionSIMD<T>& q,
-    U scalar)
-    -> QuaternionCommonSIMD<T, U>
+    U scalar
+    ) -> QuaternionCommonSIMD<T, U>
 {
-    using R = std::common_type_t<T, U>;
+    QuaternionCommonSIMD<T, U> result;
 
-    QuaternionCommonSIMD<T, U> result{
-        static_cast<R>(q.X()),
-        static_cast<R>(q.Y()),
-        static_cast<R>(q.Z()),
-        static_cast<R>(q.W())
-    };
+    if constexpr (!std::same_as<T, U>)
+    {
+        if constexpr (std::same_as<T, float>)
+        {
+            const __m256d va = _mm256_cvtps_pd(_mm_loadu_ps(q.Data()));
+            const __m256d vb = _mm256_set1_pd(static_cast<double>(scalar));
 
-    result *= static_cast<R>(scalar);
+            _mm256_storeu_pd(result.Data(), _mm256_mul_pd(va, vb));
+        }
+        else
+        {
+            const __m256d va = _mm256_loadu_pd(q.Data());
+            const __m256d vb = _mm256_set1_pd(static_cast<double>(scalar));
+
+            _mm256_storeu_pd(result.Data(), _mm256_mul_pd(va, vb));
+        }
+
+        return result;
+    }
+
+    if constexpr (std::same_as<T, float> && std::same_as<U, float>)
+    {
+        const __m128 v = _mm_loadu_ps(q.Data());
+        const __m128 s = _mm_set1_ps(static_cast<float>(scalar));
+
+        _mm_storeu_ps(result.Data(), _mm_mul_ps(v, s));
+    }
+    else if constexpr (std::same_as<T, double> && std::same_as<U, double>)
+    {
+        const __m256d v = _mm256_loadu_pd(q.Data());
+        const __m256d s = _mm256_set1_pd(static_cast<double>(scalar));
+
+        _mm256_storeu_pd(result.Data(), _mm256_mul_pd(v, s));
+    }
 
     return result;
 }
@@ -1437,17 +1526,22 @@ inline constexpr auto operator/(
     U scalar)
     -> QuaternionCommonSIMD<T, U>
 {
-    using R = std::common_type_t<T, U>;
+    using C = std::common_type_t<T, U>;
+    using Tr = simd_traits<C, (sizeof(C) == sizeof(float)) ? 128 : 256>;
 
-    QuaternionCommonSIMD<T, U> result{
-        static_cast<R>(q.X()),
-        static_cast<R>(q.Y()),
-        static_cast<R>(q.Z()),
-        static_cast<R>(q.W())
-    };
+    QuaternionCommonSIMD<T, U> result;
 
-    result /= static_cast<R>(scalar);
+    typename Tr::type v;
+    if constexpr (std::same_as<T, C>)
+    {
+        v = Tr::load(q.Data());
+    }
+    else // T = float, C = double : on élargit les 4 floats en 4 doubles
+    {
+        v = _mm256_cvtps_pd(simd_traits<float, 128>::load(q.Data()));
+    }
 
+    Tr::store(result.Data(), Tr::div(v, Tr::set1(static_cast<C>(scalar))));
     return result;
 }
 

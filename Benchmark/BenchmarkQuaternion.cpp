@@ -125,7 +125,7 @@ void BenchmarkQuaternionNoSIMD() {
         constexpr Quaternion<float> b{ 4.0f, 5.0f, 6.0f, 7.0f };
 
         auto result = Benchmark(
-            "Quaternionf::Soustraction",
+            "Quaternionf::Subtraction",
             [&]()
             {
                 for (std::size_t i = 0; i < g_batchSize; ++i)
@@ -154,6 +154,52 @@ void BenchmarkQuaternionNoSIMD() {
                 for (std::size_t i = 0; i < g_batchSize; ++i)
                 {
                     results[i] = a * b;
+                }
+
+                DoNotOptimizeAway(results);
+            },
+            g_batchSize
+        );
+
+        PrintBenchmarkResult(result, g_referenceResults);
+    }
+
+    {
+        std::vector<Quaternion<float>> q(g_batchSize);
+        std::vector<Quaternion<float>> results(g_batchSize);
+        Quaternion<float> a{ 1.0f, 2.0f, 3.0f, 4.0f };
+        constexpr float b = 3.0f;
+
+        auto result = Benchmark(
+            "Quaternionf::ScalarMul",
+            [&]()
+            {
+                for (std::size_t i = 0; i < g_batchSize; ++i)
+                {
+                    results[i] = a * b;
+                }
+
+                DoNotOptimizeAway(results);
+            },
+            g_batchSize
+        );
+
+        PrintBenchmarkResult(result, g_referenceResults);
+    }
+
+    {
+        std::vector<Quaternion<float>> q(g_batchSize);
+        std::vector<Quaternion<float>> results(g_batchSize);
+        Quaternion<float> a{ 1.0f, 2.0f, 3.0f, 4.0f };
+        constexpr float b = 3.0f;
+
+        auto result = Benchmark(
+            "Quaternionf::Division",
+            [&]()
+            {
+                for (std::size_t i = 0; i < g_batchSize; ++i)
+                {
+                    results[i] = a / b;
                 }
 
                 DoNotOptimizeAway(results);
@@ -590,7 +636,7 @@ void BenchmarkQuaternionNoSIMD() {
         constexpr Quaternion<double> b{ 4.0f, 5.0f, 6.0f, 7.0f };
 
         auto result = Benchmark(
-            "Quaterniond::Soustraction",
+            "Quaterniond::Subtraction",
             [&]()
             {
                 for (std::size_t i = 0; i < g_batchSize; ++i)
@@ -619,6 +665,52 @@ void BenchmarkQuaternionNoSIMD() {
                 for (std::size_t i = 0; i < g_batchSize; ++i)
                 {
                     results[i] = a * b;
+                }
+
+                DoNotOptimizeAway(results);
+            },
+            g_batchSize
+        );
+
+        PrintBenchmarkResult(result, g_referenceResults);
+    }
+
+    {
+        std::vector<Quaternion<double>> q(g_batchSize);
+        std::vector<Quaternion<double>> results(g_batchSize);
+        Quaternion<double> a{ 1.0f, 2.0f, 3.0f, 4.0f };
+        constexpr double b = 3.0f;
+
+        auto result = Benchmark(
+            "Quaterniond::ScalarMul",
+            [&]()
+            {
+                for (std::size_t i = 0; i < g_batchSize; ++i)
+                {
+                    results[i] = a * b;
+                }
+
+                DoNotOptimizeAway(results);
+            },
+            g_batchSize
+        );
+
+        PrintBenchmarkResult(result, g_referenceResults);
+    }
+
+    {
+        std::vector<Quaternion<double>> q(g_batchSize);
+        std::vector<Quaternion<double>> results(g_batchSize);
+        Quaternion<double> a{ 1.0f, 2.0f, 3.0f, 4.0f };
+        constexpr double b = 3.0f;
+
+        auto result = Benchmark(
+            "Quaterniond::Division",
+            [&]()
+            {
+                for (std::size_t i = 0; i < g_batchSize; ++i)
+                {
+                    results[i] = a / b;
                 }
 
                 DoNotOptimizeAway(results);
@@ -818,7 +910,7 @@ void BenchmarkQuaternionSIMD() {
         constexpr QuaternionSIMD<float> b{ 4.0f, 5.0f, 6.0f, 7.0f };
 
         auto result = Benchmark(
-            "QuaternionSIMD<float>::Soustraction",
+            "QuaternionSIMD<float>::Subtraction",
             [&]()
             {
                 for (std::size_t i = 0; i < g_batchSize; ++i)
@@ -847,6 +939,52 @@ void BenchmarkQuaternionSIMD() {
                 for (std::size_t i = 0; i < g_batchSize; ++i)
                 {
                     results[i] = a * b;
+                }
+
+                DoNotOptimizeAway(results);
+            },
+            g_batchSize
+        );
+
+        PrintBenchmarkResult(result, g_simdResults);
+    }
+
+    {
+        std::vector<QuaternionSIMD<float>> q(g_batchSize);
+        std::vector<QuaternionSIMD<float>> results(g_batchSize);
+        QuaternionSIMD<float> a{ 1.0f, 2.0f, 3.0f, 4.0f };
+        constexpr float b = 3.0f;
+
+        auto result = Benchmark(
+            "QuaternionSIMD<float>::ScalarMul",
+            [&]()
+            {
+                for (std::size_t i = 0; i < g_batchSize; ++i)
+                {
+                    results[i] = a * b;
+                }
+
+                DoNotOptimizeAway(results);
+            },
+            g_batchSize
+        );
+
+        PrintBenchmarkResult(result, g_simdResults);
+    }
+
+    {
+        std::vector<QuaternionSIMD<float>> q(g_batchSize);
+        std::vector<QuaternionSIMD<float>> results(g_batchSize);
+        QuaternionSIMD<float> a{ 1.0f, 2.0f, 3.0f, 4.0f };
+        constexpr float b = 3.0f;
+
+        auto result = Benchmark(
+            "QuaternionSIMD<float>::Division",
+            [&]()
+            {
+                for (std::size_t i = 0; i < g_batchSize; ++i)
+                {
+                    results[i] = a / b;
                 }
 
                 DoNotOptimizeAway(results);
@@ -1138,7 +1276,7 @@ void BenchmarkQuaternionSIMD() {
         constexpr QuaternionSIMD<double> b{ 4.0f, 5.0f, 6.0f, 7.0f };
 
         auto result = Benchmark(
-            "QuaternionSIMD<double>::Soustraction",
+            "QuaternionSIMD<double>::Subtraction",
             [&]()
             {
                 for (std::size_t i = 0; i < g_batchSize; ++i)
@@ -1167,6 +1305,52 @@ void BenchmarkQuaternionSIMD() {
                 for (std::size_t i = 0; i < g_batchSize; ++i)
                 {
                     results[i] = a * b;
+                }
+
+                DoNotOptimizeAway(results);
+            },
+            g_batchSize
+        );
+
+        PrintBenchmarkResult(result, g_simdResults);
+    }
+
+    {
+        std::vector<QuaternionSIMD<double>> q(g_batchSize);
+        std::vector<QuaternionSIMD<double>> results(g_batchSize);
+        QuaternionSIMD<double> a{ 1.0f, 2.0f, 3.0f, 4.0f };
+        constexpr double b = 3.0f;
+
+        auto result = Benchmark(
+            "QuaternionSIMD<double>::ScalarMul",
+            [&]()
+            {
+                for (std::size_t i = 0; i < g_batchSize; ++i)
+                {
+                    results[i] = a * b;
+                }
+
+                DoNotOptimizeAway(results);
+            },
+            g_batchSize
+        );
+
+        PrintBenchmarkResult(result, g_simdResults);
+    }
+
+    {
+        std::vector<QuaternionSIMD<double>> q(g_batchSize);
+        std::vector<QuaternionSIMD<double>> results(g_batchSize);
+        QuaternionSIMD<double> a{ 1.0f, 2.0f, 3.0f, 4.0f };
+        constexpr double b = 3.0f;
+
+        auto result = Benchmark(
+            "QuaternionSIMD<double>::Division",
+            [&]()
+            {
+                for (std::size_t i = 0; i < g_batchSize; ++i)
+                {
+                    results[i] = a / b;
                 }
 
                 DoNotOptimizeAway(results);
