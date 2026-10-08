@@ -170,6 +170,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Benchmark.cpp" />
+    <ClCompile Include="BenchmarkBatch.cpp" />
     <ClCompile Include="BenchmarkHelpers.cpp" />
     <ClCompile Include="BenchmarkMat.cpp" />
     <ClCompile Include="BenchmarkQuaternion.cpp" />

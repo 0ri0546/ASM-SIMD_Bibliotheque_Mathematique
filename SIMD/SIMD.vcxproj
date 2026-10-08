@@ -138,6 +138,7 @@
     <ClCompile Include="SIMD.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BatchSIMD.h" />
     <ClInclude Include="SIMD_traits.h" />
     <ClInclude Include="MatSIMD.h" />
     <ClInclude Include="QuaternionSIMD.h" />
@@ -145,6 +146,9 @@
     <ClInclude Include="MatSIMD.inl" />
     <ClInclude Include="VecSIMD.inl" />
     <ClInclude Include="QuaternionSIMD.inl" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="BatchSIMD.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

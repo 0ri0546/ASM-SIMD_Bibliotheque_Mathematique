@@ -35,7 +35,6 @@ __forceinline inline void DoNotOptimizeAway(const T& value)
 
 bool SetTerminalColors();
 
-std::string ANSI_RGB(int r, int g, int b);
 
 struct BenchmarkResult
 {
@@ -202,25 +201,28 @@ inline void BeginBenchmark(
     }
 
     std::println();
-    std::println("==============================================================");
-    std::println("                    SIMD BENCHMARK                            ");
-    std::println("==============================================================");
-    std::println("CPU        : {}", GetCpuName());
-    std::println("ISA        : {}", GetISA());
-    std::println("Batch      : {}", g_batchSize);
-    std::println("Iterations : {}", BENCHMARK_ITERATIONS);
-    std::println("Samples    : {}", BENCHMARK_SAMPLES);
-    std::println("Warm-up    : {}", BENCHMARK_WARMUP);
-    std::println("Seed       : {}", g_seed);
-    std::println("Build      : Release x64");
-    std::println("==============================================================");
+    std::println();
+    std::println();
+    std::println("===============================================================");
+    std::println("|                    SIMD BENCHMARK                           |");
+    std::println("===============================================================");
+    std::println("CPU        : {:<41} {} |", GetCpuName(), "");
+    std::println("Batch      : {:<42} {:<5} |", g_batchSize, "");
+    std::println("Iterations : {:<42} {:<5} |", BENCHMARK_ITERATIONS, "");
+    std::println("ISA        : {:<42} {:<5} |", GetISA(), "");
+    std::println("Samples    : {:<42} {:<5} |", BENCHMARK_SAMPLES, "");
+    std::println("Warm-up    : {:<42} {:<5} |", BENCHMARK_WARMUP, "");
+    std::println("Seed       : {:<42} {:<5} |", g_seed, "");
+    std::println("Build      : {:<42} {:<5} |", "Release x64", "");
+    std::println("---------------------------------------------------------------");
     std::println();
 }
 
 inline void PrintBenchmarkHeader()
 {
+    std::println("{:-<180}", "");
     std::println(
-        "{:<4} | {:<40} | {:>10} | {:>12} | {:>12} | {:>12} | {:>12} | {:>12} | {:>12} | {:>12}",
+        "{:<4} | {:<50} | {:>10} | {:>12} | {:>12} | {:>12} | {:>12} | {:>12} | {:>12} | {:>15}",
         "No.",
         "Name",
         "Batch",
@@ -233,7 +235,7 @@ inline void PrintBenchmarkHeader()
         "dispersion (cyc)"
     );
 
-    std::println("{:-<170}", "");
+    std::println("{:-<180}", "");
 }
 
 inline void WriteBenchmarkCSV(
@@ -269,12 +271,9 @@ inline void PrintBenchmarkResult(
 {
     const std::size_t index = g_benchmarkIndex++;
 
-    std::string ansi_rgb{};
-    if (index % 2 == 0) ansi_rgb = ANSI_RGB(255, 20, 228);
 
     std::println(
-        "{}{:<4} | {:<40} | {:>10} | {:>12} | {:>12.4e} | {:>12.4f} | {:>12.4f} | {:>12.0f} | {:>12.4f} | {:>12.4} |",
-        ansi_rgb,
+        "{:<4} | {:<50} | {:>10} | {:>12} | {:>12.4e} | {:>12.4f} | {:>12.4f} | {:>12.0f} | {:>12.4f} | {:>15.4} |",
         index,
         result.name,
         result.batchSize,
@@ -286,9 +285,6 @@ inline void PrintBenchmarkResult(
         result.totalMs,
         result.dispersion
     );
-
-    if (index % 2 == 0) ansi_rgb = ANSI_RGB(255, 255, 255);
-    std::print("{}", ansi_rgb);
 
     destination.push_back(result);
 
@@ -791,6 +787,90 @@ inline void CalculateSpeedups()
                 break;
             }
 
+            if (simd.name == "VecSIMD<float, 3>::DotBatch_AoS" &&
+                ref.name == "Vec3f::DotBatch_AoS")
+            {
+                reference = &ref;
+                break;
+            }
+
+            if (simd.name == "VecSIMD<double, 3>::DotBatch_AoS" &&
+                ref.name == "Vec3d::DotBatch_AoS")
+            {
+                reference = &ref;
+                break;
+            }
+
+            if (simd.name == "VecSIMD<float, 3>::NormalizeBatch_AoS" &&
+                ref.name == "Vec3f::NormalizeBatch_AoS")
+            {
+                reference = &ref;
+                break;
+            }
+
+            if (simd.name == "VecSIMD<double, 3>::NormalizeBatch_AoS" &&
+                ref.name == "Vec3d::NormalizeBatch_AoS")
+            {
+                reference = &ref;
+                break;
+            }
+
+            if (simd.name == "MatSIMD<float, 4, 4>::TransformPointsBatch_AoS" &&
+                ref.name == "Mat4f::TransformPointsBatch_AoS")
+            {
+                reference = &ref;
+                break;
+            }
+
+            if (simd.name == "MatSIMD<double, 4, 4>::TransformPointsBatch_AoS" &&
+                ref.name == "Mat4d::TransformPointsBatch_AoS")
+            {
+                reference = &ref;
+                break;
+            }
+
+            if (simd.name == "VecSIMD<float, 3>::DotBatch_SoA" &&
+                ref.name == "Vec3f::DotBatch_SoA")
+            {
+                reference = &ref;
+                break;
+            }
+
+            if (simd.name == "VecSIMD<double, 3>::DotBatch_SoA" &&
+                ref.name == "Vec3d::DotBatch_SoA")
+            {
+                reference = &ref;
+                break;
+            }
+
+            if (simd.name == "VecSIMD<float, 3>::NormalizeBatch_SoA" &&
+                ref.name == "Vec3f::NormalizeBatch_SoA")
+            {
+                reference = &ref;
+                break;
+            }
+
+            if (simd.name == "VecSIMD<double, 3>::NormalizeBatch_SoA" &&
+                ref.name == "Vec3d::NormalizeBatch_SoA")
+            {
+                reference = &ref;
+                break;
+            }
+
+            if (simd.name == "MatSIMD<float, 4, 4>::TransformPointsBatch_SoA" &&
+                ref.name == "Mat4f::TransformPointsBatch_SoA")
+            {
+                reference = &ref;
+                break;
+            }
+
+            if (simd.name == "MatSIMD<double, 4, 4>::TransformPointsBatch_SoA" &&
+                ref.name == "Mat4d::TransformPointsBatch_SoA")
+            {
+                reference = &ref;
+                break;
+            }
+
         }
 
         if (reference != nullptr &&
@@ -807,18 +887,21 @@ inline void PrintSpeedupTable()
 {
     static int index = 0;
     std::println();
-    std::println("{:=<72}", "");
-    std::println("                                SPEEDUP");
-    std::println("{:=<72}", "");
+    std::println();
+    std::println();
+    std::println("==============================================================");
+    std::println("|                         SPEEDUP                            |");
+    std::println("==============================================================");
+    std::println();
 
     std::println(
-        "{:<38} | {:>14} | {}",
+        "{:<50} | {:>14} | {:>20} |",
         "Benchmark",
         "Speedup",
         "Comparison"
     );
 
-    std::println("{:-<72}", "");
+    std::println("{:-<92}", "");
 
 	constexpr double TOLERANCE = 0.05;
 
@@ -827,20 +910,15 @@ inline void PrintSpeedupTable()
         if (simd.speedup <= 0.0)
             continue;
 
-        std::string ansi_rgb{};
-        if (index % 2 == 0) ansi_rgb = ANSI_RGB(255, 20, 228);
-        
         std::println(
-            "{}{:<38} | {:>13.3f}x | {}",
-            ansi_rgb,
+            "{:<50} | {:>13.3f}x | {:>20} |",
             simd.name,
             simd.speedup,
 			std::abs(simd.speedup - 1.0) < TOLERANCE ? "About equal" : simd.speedup > 1.0 ? "SIMD is faster" : "SIMD is slower"
         );
-        if (index % 2 == 0) ansi_rgb = ANSI_RGB(255, 255, 255);
-        std::print("{}", ansi_rgb);
         index++;
     }
+    std::println("{:-<92}", "");
     
 }
 
@@ -858,3 +936,6 @@ void BenchmarkMatSIMD();
 
 void BenchmarkQuaternionNoSIMD();
 void BenchmarkQuaternionSIMD();
+
+void BenchmarkBatchNoSIMD();
+void BenchmarkBatchSIMD();

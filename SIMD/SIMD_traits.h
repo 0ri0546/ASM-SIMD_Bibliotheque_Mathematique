@@ -2,6 +2,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <cmath>
 
 #include <immintrin.h>
 
@@ -75,6 +76,11 @@ struct simd_traits<double, 128>
         return _mm_div_pd(a, b);
     }
 
+    static type sqrt(type a)
+    {
+        return _mm_sqrt_pd(a);
+    }
+
     static type neg(type a)
     {
         return _mm_xor_pd(a, _mm_set1_pd(-0.0));
@@ -94,6 +100,19 @@ struct simd_traits<double, 128>
     static bool all_equal(type a, type b)
     {
         return _mm_movemask_pd(_mm_cmpeq_pd(a, b)) == 0x3;
+    }
+
+    static type compareEqual(type a, type b)
+    {
+        return _mm_cmpeq_pd(a, b);
+    }
+
+    static type select(type a, type b, type mask)
+    {
+        return _mm_or_pd(
+            _mm_and_pd(mask, b),
+            _mm_andnot_pd(mask, a)
+        );
     }
 };
 
@@ -143,6 +162,11 @@ struct simd_traits<float, 128>
         return _mm_div_ps(a, b);
     }
 
+    static type sqrt(type a)
+    {
+        return _mm_sqrt_ps(a);
+    }
+
     static type neg(type a)
     {
         return _mm_xor_ps(a, _mm_set1_ps(-0.0f));
@@ -180,6 +204,19 @@ struct simd_traits<float, 128>
     static bool all_equal(type a, type b)
     {
         return _mm_movemask_ps(_mm_cmpeq_ps(a, b)) == 0xF;
+    }
+
+    static type compareEqual(type a, type b)
+    {
+        return _mm_cmpeq_ps(a, b);
+    }
+
+    static type select(type a, type b, type mask)
+    {
+        return _mm_or_ps(
+            _mm_and_ps(mask, b),
+            _mm_andnot_ps(mask, a)
+        );
     }
 };
 
@@ -229,6 +266,11 @@ struct simd_traits<float, 256>
         return _mm256_div_ps(a, b);
     }
 
+    static type sqrt(type a)
+    {
+        return _mm256_sqrt_ps(a);
+    }
+
     static type neg(type a)
     {
         return _mm256_xor_ps(a, _mm256_set1_ps(-0.0f));
@@ -248,6 +290,19 @@ struct simd_traits<float, 256>
     static bool all_equal(type a, type b)
     {
         return _mm256_movemask_ps(_mm256_cmp_ps(a, b, _CMP_EQ_OQ)) == 0xFF;
+    }
+
+    static type compareEqual(type a, type b)
+    {
+        return _mm256_cmp_ps(a, b, _CMP_EQ_OQ);
+    }
+
+    static type select(type a, type b, type mask)
+    {
+        return _mm256_or_ps(
+            _mm256_and_ps(mask, b),
+            _mm256_andnot_ps(mask, a)
+        );
     }
 };
 
@@ -297,6 +352,11 @@ struct simd_traits<double, 256>
         return _mm256_div_pd(a, b);
     }
 
+    static type sqrt(type a)
+    {
+        return _mm256_sqrt_pd(a);
+    }
+
     static type neg(type a)
     {
         return _mm256_xor_pd(a, _mm256_set1_pd(-0.0));
@@ -333,6 +393,19 @@ struct simd_traits<double, 256>
     static bool all_equal(type a, type b)
     {
         return _mm256_movemask_pd(_mm256_cmp_pd(a, b, _CMP_EQ_OQ)) == 0xF;
+    }
+
+    static type compareEqual(type a, type b)
+    {
+        return _mm256_cmp_pd(a, b, _CMP_EQ_OQ);
+    }
+
+    static type select(type a, type b, type mask)
+    {
+        return _mm256_or_pd(
+            _mm256_and_pd(mask, b),
+            _mm256_andnot_pd(mask, a)
+        );
     }
 };
 
@@ -378,6 +451,11 @@ struct simd_traits<T, 0>
         return a / b;
     }
 
+    static constexpr type sqrt(type a)
+    {
+        return std::sqrt(a);
+    }
+
     static constexpr type neg(type a)
     {
         return -a;
@@ -396,5 +474,15 @@ struct simd_traits<T, 0>
     static constexpr bool all_equal(type a, type b)
     {
         return a == b;
+    }
+
+    static constexpr bool compareEqual(type a, type b)
+    {
+        return a == b;
+    }
+
+    static constexpr type select(type a, type b, bool mask)
+    {
+        return mask ? b : a;
     }
 };

@@ -1,8 +1,15 @@
+#pragma once
+
 #include <print>
 
-#include "VecSIMD.h"
-#include "MatSIMD.h"
-#include "QuaternionSIMD.h"
+#include <vector>
+#include <cmath>
+#include <cassert>
+
+#include "Headers/Batch.h"
+#include "BatchSIMD.h"
+
+
 
 int main()
 {
@@ -103,6 +110,12 @@ int main()
 
 	auto mat_g = MatCastLayout<double, 3, 3, ColumnMajor, RowMajor>(mat_f);
     std::println("{}", mat_g);
+
+    std::println("");
+    std::println("--------------------------------BATCH----------------------------------");
+    std::println("");
+
+    std::println("All batch tests passed.\n");
 
     return 0;
 }

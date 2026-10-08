@@ -4,7 +4,7 @@
 #include <cstdint>
 #include <format>
 
-#include "Concepts.h"
+#include "../Concepts.h"
 
 template <float_num T, std::size_t N>
 class Vec {
