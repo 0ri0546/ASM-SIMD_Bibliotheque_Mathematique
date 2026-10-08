@@ -4,7 +4,7 @@
 #include "VecSIMD.h"
 
 // MASM function
-extern "C" void Vec4fAdd(const float* a, const float* b, float* result);
+extern "C" void Vec4fAdd(const float* a, const float* b, std::size_t count);
 
 void BenchmarkVecNoSIMD() {
     {
@@ -927,10 +927,7 @@ void BenchmarkVecSIMD() {
             "Vec4fAdd_SIMD",
             [&]()
             {
-                for (std::size_t i = 0; i < g_batchSize; ++i)
-                {
-                    Vec4fAdd(a[i].Data(), b[i].Data(), a[i].Data());
-                }
+                Vec4fAdd(a[0].Data(), b[0].Data(), g_batchSize);
 
                 DoNotOptimizeAway(a);
                 DoNotOptimizeAway(b);

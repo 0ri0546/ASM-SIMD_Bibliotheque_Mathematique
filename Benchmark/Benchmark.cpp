@@ -75,7 +75,10 @@ int main()
     if (benchmarkType == 3)
     {
         CalculateSpeedups();
+        CalculateLayoutSpeedups();
+
         PrintSpeedupTable();
+        PrintLayoutSpeedupTable();
     }
 
     std::println();

@@ -50,6 +50,7 @@ struct BenchmarkResult
     double totalMs = 0.0;
 
     double speedup = 0.0;
+    double layoutSpeedup = 0.0;
     double dispersion = 0.0;
 };
 
@@ -883,6 +884,59 @@ inline void CalculateSpeedups()
     }
 }
 
+inline void CalculateLayoutSpeedups()
+{
+    for (auto& soa : g_referenceResults)
+    {
+        soa.layoutSpeedup = 0.0;
+
+        if (soa.name.find("_SoA") == std::string::npos)
+            continue;
+
+        std::string aosName = soa.name;
+        aosName.replace(aosName.find("_SoA"), 4, "_AoS");
+
+        for (const auto& aos : g_referenceResults)
+        {
+            if (aos.name == aosName &&
+                aos.nsPerOperation > 0.0 &&
+                soa.nsPerOperation > 0.0)
+            {
+                soa.layoutSpeedup =
+                    aos.nsPerOperation /
+                    soa.nsPerOperation;
+
+                break;
+            }
+        }
+    }
+
+    for (auto& soa : g_simdResults)
+    {
+        soa.layoutSpeedup = 0.0;
+
+        if (soa.name.find("_SoA") == std::string::npos)
+            continue;
+
+        std::string aosName = soa.name;
+        aosName.replace(aosName.find("_SoA"), 4, "_AoS");
+
+        for (const auto& aos : g_simdResults)
+        {
+            if (aos.name == aosName &&
+                aos.nsPerOperation > 0.0 &&
+                soa.nsPerOperation > 0.0)
+            {
+                soa.layoutSpeedup =
+                    aos.nsPerOperation /
+                    soa.nsPerOperation;
+
+                break;
+            }
+        }
+    }
+}
+
 inline void PrintSpeedupTable()
 {
     static int index = 0;
@@ -894,6 +948,7 @@ inline void PrintSpeedupTable()
     std::println("==============================================================");
     std::println();
 
+    std::println("{:-<92}", "");
     std::println(
         "{:<50} | {:>14} | {:>20} |",
         "Benchmark",
@@ -920,6 +975,54 @@ inline void PrintSpeedupTable()
     }
     std::println("{:-<92}", "");
     
+}
+
+inline void PrintLayoutSpeedupTable()
+{
+    std::println();
+    std::println();
+    std::println();
+    std::println("==============================================================");
+    std::println("|                       AoS vs SoA                            |");
+    std::println("==============================================================");
+    std::println();
+
+    std::println("{:-<92}", "");
+    std::println(
+        "{:<50} | {:>14} | {:>20} |",
+        "Benchmark",
+        "Speedup (SoA)",
+        "Comparison"
+    );
+
+    std::println("{:-<92}", "");
+
+    constexpr double TOLERANCE = 0.05;
+
+    auto printResult = [](const BenchmarkResult& result)
+        {
+            if (result.layoutSpeedup <= 0.0)
+                return;
+
+            std::println(
+                "{:<50} | {:>13.3f}x | {:>20} |",
+                result.name,
+                result.layoutSpeedup,
+                std::abs(result.layoutSpeedup - 1.0) < TOLERANCE
+                ? "About equal"
+                : result.layoutSpeedup > 1.0
+                ? "SoA is faster"
+                : "AoS is faster"
+            );
+        };
+
+    for (const auto& result : g_referenceResults)
+        printResult(result);
+
+    for (const auto& result : g_simdResults)
+        printResult(result);
+
+    std::println("{:-<92}", "");
 }
 
 std::size_t ChooseBatchSize();
