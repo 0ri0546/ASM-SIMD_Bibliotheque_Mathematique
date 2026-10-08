@@ -211,7 +211,7 @@ inline void BeginBenchmark(
     std::println("Iterations : {:<42} {:<5} |", BENCHMARK_ITERATIONS, "");
     std::println("ISA        : {:<42} {:<5} |", GetISA(), "");
     std::println("Samples    : {:<42} {:<5} |", BENCHMARK_SAMPLES, "");
-    std::println("Warm-up    : {:<42} {:<5} |", BENCHMARK_WARMUP, "");
+    std::println("Warm-up    : {:<42} {:<5} |", "10ms", "");
     std::println("Seed       : {:<42} {:<5} |", g_seed, "");
     std::println("Build      : {:<42} {:<5} |", "Release x64", "");
     std::println("---------------------------------------------------------------");
