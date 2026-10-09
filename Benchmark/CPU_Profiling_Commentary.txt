@@ -1,0 +1,50 @@
+CPU PROFILING COMMENTARY
+Project: C++ Math Library / SIMD
+Tool: Visual Studio Performance Profiler
+Session analyzed: Rapport20261008-1010.diagsession
+
+1. Objective
+
+CPU profiling was used to observe how processor time was distributed while running the math library benchmarks and to identify the functions contributing most to the observed cost. This analysis complements the benchmark's per-operation timing measurements; it does not replace them.
+
+2. Results visible in the session
+
+The Call Tree view reports the following values for benchmark functions:
+
+- BenchmarkMatSIMD: 41,192 total CPU time units, or 29.50% of the session; exclusive CPU time: 310 units (0.22%).
+- BenchmarkMatNoSIMD: 27,802 units, or 19.91%; exclusive CPU time: 109 units (0.08%).
+- BenchmarkQuaternionNoSIMD: 19,991 units, or 14.32%; exclusive CPU time: 98 units (0.07%).
+- BenchmarkQuaternionSIMD: 16,242 units, or 11.63%; exclusive CPU time: 45 units (0.03%).
+- BenchmarkVecNoSIMD: 10,460 units, or 7.49%; exclusive CPU time: 223 units (0.16%).
+- BenchmarkBatchNoSIMD: 2,401 units, or 1.72%; exclusive CPU time: 22 units (0.02%).
+- BenchmarkBatchSIMD: 1,793 units, or 1.28%; exclusive CPU time: 20 units (0.01%).
+
+These percentages describe each function's share of the CPU time observed in this session. They are not, by themselves, measurements of the performance gain or loss between SIMD and non-SIMD implementations.
+
+3. Analysis of BenchmarkMatSIMD
+
+The BenchmarkMatSIMD node accounts for 29.50% of the observed time, but its exclusive time is only 0.22%. Most of the time is therefore attributed to functions called by this benchmark rather than to the body of BenchmarkMatSIMD itself.
+
+In the expanded branch, the function associated with MatSIMD<double, 4, 4, ...> accounts for 5,297 units (3.79% of the session). The nested calls shown include a benchmark lambda at 5,296 units (3.79%), followed by a benchmark function at 4,896 units (3.51%). A branch associated with std::vector<QuaternionSIMD...> accounts for 2,364 units (1.69%), of which 2,313 units (1.66%) are exclusive according to the displayed view.
+
+These entries show that the time attributed to the benchmark also includes work performed by called functions and data handling. However, the screenshots do not make it possible to attribute all of this cost precisely to a single mathematical operation. The visible std::vector branch does not, on its own, prove that allocation is a bottleneck; the associated code would need to be examined and, if necessary, profiled separately.
+
+4. SIMD / non-SIMD comparison: limitations
+
+The matrix benchmark functions have different total times in this session: 29.50% for SIMD versus 19.91% for non-SIMD. It would be incorrect to conclude from this that SIMD is slower, because these values are shares of the CPU time of the complete run. They depend on factors such as the number of calls, the work performed by each benchmark, and other activity during the session.
+
+Similarly, the values for BenchmarkBatchSIMD and BenchmarkBatchNoSIMD (1.28% and 1.72%) do not directly establish the relative speed of the batch implementations.
+
+Performance comparisons should instead use the dedicated benchmark results: time per operation, batch size, iteration count, and identical measurement conditions. Profiling is primarily useful for locating expensive execution paths and guiding optimization work.
+
+5. System functions and memory management
+
+The Call Tree shows free and std::filesystem::filesystem_error::_Pretty_message in the session's call chain. Their presence does not prove that an error occurred: a function associated with exception handling may appear in a profile without an error necessarily being thrown. The provided screenshots do not establish why these functions appear or whether they slow down the benchmark.
+
+This observation should therefore not be reported as a confirmed error. To investigate further, the relevant execution path and associated code would need to be examined.
+
+6. Conclusion
+
+The profiling shows that matrix benchmark functions account for a significant share of the total CPU time in this session, particularly BenchmarkMatSIMD. However, their exclusive CPU times are low: most of the observed cost is attributed to functions called by the benchmarks. The Call Tree helps identify these branches, but the current screenshots do not identify a specific SIMD instruction or mathematical operation as the cause of the cost.
+
+Conclusions about SIMD's effectiveness should therefore be based on the benchmark's comparative measurements rather than on the profiler's percentages alone. In this project, profiling is a complementary tool for exploring execution paths and guiding potential optimizations.
