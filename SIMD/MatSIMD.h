@@ -11,6 +11,12 @@
 
 #include "Concepts.h"
 
+/// <summary>
+/// Uses std::mdspan's LayoutPolicy
+/// std::mdspan: https://en.cppreference.com/cpp/container/mdspan
+/// Row major, see: https://en.cppreference.com/cpp/container/mdspan/layout_right
+/// Column major, see: https://en.cppreference.com/cpp/container/mdspan/layout_left
+/// </summary>
 using RowMajor = std::layout_right;
 using ColumnMajor = std::layout_left;
 

@@ -1,0 +1,49 @@
+--- C:\Users\lmarcucci\source\repos\ASM-SIMD_Bibliotheque_Mathematique\SIMD\VecSIMD.inl 
+   887: 
+   888: template <float_num T, std::size_t N>
+   889: inline constexpr VecSIMD<T, N> VecSIMD<T, N>::Normalized() const
+   890: {
+; rsp = stack pointer
+; rcx and rdx = general purpose registers (64 bit width)
+00007FF6D587B3A0 48 89 54 24 10       mov         qword ptr [rsp+10h],rdx ; rdx gets the value 2 bytes from the stack pointer (as a pointer to a 64-bit value)
+00007FF6D587B3A5 48 89 4C 24 08       mov         qword ptr [rsp+8],rcx   ; rcx gets the value 1 byte from the stack pointer (as a pointer to a 64-bit value)
+00007FF6D587B3AA 55                   push        rbp                     ; value of rbp pushed on the stack
+00007FF6D587B3AB 56                   push        rsi                     ; value of rsi pushed on the stack
+00007FF6D587B3AC 57                   push        rdi                     ; value of rdi pushed on the stack
+00007FF6D587B3AD 48 81 EC 00 01 00 00 sub         rsp,100h                ; reserves 256 bits on the stack
+00007FF6D587B3B4 48 8D 6C 24 20       lea         rbp,[rsp+20h]           ; address of(rsp + 32-bits) loaded into rbp
+00007FF6D587B3B9 48 8D 0D 71 23 14 00 lea         rcx,[__9B722E89_VecSIMD@inl (07FF6D59BD731h)]  ; loads the address of the function (0x07FF6D59BD731) into rcx
+00007FF6D587B3C0 E8 B5 4B EC FF       call        __CheckForDebuggerJustMyCode (07FF6D573FF7Ah)  ; internal debugger call (probably breakpoint)
+00007FF6D587B3C5 90                   nop  
+   891:     const T length = Length();
+00007FF6D587B3C6 48 8B 8D 00 01 00 00 mov         rcx,qword ptr [this]                           ; move the address of the vector object into rcx
+00007FF6D587B3CD E8 2B 1E EC FF       call        VecSIMD<float,4>::Length (07FF6D573D1FDh)      ; call the length function
+00007FF6D587B3D2 C5 FA 11 45 04       vmovss      dword ptr [length],xmm0                        ; move length pointer into xmm0 (simd register, vectorized operation)
+   892: 
+   893:     if (length <= T{ 0 })
+00007FF6D587B3D7 C5 F8 57 C0          vxorps      xmm0,xmm0,xmm0                                 ; `xmm0 ^= xmm0` xor xmm0 with itself; xmm now equals 0
+00007FF6D587B3DB C5 F8 2F 45 04       vcomiss     xmm0,dword ptr [length]                        ; compare 2 floats (length and xmm (0)) and updates the carry flag
+00007FF6D587B3E0 72 1E                jb          VecSIMD<float,4>::Normalized+60h (07FF6D587B400h)  ; jumps to '00007FF6D587B436' if the carry flag is equal to 1 (if length <= 0)
+   894:         return *this;
+00007FF6D587B3E2 48 8B BD 08 01 00 00 mov         rdi,qword ptr [rbp+108h]                       ; move the address of (rbp + 264-bits) into rdi
+00007FF6D587B3E9 48 8B B5 00 01 00 00 mov         rsi,qword ptr [this]                           ; move the address of `this` into rsi
+00007FF6D587B3F0 B9 10 00 00 00       mov         ecx,10h                                        ; move the value 16 into ecx register (32-bits)
+00007FF6D587B3F5 F3 A4                rep movs    byte ptr [rdi],byte ptr [rsi]                  ; repeats 16 times the movs instruction (why ??)
+00007FF6D587B3F7 48 8B 85 08 01 00 00 mov         rax,qword ptr [rbp+108h]                       ; move the address of (rbp + 264-bits) into rax
+00007FF6D587B3FE EB 2C                jmp         VecSIMD<float,4>::Normalized+8Ch               ; jump to (07FF6D587B42Ch) (fin dla fonction gros)
+   895: 
+   896:     return *this * (T{ 1 } / length);
+00007FF6D587B400 C5 FA 10 05 04 73 0A 00 vmovss      xmm0,dword ptr [__real@3f800000 (07FF6D592270Ch)]  ; move the (07FF6D592270Ch) address into xmm0
+00007FF6D587B408 C5 FA 5E 45 04       vdivss      xmm0,xmm0,dword ptr [length]                          ; `(T{ 1 } / length)` move the result of the division between length and xmm0 into xmm0
+00007FF6D587B40D C5 F8 10 D0          vmovups     xmm2,xmm0                                             ; move xmm0 into xmm2
+00007FF6D587B411 48 8B 95 00 01 00 00 mov         rdx,qword ptr [this]                                  ; move this into rdx
+00007FF6D587B418 48 8B 8D 08 01 00 00 mov         rcx,qword ptr [rbp+108h]                              ; move (rbp + 264-bits) into rcx
+00007FF6D587B41F E8 A0 42 EC FF       call        operator*<float,float,4> (07FF6D573F6C4h)             ; `this * xmm2` call multiply operator (Vec4)
+00007FF6D587B424 90                   nop
+00007FF6D587B425 48 8B 85 08 01 00 00 mov         rax,qword ptr [rbp+108h]                              ; move (rbp + 264-bits) into rax
+   897: }
+00007FF6D587B42C 48 8D A5 E0 00 00 00 lea         rsp,[rbp+0E0h]                                        ; load the address of (rbp + 224-bits) into the stack pointer
+00007FF6D587B433 5F                   pop         rdi                                                   ; pops the value of rdi from the stack
+00007FF6D587B434 5E                   pop         rsi                                                   ; pops the value of rsi from the stack
+00007FF6D587B435 5D                   pop         rbp                                                   ; pops the value of rbp from the stack
+00007FF6D587B436 C3                   ret                                                               ; return

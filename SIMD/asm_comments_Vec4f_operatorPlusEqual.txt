@@ -1,0 +1,33 @@
+template <float_num T, std::size_t N>
+    80: template <float_num U>
+    81: inline constexpr VecSIMD<T, N>& VecSIMD<T, N>::operator+=(
+    82:     const VecSIMD<U, N>& other
+    83:     )
+    84: {
+00007FF6D5851170 48 89 54 24 10       mov         qword ptr [rsp+10h],rdx                   ; move rdx into address of (rsp + 16 bits)
+00007FF6D5851175 48 89 4C 24 08       mov         qword ptr [rsp+8],rcx                     ; move rcx into address of (rsp + 8 bits)
+00007FF6D585117A 55                   push        rbp                                       ; value of rbp pushed on the stack
+00007FF6D585117B 56                   push        rsi                                       ; value of rsi pushed on the stack
+00007FF6D585117C 57                   push        rdi                                       ; value of rdi pushed on the stack  
+00007FF6D585117D 48 81 EC 10 01 00 00 sub         rsp,110h                                  ; sub 272 to rbp register
+00007FF6D5851184 48 8D 6C 24 20       lea         rbp,[rsp+20h]                             ; loads the adress of (rsp + 32 bits) into rbp
+00007FF6D5851189 48 8D 0D A1 C5 16 00 lea         rcx,[__9B722E89_VecSIMD@inl (07FF6D59BD731h)]       ; loads (07FF6D59BD731h) into rcx
+00007FF6D5851190 E8 E5 ED EE FF       call        __CheckForDebuggerJustMyCode (07FF6D573FF7Ah)       ; internal debugger call (probably breakpoint)
+00007FF6D5851195 90                   nop  
+    85:     *this = *this + other;
+00007FF6D5851196 4C 8B 85 18 01 00 00 mov         r8,qword ptr [other]                ; mov other into r8 register
+00007FF6D585119D 48 8B 95 10 01 00 00 mov         rdx,qword ptr [this]                ; mov this into rdx register
+00007FF6D58511A4 48 8D 8D C8 00 00 00 lea         rcx,[rbp+0C8h]                      ; loads the adress of (rbp + 200 bits) into rcx
+00007FF6D58511AB E8 6E CC EE FF       call        operator+<float,float,4> (07FF6D573DE1Eh)            ; call the operator function
+00007FF6D58511B0 48 8B BD 10 01 00 00 mov         rdi,qword ptr [this]                                 ; mov this into rdi register
+00007FF6D58511B7 48 8B F0             mov         rsi,rax                             ; mov rax value into rsi register
+00007FF6D58511BA B9 10 00 00 00       mov         ecx,10h                             ; mov the value 16 into ecx register
+00007FF6D58511BF F3 A4                rep movs    byte ptr [rdi],byte ptr [rsi]       ; repeats 16 times the movs instruction ()
+    86:     return *this;
+00007FF6D58511C1 48 8B 85 10 01 00 00 mov         rax,qword ptr [this]                ; mov this into rax register
+    87: }
+00007FF6D58511C8 48 8D A5 F0 00 00 00 lea         rsp,[rbp+0F0h]                      ; loads the adress of (rbp + 256 bits) into rsp register
+00007FF6D58511CF 5F                   pop         rdi                                 ; pops the value of rdi from the stack
+00007FF6D58511D0 5E                   pop         rsi                                 ; pops the value of rsi from the stack
+00007FF6D58511D1 5D                   pop         rbp                                 ; pops the value of rbp from the stack
+00007FF6D58511D2 C3                   ret                                             ; return
