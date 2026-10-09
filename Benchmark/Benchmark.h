@@ -353,18 +353,22 @@ BenchmarkResult Benchmark(
                 cycleEnd - cycleBegin
                 );
 
-        if (maxCycles == 0.0)
+        if (sample == 0)
         {
+            minCycles = elapsedCycles;
             maxCycles = elapsedCycles;
-            minCycles = elapsedCycles;
-        }
-        if (elapsedCycles < minCycles)
-        {
-            minCycles = elapsedCycles;
         }
         else
         {
-            maxCycles = elapsedCycles;
+            if (elapsedCycles < minCycles)
+            {
+                minCycles = elapsedCycles;
+            }
+
+            if (elapsedCycles > maxCycles)
+            {
+                maxCycles = elapsedCycles;
+            }
         }
 
         const double totalOperations =
@@ -402,7 +406,9 @@ BenchmarkResult Benchmark(
     result.totalMs =
         totalNanoseconds * 1.0e-6;
 
-    result.dispersion = (maxCycles - minCycles) / batchSize;
+    result.dispersion =
+        (maxCycles - minCycles) /
+        (static_cast<double>(batchSize) * iterations);
 
     return result;
 }

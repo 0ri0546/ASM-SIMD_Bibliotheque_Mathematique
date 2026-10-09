@@ -7,8 +7,8 @@
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
-// Test MASMx64 function (usage: Vec4fAdd(a.Data(), b.Data(), result))
-extern "C" void Vec4fAdd(const float* a, const float* b, float* result);
+// Test MASMx64 function (usage: Vec4fAdd(a.Data(), b.Data(), count))
+extern "C" void Vec4fAdd(const float* a, const float* b, std::size_t count);
 
 namespace {
     // Compares two floating-point values through Assert::AreEqual's tolerance overload.
@@ -197,7 +197,7 @@ namespace MathLibraryTests
         TEST_METHOD(AdditionASM) {
 			VecSIMD<float, 4> a{ 1.0f, 2.0f, 3.0f, 4.0f };
 			VecSIMD<float, 4> b{ 0.5f, 1.5f, 2.5f, 3.5f };
-			Vec4fAdd(a.Data(), b.Data(), a.Data()); // a += b;
+			Vec4fAdd(a.Data(), b.Data(), 1); // a += b;
 			Assert::AreEqual(1.5f, a[0]);
             Assert::AreEqual(3.5f, a[1]);
             Assert::AreEqual(5.5f, a[2]);
@@ -875,8 +875,8 @@ namespace MathLibraryTests
         }
 
         // =========================================================================
-// 4D vectors
-// =========================================================================
+        // 4D vectors
+        // =========================================================================
 
         TEST_METHOD(Addition4D) {
             constexpr VecSIMD<float, 4> a{ 1, 2, 3, 4 };
