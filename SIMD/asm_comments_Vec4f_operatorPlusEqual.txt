@@ -22,7 +22,7 @@ template <float_num T, std::size_t N>
 00007FF6D58511B0 48 8B BD 10 01 00 00 mov         rdi,qword ptr [this]                                 ; mov this into rdi register
 00007FF6D58511B7 48 8B F0             mov         rsi,rax                             ; mov rax value into rsi register
 00007FF6D58511BA B9 10 00 00 00       mov         ecx,10h                             ; mov the value 16 into ecx register
-00007FF6D58511BF F3 A4                rep movs    byte ptr [rdi],byte ptr [rsi]       ; repeats 16 times the movs instruction ()
+00007FF6D58511BF F3 A4                rep movs    byte ptr [rdi],byte ptr [rsi]       ; copies 16 bytes (the 16-byte vector) from the source to the return-value storage
     86:     return *this;
 00007FF6D58511C1 48 8B 85 10 01 00 00 mov         rax,qword ptr [this]                ; mov this into rax register
     87: }

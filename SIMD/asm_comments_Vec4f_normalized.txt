@@ -28,7 +28,7 @@
 00007FF6D587B3E2 48 8B BD 08 01 00 00 mov         rdi,qword ptr [rbp+108h]                       ; move the address of (rbp + 264-bits) into rdi
 00007FF6D587B3E9 48 8B B5 00 01 00 00 mov         rsi,qword ptr [this]                           ; move the address of `this` into rsi
 00007FF6D587B3F0 B9 10 00 00 00       mov         ecx,10h                                        ; move the value 16 into ecx register (32-bits)
-00007FF6D587B3F5 F3 A4                rep movs    byte ptr [rdi],byte ptr [rsi]                  ; repeats 16 times the movs instruction (why ??)
+00007FF6D587B3F5 F3 A4                rep movs    byte ptr [rdi],byte ptr [rsi]                  ; copies 16 bytes (the 16-byte vector) from the source to the return-value storage
 00007FF6D587B3F7 48 8B 85 08 01 00 00 mov         rax,qword ptr [rbp+108h]                       ; move the address of (rbp + 264-bits) into rax
 00007FF6D587B3FE EB 2C                jmp         VecSIMD<float,4>::Normalized+8Ch               ; jump to (07FF6D587B42Ch) (fin dla fonction gros)
    895: 
